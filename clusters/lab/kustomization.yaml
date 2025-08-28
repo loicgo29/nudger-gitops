@@ -3,5 +3,4 @@ kind: Kustomization
 resources:
   - ../../apps/whoami
   - ../../apps/ingress-nginx/overlays/lab
-  - ../../apps/whoami/overlays/lab   # etc.
 
