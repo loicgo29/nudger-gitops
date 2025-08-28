@@ -5,7 +5,10 @@ metadata:
   namespace: whoami
   annotations:
     kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "30"
 spec:
+  ingressClassName: nginx
   rules:
     - host: whoami.localtest.me
       http:

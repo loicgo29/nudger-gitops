@@ -13,6 +13,10 @@ spec:
     spec:
       containers:
         - name: whoami
-          image: containous/whoami:latest
+          image: traefik/whoami:latest
           ports: [{ containerPort: 80 }]
-
+          readinessProbe: { httpGet: { path: /, port: 80 }, initialDelaySeconds: 1, periodSeconds: 5 }
+          livenessProbe:  { httpGet: { path: /, port: 80 }, initialDelaySeconds: 5, periodSeconds: 10 }
+          resources:
+            requests: { cpu: "50m", memory: "64Mi" }
+            limits:   { cpu: "200m", memory: "128Mi" }
