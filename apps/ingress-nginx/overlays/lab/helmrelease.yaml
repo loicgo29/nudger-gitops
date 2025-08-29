@@ -4,6 +4,15 @@ metadata:
   name: ingress-nginx
   namespace: ingress-nginx
 spec:
+  values:
+    controller:
+      admissionWebhooks:
+        patch:
+          enabled: true
+          image:
+            registry: quay.io
+            repository: kubernetes-ingress-controller/kube-webhook-certgen
+            tag: v20240910
   interval: 1m
   chart:
     spec:
@@ -18,14 +27,3 @@ spec:
     timeout: 10m
   upgrade:
     remediation: { retries: 3 }
-  values:
-    controller:
-      admissionWebhooks:
-        enabled: true
-        patch:
-          enabled: true
-          image:
-            registry: registry.k8s.io
-            image: ingress-nginx/kube-webhook-certgen
-            tag: v20240910
-
