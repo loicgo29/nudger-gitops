@@ -13,6 +13,8 @@ spec:
           https: 30443
       admissionWebhooks:
         enabled: false
+        patch:
+          enabled: false
   chart:
     spec:
       chart: ingress-nginx
