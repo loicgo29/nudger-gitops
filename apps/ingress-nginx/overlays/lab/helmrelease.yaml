@@ -4,17 +4,7 @@ metadata:
   name: ingress-nginx
   namespace: ingress-nginx
 spec:
-  values:
-    controller:
-      service:
-        type: NodePort
-        nodePorts:
-          http: 30080
-          https: 30443
-      admissionWebhooks:
-        enabled: false
-        patch:
-          enabled: false
+  interval: 1m           # << OBLIGATOIRE
   chart:
     spec:
       chart: ingress-nginx
@@ -28,3 +18,15 @@ spec:
     timeout: 10m
   upgrade:
     remediation: { retries: 3 }
+  values:
+    controller:
+      service:
+        type: NodePort
+        nodePorts:
+          http: 30080
+          https: 30443
+      admissionWebhooks:
+        enabled: false
+        patch:
+          enabled: false
+
