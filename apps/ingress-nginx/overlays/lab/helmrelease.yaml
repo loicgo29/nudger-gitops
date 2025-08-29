@@ -15,6 +15,7 @@ spec:
         namespace: flux-system
   install:
     remediation: { retries: 3 }
+    timeout: 10m
   upgrade:
     remediation: { retries: 3 }
   values:
@@ -25,6 +26,6 @@ spec:
           enabled: true
           image:
             registry: registry.k8s.io
-            repository: ingress-nginx/kube-webhook-certgen
+            image: ingress-nginx/kube-webhook-certgen
             tag: v20240910
 
