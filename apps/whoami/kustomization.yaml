@@ -6,6 +6,6 @@ resources:
   - service.yaml
   - ingress.yaml
 images:
-  - name: whoami
-    newName: ghcr.io/loicgo29/nudger-ui
-    newTag: 2025.09.01-a1b2c3d
+  - name: traefik/whoami            # doit matcher .spec.template.spec.containers[*].image
+    newName: traefik/whoami         # {"$imagepolicy": "flux-system:whoami:name"}
+    newTag: v1.10.1 

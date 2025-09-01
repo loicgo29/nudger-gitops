@@ -1,0 +1,25 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageUpdateAutomation
+metadata:
+  name: whoami-update
+  namespace: flux-system
+spec:
+  interval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: gitops
+  git:
+    checkout:
+      ref:
+        branch: main
+    commit:
+      author:
+        name: Flux Bot
+        email: flux@example.com
+      messageTemplate: |
+        chore(whoami): update image via policy {{ .AutomationObject.metadata.namespace }}:{{ .AutomationObject.metadata.name }}
+    push:
+      branch: main
+  update:
+    path: ./apps/whoami
+    strategy: Setters
