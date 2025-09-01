@@ -1,0 +1,36 @@
+name: "PR: Flux image updates"
+
+on:
+  push:
+    branches: [ "flux-image-updates" ]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # (Optionnel) petite vérif YAML/K8s rapide
+      # - name: Kustomize build (lint rapide)
+      #   run: |
+      #     sudo apt-get update -y && sudo apt-get install -y git curl
+      #     curl -sLo /usr/local/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.2/kustomize_v5.4.2_linux_amd64.tar.gz
+      #     tar -xzf /usr/local/bin/kustomize -C /usr/local/bin || true
+      #     kustomize build apps/whoami >/dev/null
+
+      - uses: peter-evans/create-pull-request@v6
+        with:
+          branch: flux-image-updates
+          base: main
+          title: "chore(images): updates from Flux"
+          body: |
+            Mises à jour d’images proposées automatiquement par Flux.
+            - Branche source : `flux-image-updates`
+            - Merci de reviewer et merger si OK ✅
+          labels: automated-pr, flux
+          delete-branch: false
+

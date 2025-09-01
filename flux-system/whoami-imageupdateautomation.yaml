@@ -11,15 +11,16 @@ spec:
   git:
     checkout:
       ref:
-        branch: main
+        branch: main   # branche de lecture
     commit:
       author:
         name: Flux Bot
         email: flux@example.com
       messageTemplate: |
-        chore(whoami): update image via policy {{ .AutomationObject.metadata.namespace }}:{{ .AutomationObject.metadata.name }}
+        chore({{ .AutomationObject.Name }}): bump {{ .PolicyResult.Repository }}:{{ .PolicyResult.Tag }}
     push:
-      branch: main
+      branch: flux-image-updates   # <— pousse sur une branche dédiée
   update:
     path: ./apps/whoami
     strategy: Setters
+
