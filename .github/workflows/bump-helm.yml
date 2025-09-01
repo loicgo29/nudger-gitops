@@ -1,4 +1,4 @@
-name: " Bump HELM image (manual)"
+name: "🔧 Bump HELM image (manual)"
 
 on:
   workflow_dispatch:
@@ -44,7 +44,8 @@ jobs:
           changed=0
           for f in ${{ inputs.file_glob }}; do
             echo "⟳ Mise à jour: $f"
-            yq -i '${{ inputs.image_key }} = "${{ inputs.image_tag }}"' "$f"
+            # Exemple: .image.tag = "v1.2.3"
+            yq -i "${{ inputs.image_key }} = \"${{ inputs.image_tag }}\"" "$f"
             git add "$f" && changed=1
           done
           if [[ "$changed" -eq 0 ]]; then
@@ -52,5 +53,17 @@ jobs:
           fi
 
       - name: Create pull request
-        uses: peter-evans/cr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: chore/bump-helm-${{ inputs.image_tag }}
+          commit-message: "chore(helm): bump image tag to ${{ inputs.image_tag }}"
+          title: "🔧 Bump Helm image tag to ${{ inputs.image_tag }}"
+          body: |
+            Mise à jour automatique du tag d’image Helm:
+            - **clé**: `${{ inputs.image_key }}`
+            - **tag**: `${{ inputs.image_tag }}`
+            - **fichiers**: `${{ inputs.file_glob }}`
+          labels: maintenance, automated-pr
+          delete-branch: true
 
