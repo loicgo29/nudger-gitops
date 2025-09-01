@@ -9,3 +9,4 @@ images:
   - name: traefik/whoami            # doit matcher .spec.template.spec.containers[*].image
     newName: traefik/whoami         # {"$imagepolicy": "flux-system:whoami:name"}
     newTag: v1.10.1 
+
