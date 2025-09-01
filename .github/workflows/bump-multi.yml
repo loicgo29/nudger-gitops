@@ -1,0 +1,53 @@
+name: 🔧 Bump MULTI (manual)
+
+
+on:
+workflow_dispatch:
+inputs:
+kind:
+description: "helm ou kustomize"
+required: true
+type: choice
+options: [helm, kustomize]
+paths:
+description: "Fichiers séparés par des virgules"
+required: true
+type: string
+image_repo:
+description: "Repo d'image publique"
+required: true
+type: string
+image_tag:
+description: "Tag"
+required: true
+type: string
+name:
+description: "images[].name si kustomize"
+required: false
+type: string
+
+
+permissions:
+contents: write
+
+
+jobs:
+bump:
+runs-on: ubuntu-latest
+steps:
+- uses: actions/checkout@v4
+- name: Install yq
+run: |
+sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
+sudo chmod +x /usr/local/bin/yq
+- name: Patch files
+id: patch
+env:
+KIND: ${{ inputs.kind }}
+FILES: ${{ inputs.paths }}
+REPO: ${{ inputs.image_repo }}
+TAG: ${{ inputs.image_tag }}
+NAME: ${{ inputs.name }}
+run: |
+set -euo pipefail
+bump

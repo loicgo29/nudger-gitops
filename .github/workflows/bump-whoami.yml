@@ -1,0 +1,61 @@
+name: 🔧 Bump whoami (Kustomize)
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_repo:
+        description: "Repo d'image (public) – ex: ghcr.io/loicgo29/nudger-whoami ou traefik/whoami"
+        required: true
+        type: string
+        default: traefik/whoami
+      image_tag:
+        description: "Tag – ex: v1.10.1"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Patch apps/whoami/kustomization.yaml
+        id: patch
+        env:
+          FILE: apps/whoami/kustomization.yaml
+          NAME: whoami
+          REPO: ${{ inputs.image_repo }}
+          TAG:  ${{ inputs.image_tag }}
+        run: |
+          set -euo pipefail
+          test -f "$FILE" || { echo "Introuvable: $FILE"; exit 1; }
+          # Garantir le bloc images[]
+          if ! yq '.images' "$FILE" >/dev/null 2>&1; then yq -i '.images = []' "$FILE"; fi
+          # Update/insert l'entrée par name
+          if yq '.images[] | select(.name == env(NAME))' "$FILE" >/dev/null 2>&1; then
+            yq -i '(.images[] | select(.name == env(NAME)).newName) = env(REPO) | (.images[] | select(.name == env(NAME)).newTag) = env(TAG)' "$FILE"
+          else
+            yq -i '.images += [{"name": env(NAME), "newName": env(REPO), "newTag": env(TAG)}]' "$FILE"
+          fi
+          echo "file=$FILE" >> $GITHUB_OUTPUT
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore(whoami): bump to ${{ inputs.image_repo }}:${{ inputs.image_tag }}"
+          title: "chore(whoami): ${{ inputs.image_repo }}:${{ inputs.image_tag }}"
+          body: "Path: `${{ steps.patch.outputs.file }}`"
+          branch: chore/whoami-bump-${{ github.run_id }}
+          labels: |
+            auto
+            whoami
+            kustomize
+
