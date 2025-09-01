@@ -12,7 +12,7 @@ on:
         required: true
         type: string
       image_repo:
-        description: "Repo d'image public (ex: traefik/whoami)"
+        description: "Repo d'image publique (ex: traefik/whoami)"
         required: true
         type: string
       image_tag:
@@ -22,6 +22,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   bump:
@@ -45,9 +46,9 @@ jobs:
         run: |
           set -euo pipefail
           test -f "$FILE" || { echo "Introuvable: $FILE"; exit 1; }
-          # S'assure que le bloc images[] existe
+          # S'assurer que images[] existe
           if ! yq '.images' "$FILE" >/dev/null 2>&1; then yq -i '.images = []' "$FILE"; fi
-          # Met à jour ou crée l'entrée par name
+          # Update/insert par name
           if yq '.images[] | select(.name == env(NAME))' "$FILE" >/dev/null 2>&1; then
             yq -i '(.images[] | select(.name == env(NAME)).newName) = env(REPO) | (.images[] | select(.name == env(NAME)).newTag) = env(TAG)' "$FILE"
           else
@@ -58,8 +59,9 @@ jobs:
       - name: Create PR
         uses: peter-evans/create-pull-request@v6
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}   # ou un PAT en secret GITOPS_TOKEN
           commit-message: "chore(kustomize): ${{ inputs.image_repo }}:${{ inputs.image_tag }} (name=${{ inputs.name }})"
-          title: "chore(kustomize): bump to ${{ inputs.image_repo }}:${{ inputs.image_tag }} (name=${{ inputs.name }})"
+          title: "chore(kustomize): ${{ inputs.image_repo }}:${{ inputs.image_tag }} (name=${{ inputs.name }})"
           body: "Path: `${{ steps.patch.outputs.file }}`"
           branch: chore/kustomize-bump-${{ github.run_id }}
           labels: |
