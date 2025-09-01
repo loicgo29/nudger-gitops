@@ -5,10 +5,12 @@ metadata:
   namespace: whoami
 spec:
   replicas: 3
-  matchLabels: { app: whoami }
+  matchLabels: 
+    app: whoami
   template:
     metadata:
-      labels: { app: whoami }
+      labels: 
+        app: whoami
     spec:
       containers:
         - name: whoami
