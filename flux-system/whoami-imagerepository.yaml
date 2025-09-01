@@ -1,0 +1,8 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: whoami
+  namespace: flux-system
+spec:
+  image: traefik/whoami
+  interval: 1m

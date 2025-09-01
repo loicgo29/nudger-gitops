@@ -1,0 +1,12 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: whoami
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: whoami
+  policy:
+    semver:
+      # Exemple: ne prendre que les patchs de 1.10 (les tags upstream sont "v1.10.x")
+      range: 1.10.x
