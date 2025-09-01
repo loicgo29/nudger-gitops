@@ -5,4 +5,7 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
-images: []
+images:
+  - name: whoami
+    newName: ghcr.io/loicgo29/nudger-ui
+    newTag: 2025.09.01-a1b2c3d
