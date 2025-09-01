@@ -1,4 +1,4 @@
-name: "🔧 Bump HELM image (manual)"
+name: "🔧 Bump HELM image (manual)" 
 
 on:
   workflow_dispatch:
