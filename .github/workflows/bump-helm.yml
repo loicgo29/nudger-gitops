@@ -3,53 +3,54 @@ name: "🔧 Bump HELM image (manual)"
 on:
   workflow_dispatch:
     inputs:
-      path:
-        description: "Fichier values.yaml (ex: clusters/lab/apps/xwiki/values.yaml)"
+      file_glob:
+        description: "Glob des fichiers Helm à modifier (ex: charts/**/values.yaml)"
         required: true
+        default: "charts/**/values.yaml"
         type: string
-      image_repo:
-        description: "Repo d'image public (ex: traefik/whoami)"
+      image_key:
+        description: "Chemin YQ vers la clé du tag (ex: .image.tag ou .app.image.tag)"
         required: true
+        default: ".image.tag"
         type: string
       image_tag:
-        description: "Tag (ex: v1.10.1)"
+        description: "Tag (ex: 2025.09.01-a1b2c3d ou v1.2.3)"
         required: true
         type: string
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
-  bump:                    # ⬅️ le job est SOUS 'jobs'
+  bump:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install yq
-        run: |              # ⬅️ le script est indenté SOUS 'run:'
+        run: |
           sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
           sudo chmod +x /usr/local/bin/yq
+          yq --version
 
-      - name: Patch values.yaml
-        id: patch
-        env:
-          FILE: ${{ inputs.path }}
-          REPO: ${{ inputs.image_repo }}
-          TAG:  ${{ inputs.image_tag }}
+      - name: Update Helm values
+        shell: bash
         run: |
           set -euo pipefail
-          test -f "$FILE" || { echo "Fichier introuvable: $FILE"; exit 1; }
-          yq -i '.image.repository = env(REPO) | .image.tag = env(TAG)' "$FILE"
-          echo "file=$FILE" >> "$GITHUB_OUTPUT"
+          shopt -s globstar nullglob
+          changed=0
+          for f in ${{ inputs.file_glob }}; do
+            echo "⟳ Mise à jour: $f"
+            yq -i '${{ inputs.image_key }} = "${{ inputs.image_tag }}"' "$f"
+            git add "$f" && changed=1
+          done
+          if [[ "$changed" -eq 0 ]]; then
+            echo "Aucun fichier ne correspond au glob '${{ inputs.file_glob }}'"; exit 1
+          fi
 
-      - name: Create PR
-        uses: peter-evans/create-pull-request@v6
-        with:
-          commit-message: "chore(helm): ${{ inputs.image_repo }}:${{ inputs.image_tag }}"
-          title: "chore(helm): bump to ${{ inputs.image_repo }}:${{ inputs.image_tag }}"
-          body: "Path: `${{ steps.patch.outputs.file }}`"
-          branch: chore/helm-bump-${{ github.run_id }}
-          labels: |
-            auto
-            helm
+      - name: Create pull request
+        uses: peter-evans/cr
 
