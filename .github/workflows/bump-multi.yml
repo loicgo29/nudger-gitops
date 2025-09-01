@@ -1,53 +1,103 @@
-name: 🔧 Bump MULTI (manual)
-
+name: "🔧 Bump MULTI (manual)"
 
 on:
-workflow_dispatch:
-inputs:
-kind:
-description: "helm ou kustomize"
-required: true
-type: choice
-options: [helm, kustomize]
-paths:
-description: "Fichiers séparés par des virgules"
-required: true
-type: string
-image_repo:
-description: "Repo d'image publique"
-required: true
-type: string
-image_tag:
-description: "Tag"
-required: true
-type: string
-name:
-description: "images[].name si kustomize"
-required: false
-type: string
-
+  workflow_dispatch:
+    inputs:
+      kind:
+        description: "helm ou kustomize"
+        required: true
+        type: choice
+        options: [helm, kustomize]
+      paths:
+        description: "Fichiers séparés par des virgules"
+        required: true
+        type: string
+      image_repo:
+        description: "Repo d'image publique (ex: traefik/whoami)"
+        required: true
+        type: string
+      image_tag:
+        description: "Tag (ex: v1.10.1)"
+        required: true
+        type: string
+      name:
+        description: "images[].name si kustomize (ex: whoami)"
+        required: false
+        type: string
 
 permissions:
-contents: write
-
+  contents: write
 
 jobs:
-bump:
-runs-on: ubuntu-latest
-steps:
-- uses: actions/checkout@v4
-- name: Install yq
-run: |
-sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
-sudo chmod +x /usr/local/bin/yq
-- name: Patch files
-id: patch
-env:
-KIND: ${{ inputs.kind }}
-FILES: ${{ inputs.paths }}
-REPO: ${{ inputs.image_repo }}
-TAG: ${{ inputs.image_tag }}
-NAME: ${{ inputs.name }}
-run: |
-set -euo pipefail
-bump
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Patch files
+        id: patch
+        env:
+          KIND:  ${{ inputs.kind }}
+          FILES: ${{ inputs.paths }}
+          REPO:  ${{ inputs.image_repo }}
+          TAG:   ${{ inputs.image_tag }}
+          NAME:  ${{ inputs.name }}
+        run: |
+          set -euo pipefail
+          changed=0
+          IFS=',' read -r -a arr <<< "$FILES"
+          for FILE in "${arr[@]}"; do
+            FILE=$(echo "$FILE" | xargs)  # trim
+            if [ ! -f "$FILE" ]; then
+              echo "skip: $FILE introuvable"
+              continue
+            fi
+
+            if [ "$KIND" = "helm" ]; then
+              yq -i '.image.repository = env(REPO) | .image.tag = env(TAG)' "$FILE" && changed=1
+            else
+              # kustomize
+              if [ -z "${NAME:-}" ]; then
+                echo "name requis pour kustomize (inputs.name)"; exit 1
+              fi
+              # assurer le tableau images[]
+              if ! yq '.images' "$FILE" >/dev/null 2>&1; then yq -i '.images = []' "$FILE"; fi
+              # update/insert
+              if yq '.images[] | select(.name == env(NAME))' "$FILE" >/dev/null 2>&1; then
+                yq -i '(.images[] | select(.name == env(NAME)).newName) = env(REPO) | (.images[] | select(.name == env(NAME)).newTag) = env(TAG)' "$FILE"
+              else
+                yq -i '.images += [{"name": env(NAME), "newName": env(REPO), "newTag": env(TAG)}]' "$FILE"
+              fi
+              changed=1
+            fi
+            echo "patched: $FILE"
+          done
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+
+      - name: Create PR
+        if: steps.patch.outputs.changed == '1'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore(multi): ${{ inputs.image_repo }}:${{ inputs.image_tag }}"
+          title: "chore(multi): bump to ${{ inputs.image_repo }}:${{ inputs.image_tag }}"
+          body: |
+            Kind: ${{ inputs.kind }}
+            Paths: ${{ inputs.paths }}
+            Repo: `${{ inputs.image_repo }}`
+            Tag: `${{ inputs.image_tag }}`
+            Name: `${{ inputs.name }}`
+          branch: chore/bump-multi-${{ github.run_id }}
+          labels: |
+            auto
+            bump
+
+      - name: No changes
+        if: steps.patch.outputs.changed != '1'
+        run: echo "Aucun fichier patché (déjà à jour ou fichiers manquants)."
+
