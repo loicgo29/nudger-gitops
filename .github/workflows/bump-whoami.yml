@@ -9,7 +9,7 @@ on:
         type: string
         default: traefik/whoami
       image_tag:
-        description: "Tag – ex: v1.10.1"
+        description: "v1.10.1"
         required: true
         type: string
 
