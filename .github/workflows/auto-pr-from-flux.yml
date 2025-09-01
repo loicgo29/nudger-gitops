@@ -3,6 +3,8 @@ name: "PR: Flux image updates"
 on:
   push:
     branches: [ "flux-image-updates" ]
+  workflow_dispatch: {}
+
 
 permissions:
   contents: write
