@@ -1,4 +1,4 @@
-name: "PR: Flux image updates"
+name: "PR: Flux image updates" 
 
 on:
   push:
