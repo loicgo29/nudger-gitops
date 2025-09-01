@@ -4,8 +4,7 @@ metadata:
   name: whoami
   namespace: whoami
 spec:
-  replicas: 2
-  selector:
+  replicas: 22
     matchLabels: { app: whoami }
   template:
     metadata:
