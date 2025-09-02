@@ -1,7 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources: []
-images:
-  - name: traefik/whoami
-    newName: traefik/whoami # {"$imagepolicy": "flux-system:whoami:name"}
-    newTag: v1.10.2        # {"$imagepolicy": "flux-system:whoami:tag"}
