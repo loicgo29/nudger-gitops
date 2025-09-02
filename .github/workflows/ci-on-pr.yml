@@ -24,7 +24,11 @@ jobs:
         run: |
           set -e
           KVER="v5.4.2"
-          curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KVER}/kustomize_${KVER#v}_linux_amd64.tar.gz" -o k.tar.gz
+          URL="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KVER}/kustomize_${KVER#v}_linux_amd64.tar.gz"
+          echo "Downloading $URL"
+          curl -fsSL "$URL" -o kustomize.tgz
+          test -s kustomize.tgz
+          file kustomize.tgz | grep -qi 'gzip compressed data'
           tar -xzf k.tar.gz
           sudo mv kustomize /usr/local/bin/kustomize
           kustomize version
@@ -32,8 +36,11 @@ jobs:
       - name: Install kubeconform (optional)
         run: |
           set -e
-          curl -sL https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz -o kc.tar.gz
-          sudo tar -xzf kc.tar.gz -C /usr/local/bin kubeconform || true
+          URL="https://github.com/yannh/kubeconform/releases/download/${KCONF_VER}/kubeconform-linux-amd64.tar.gz"
+          echo "Downloading $URL"
+          curl -fsSL "$URL" -o kubeconform.tgz
+          test -s kubeconform.tgz
+          file kubeconform.tgz | grep -qi 'gzip compressed data'
           kubeconform -v || echo "kubeconform not found; continuing"
 
       - name: Kustomize build (apps/whoami)
