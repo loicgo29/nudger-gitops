@@ -23,6 +23,15 @@ jobs:
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
+      - name: Ensure labels exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # crée/actualise les labels nécessaires (idempotent)
+          gh label create flux --color FFD700 --description "Flux automation" || gh label edit flux --color FFD700 --description "Flux automation"
+          gh label create automated-pr --color 1D76DB --description "Created by automation" || gh label edit automated-pr --color 1D76DB --description "Created by automation"
+
 
       - name: Ensure PR exists (from branch → main)
         env:
