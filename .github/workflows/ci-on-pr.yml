@@ -3,9 +3,12 @@ name: "CI: validate manifests on PR"
 on:
   pull_request:
     branches: [ main ]
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
+  pull-requests: write
+  issues: write  
 
 concurrency:
   group: ci-on-pr-${{ github.ref }}
