@@ -12,5 +12,7 @@ if [[ "${1:-}" == "--help" ]]; then usage; exit 0; fi
 echo ">> flux build kustomization ${KZ} -n ${NS}"
 
 echo "${FLUX} build kustomization ${KZ} -n ${NS}"
-"${FLUX}" build kustomization "${KZ}" -n "${NS}"
+kustomize build ./apps/whoami
+kustomize build ./apps/whoami | kubectl apply --dry-run=server -f -
+
 
