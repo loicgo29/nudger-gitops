@@ -20,6 +20,6 @@ spec:
     push:
       branch: flux-image-updates   # <— pousse sur une branche dédiée
   update:
-    path: ./apps/whoami
+    path: apps/whoami
     strategy: Setters
 
