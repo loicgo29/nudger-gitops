@@ -26,6 +26,7 @@ jobs:
         with:
           kustomize-version: "5.4.2"
 
+
       # Install kubeconform
       - name: Install kubeconform
         run: |
