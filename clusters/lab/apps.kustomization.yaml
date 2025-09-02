@@ -1,7 +1,5 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
-resources:
-  - ../../flux-system
 metadata:
   name: apps
   namespace: flux-system
@@ -13,27 +11,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: gitops
-  path: ./apps/whoami
+  path: apps/whoami     # ou 'apps' si tu veux agréger plusieurs apps via un kustomize "classique"
   dependsOn:
     - name: ingress-nginx
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: ingress-nginx
-  namespace: flux-system
-spec:
-  interval: 1m
-  timeout: 5m
-  wait: true
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: gitops
-  path: apps/ingress-nginx/overlays/lab
-  # Santé minimum avant de laisser passer les apps
-  healthChecks:
-    - apiVersion: apps/v1
-      kind: Deployment
-      name: ingress-nginx-controller
-      namespace: ingress-nginx
+
