@@ -79,6 +79,26 @@ jobs:
           echo "New branch at $(git rev-parse HEAD) (should equal ${SRC_SHA})"
           git push origin "${NEW_BRANCH}:${NEW_BRANCH}"
           echo "Created & pushed ${NEW_BRANCH}"
+      - name: Ensure HEAD (remote) has commits ahead of BASE
+        run: |
+          set -euo pipefail
+          git fetch origin "+refs/heads/*:refs/remotes/origin/*"
+          echo "BASE=origin/${BASE_BRANCH}  HEAD=origin/${HEAD_BRANCH}"
+          echo "BASE SHA: $(git rev-parse origin/${BASE_BRANCH})"
+          echo "HEAD SHA: $(git rev-parse origin/${HEAD_BRANCH} || echo 'N/A')"
+
+          if ! git rev-parse --verify "origin/${HEAD_BRANCH}" >/dev/null 2>&1; then
+            echo "La branche origin/${HEAD_BRANCH} n'existe pas. Rien à PR."
+            exit 0
+          fi
+
+          AHEAD=$(git rev-list --count "origin/${BASE_BRANCH}..origin/${HEAD_BRANCH}")
+          echo "Commits ahead (origin/${BASE_BRANCH}..origin/${HEAD_BRANCH}) = ${AHEAD}"
+          if [ "${AHEAD}" -eq 0 ]; then
+            echo "Aucun commit en avance côté Flux → on termine proprement (pas de PR)."
+            exit 0
+          fi
+
 
       - name: Ensure labels exist (idempotent)
         env:
