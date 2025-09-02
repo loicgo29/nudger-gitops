@@ -7,8 +7,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
-  issues: write  
 
 concurrency:
   group: ci-on-pr-${{ github.ref }}
@@ -17,64 +15,49 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Install kustomize
-        run: |
-          set -e
-          KVER="v5.4.2"
-          URL="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KVER}/kustomize_${KVER#v}_linux_amd64.tar.gz"
-          echo "Downloading $URL"
-          curl -fsSL "$URL" -o kustomize.tgz
-          test -s kustomize.tgz
-          file kustomize.tgz | grep -qi 'gzip compressed data'
-          tar -xzf k.tar.gz
-          sudo mv kustomize /usr/local/bin/kustomize
-          kustomize version
+      # Install kustomize (action fiable, version paramétrable)
+      - name: Setup kustomize
+        uses: imranismail/setup-kustomize@v4
+        with:
+          kustomize-version: "5.4.2"
 
-      - name: Install kubeconform (optional)
+      # Install kubeconform
+      - name: Install kubeconform
         run: |
-          set -e
+          set -euo pipefail
+          KCONF_VER="v0.6.7"
           URL="https://github.com/yannh/kubeconform/releases/download/${KCONF_VER}/kubeconform-linux-amd64.tar.gz"
-          echo "Downloading $URL"
           curl -fsSL "$URL" -o kubeconform.tgz
-          test -s kubeconform.tgz
-          file kubeconform.tgz | grep -qi 'gzip compressed data'
-          kubeconform -v || echo "kubeconform not found; continuing"
+          tar -xzf kubeconform.tgz kubeconform
+          sudo mv kubeconform /usr/local/bin/
+          kubeconform -v
 
-      - name: Kustomize build (apps/whoami)
+      # Validate whoami
+      - name: Validate apps/whoami
         run: |
-          set -e
           if [ -d "apps/whoami" ]; then
-            kustomize build apps/whoami >/dev/null
-            echo "apps/whoami ✅"
+            echo "🔍 Building apps/whoami..."
+            kustomize build apps/whoami | tee /tmp/whoami.yaml
+            echo "✅ Running kubeconform..."
+            kubeconform -strict -ignore-missing-schemas -summary </tmp/whoami.yaml
           else
-            echo "apps/whoami not found (skipped)"
+            echo "apps/whoami not found (skipped)."
           fi
 
-      - name: Kustomize build (ingress-nginx overlay lab)
+      # Validate ingress-nginx lab overlay
+      - name: Validate apps/ingress-nginx/overlays/lab
         run: |
-          set -e
           if [ -d "apps/ingress-nginx/overlays/lab" ]; then
-            kustomize build apps/ingress-nginx/overlays/lab >/dev/null
-            echo "apps/ingress-nginx/overlays/lab ✅"
+            echo "🔍 Building ingress-nginx/overlays/lab..."
+            kustomize build apps/ingress-nginx/overlays/lab | tee /tmp/ingress.yaml
+            echo "✅ Running kubeconform..."
+            kubeconform -strict -ignore-missing-schemas -summary </tmp/ingress.yaml
           else
-            echo "apps/ingress-nginx/overlays/lab not found (skipped)"
-          fi
-
-      - name: kubeconform validate (if available)
-        run: |
-          set -e
-          if command -v kubeconform >/dev/null 2>&1; then
-            # Valide what we can; ignore CRDs unknown to schemas by default
-            if [ -d "apps/whoami" ]; then
-              kustomize build apps/whoami | kubeconform -strict -summary -ignore-missing-schemas
-            fi
-            if [ -d "apps/ingress-nginx/overlays/lab" ]; then
-              kustomize build apps/ingress-nginx/overlays/lab | kubeconform -strict -summary -ignore-missing-schemas
-            fi
-          else
-            echo "kubeconform not installed; skipping validation."
+            echo "apps/ingress-nginx/overlays/lab not found (skipped)."
           fi
 
