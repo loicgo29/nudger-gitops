@@ -8,5 +8,5 @@ resources:
 images:
   - name: traefik/whoami
     newName: traefik/whoami # {"$imagepolicy": "flux-system:whoami:name"}
-    newTag: v1.10.4 # {"$imagepolicy": "flux-system:whoami:tag"}
+    newTag: v1.10.1 # {"$imagepolicy": "flux-system:whoami:tag"}
 
