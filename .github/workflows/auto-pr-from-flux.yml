@@ -8,7 +8,7 @@ on:
     inputs:
       head_branch:
         description: "Source branch (default: flux-imageupdates)"
-        required: true
+        required: false
         default: flux-imageupdates
 
 permissions:
@@ -16,17 +16,24 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: auto-pr-flux-${{ github.ref || github.event.inputs.head_branch }}
+  group: auto-pr-flux-${{ github.run_id }}
   cancel-in-progress: true
-
-env:
-  BASE_BRANCH: main
-  HEAD_BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.head_branch || github.ref_name }}
 
 jobs:
   create-pr:
     runs-on: ubuntu-latest
+    env:
+      BASE_BRANCH: main
     steps:
+      - name: Determine HEAD branch
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.head_branch }}" ]; then
+            echo "HEAD_BRANCH=${{ github.event.inputs.head_branch }}" >> "$GITHUB_ENV"
+          else
+            echo "HEAD_BRANCH=${{ github.ref_name }}" >> "$GITHUB_ENV"
+          fi
+          echo "Using HEAD_BRANCH=$(cat $GITHUB_ENV | sed -n 's/^HEAD_BRANCH=//p')"
+
       - name: Checkout HEAD branch
         uses: actions/checkout@v4
         with:
@@ -34,8 +41,10 @@ jobs:
           fetch-depth: 0
 
       - name: Ensure labels exist (idempotent)
-        env: { GH_TOKEN: ${{ github.token }} }
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           gh label create flux --color FFD700 --description "Flux automation" || gh label edit flux --color FFD700 --description "Flux automation"
           gh label create automated-pr --color 1D76DB --description "Created by automation" || gh label edit automated-pr --color 1D76DB --description "Created by automation"
 
@@ -44,7 +53,7 @@ jobs:
           set -euo pipefail
           echo "HEAD=${HEAD_BRANCH} BASE=${BASE_BRANCH}"
           if [ "${HEAD_BRANCH}" = "${BASE_BRANCH}" ]; then
-            echo "HEAD==BASE (you probably ran from main). Exiting."
+            echo "HEAD==BASE (probably ran from main). Exiting."
             exit 0
           fi
           git fetch origin "${BASE_BRANCH}"
@@ -54,7 +63,8 @@ jobs:
           fi
 
       - name: Create or reopen PR
-        env: { GH_TOKEN: ${{ github.token }} }
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           if gh pr view --head "${HEAD_BRANCH}" --base "${BASE_BRANCH}" >/dev/null 2>&1; then
@@ -63,5 +73,10 @@ jobs:
           else
             gh pr create \
               --head "${HEAD_BRANCH}" \
-              --base "${BASE
+              --base "${BASE_BRANCH}" \
+              --title "chore(images): updates from Flux" \
+              --body "PR auto générée depuis \`${HEAD_BRANCH}\` (bump images via Flux)." \
+              --label flux --label automated-pr
+          fi
+          gh pr view --head "${HEAD_BRANCH}" --base "${BASE_BRANCH}" --json number,url -q '"PR #" + ( .number | tostring ) + " → " + .url'
 
