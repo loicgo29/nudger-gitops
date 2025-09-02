@@ -3,7 +3,7 @@ kubectl -n flux-system annotate imageupdateautomation whoami-update \
   reconcile.fluxcd.io/requestedAt="$(date +%s)" --overwrite
 
 # Forcer la source GitOps
-flux reconcile source git gitops -n flux-systemA
+flux reconcile source git gitops -n flux-system
 
 # Forcer toutes les Kustomizations (méthode la plus simple)
 kubectl get kustomization -A -o jsonpath='{range .items[*]}{.metadata.namespace}{" "}{.metadata.name}{"\n"}{end}' \
