@@ -18,7 +18,7 @@ spec:
         email: flux@example.com
         messageTemplate: "chore({{ .AutomationObject.Namespace }}/{{ .AutomationObject.Name }}): image update"
     push:
-      branch: flux-image-updates   # <— pousse sur une branche dédiée
+      branch: flux-imageupdates   # <— pousse sur une branche dédiée
   update:
     path: apps/whoami
     strategy: Setters
