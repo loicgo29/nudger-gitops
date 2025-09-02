@@ -4,55 +4,88 @@ on:
   push:
     branches:
       - flux-imageupdates
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      head_branch:
+        description: "Source branch (default: flux-imageupdates)"
+        required: false
+        default: flux-imageupdates
 
 permissions:
   contents: write
   pull-requests: write
 
 concurrency:
-  group: auto-pr-flux-${{ github.ref }}
+  group: auto-pr-flux-${{ github.run_id }}
   cancel-in-progress: true
 
 jobs:
   create-pr:
     runs-on: ubuntu-latest
+    env:
+      BASE_BRANCH: main
     steps:
-      - name: Checkout branch that triggered the workflow
+      - name: Determine HEAD branch
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.head_branch }}" ]; then
+            echo "HEAD_BRANCH=${{ github.event.inputs.head_branch }}" >> "$GITHUB_ENV"
+          else
+            echo "HEAD_BRANCH=${{ github.ref_name }}" >> "$GITHUB_ENV"
+          fi
+          echo "Using HEAD_BRANCH=$(cat $GITHUB_ENV | sed -n 's/^HEAD_BRANCH=//p')"
+
+      - name: Checkout HEAD branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ env.HEAD_BRANCH }}
           fetch-depth: 0
 
-      - name: Ensure PR exists (from branch → main)
+      - name: Ensure labels exist (idempotent)
         env:
-          GH_TOKEN: ${{ github.token }}
-          HEAD_BRANCH: ${{ github.ref_name }}
-          BASE_BRANCH: main
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          echo "HEAD=$HEAD_BRANCH BASE=$BASE_BRANCH"
+          gh label create flux --color FFD700 --description "Flux automation" || gh label edit flux --color FFD700 --description "Flux automation"
+          gh label create automated-pr --color 1D76DB --description "Created by automation" || gh label edit automated-pr --color 1D76DB --description "Created by automation"
 
-          # Si une PR existe déjà pour cette branche → OK (ouvre rien).
-          if gh pr view --head "$HEAD_BRANCH" --base "$BASE_BRANCH" >/dev/null 2>&1; then
-            echo "PR already exists for $HEAD_BRANCH -> $BASE_BRANCH."
-            # Si fermée, on la rouvre
-            state=$(gh pr view --head "$HEAD_BRANCH" --base "$BASE_BRANCH" --json state -q .state || echo "")
-            if [ "$state" = "CLOSED" ]; then
-              gh pr reopen --head "$HEAD_BRANCH" --base "$BASE_BRANCH"
-              echo "Reopened existing PR."
-            fi
-          else
-            # Créer la PR
-            gh pr create \
-              --head "$HEAD_BRANCH" \
-              --base "$BASE_BRANCH" \
-              --title "chore(images): updates from Flux" \
-              --body "PR auto générée depuis \`$HEAD_BRANCH\` (bump images via Flux)." \
-              --label flux,automated-pr
-            echo "PR created."
+      - name: Abort if HEAD==BASE or no diff
+        run: |
+          set -euo pipefail
+          echo "HEAD=${HEAD_BRANCH} BASE=${BASE_BRANCH}"
+          if [ "${HEAD_BRANCH}" = "${BASE_BRANCH}" ]; then
+            echo "HEAD==BASE (probably ran from main). Exiting."
+            exit 0
           fi
+          git fetch origin "${BASE_BRANCH}"
+          if git diff --quiet "origin/${BASE_BRANCH}..HEAD"; then
+            echo "No diff between ${HEAD_BRANCH} and ${BASE_BRANCH}. Exiting."
+            exit 0
+          fi
+      - name: Create or reopen PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
 
-          # Petit log sympa
-          gh pr view --head "$HEAD_BRANCH" --base "$BASE_BRANCH" --json number,url -q '"PR #" + ( .number | tostring ) + " → " + .url'
+          # Cherche une PR head=HEAD_BRANCH, base=BASE_BRANCH (tous états)
+          PR_JSON=$(gh pr list --head "${HEAD_BRANCH}" --base "${BASE_BRANCH}" --state all --json number,url,state -q '.[0]' || true)
+
+          if [ -n "${PR_JSON}" ]; then
+            PR_NUMBER=$(echo "$PR_JSON" | jq -r .number)
+            PR_URL=$(echo "$PR_JSON" | jq -r .url)
+            PR_STATE=$(echo "$PR_JSON" | jq -r .state)
+            if [ "${PR_STATE}" = "CLOSED" ]; then
+              gh pr reopen "${PR_NUMBER}"
+            fi
+            echo "PR #${PR_NUMBER} → ${PR_URL}"
+          else
+            gh pr create \
+              --head "${HEAD_BRANCH}" \
+              --base "${BASE_BRANCH}" \
+              --title "chore(images): updates from Flux" \
+              --body "PR auto générée depuis \`${HEAD_BRANCH}\` (bump images via Flux)." \
+              --label flux --label automated-pr
+            # Récupérer et afficher l’URL de la PR nouvellement créée
+            gh pr list --head "${HEAD_BRANCH}" --base "${BASE_BRANCH}" --state open --json number,url -q '.[0] | "PR #"+(.number|tostring)+" → "+.url'
+          fi
 
