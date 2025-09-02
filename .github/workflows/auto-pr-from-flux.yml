@@ -91,7 +91,8 @@ jobs:
             || gh label edit automated-pr --color 1D76DB --description "Created by automation"
 
       - name: Open PR from unique branch to main
-        env: { GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} }
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           gh pr create \
