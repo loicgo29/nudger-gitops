@@ -3,7 +3,7 @@ name: "PR: Flux image updates (unique)"
 on:
   push:
     branches:
-      - flux-imageupdates         # déclenché par Flux
+      - flux-imageupdates       # déclenché automatiquement par Flux
   workflow_dispatch:
     inputs:
       head_branch:
@@ -11,10 +11,10 @@ on:
         required: false
         default: flux-imageupdates
 
-# Besoin de ces permissions:
-# - contents: pour pousser la branche
-# - pull-requests: pour créer la PR
-# - issues: pour créer/éditer des labels
+# Permissions nécessaires :
+# - contents: push de la nouvelle branche
+# - pull-requests: création/maj PR
+# - issues: création/édition des labels
 permissions:
   contents: write
   pull-requests: write
@@ -29,6 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BASE_BRANCH: main
+
     steps:
       - name: Determine HEAD branch (push vs manual)
         id: head
@@ -46,24 +47,26 @@ jobs:
           ref: ${{ env.HEAD_BRANCH }}
           fetch-depth: 0
 
-      - name: Ensure there is a diff vs base
+      - name: Ensure HEAD has commits ahead of BASE
         run: |
           set -euo pipefail
           echo "Comparing HEAD=${HEAD_BRANCH} to BASE=${BASE_BRANCH}"
           if [ "${HEAD_BRANCH}" = "${BASE_BRANCH}" ]; then
-            echo "HEAD==BASE (probablement lancé depuis main). Exit."
+            echo "HEAD==BASE (lancé depuis main). Exit."
             exit 0
           fi
           git fetch origin "${BASE_BRANCH}"
-          if git diff --quiet "origin/${BASE_BRANCH}..HEAD"; then
-            echo "Aucun diff entre ${HEAD_BRANCH} et ${BASE_BRANCH}. Rien à PR. Exit."
+          AHEAD=$(git rev-list --count "origin/${BASE_BRANCH}..HEAD")
+          echo "Commits ahead of ${BASE_BRANCH}: ${AHEAD}"
+          if [ "$AHEAD" -eq 0 ]; then
+            echo "Aucun commit 'ahead' → rien à PR. Exit."
             exit 0
           fi
 
       - name: Create unique branch from HEAD
         run: |
           set -euo pipefail
-          SHORT_SHA="${GITHUB_SHA::7}"
+          SHORT_SHA="$(git rev-parse --short=7 HEAD)"
           STAMP="$(date +%Y%m%d-%H%M%S)"
           NEW_BRANCH="${HEAD_BRANCH}-${SHORT_SHA}-${STAMP}"
           echo "NEW_BRANCH=${NEW_BRANCH}" >> "$GITHUB_ENV"
