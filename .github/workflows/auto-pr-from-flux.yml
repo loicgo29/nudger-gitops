@@ -40,32 +40,35 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Fetch branches & show SHAs
         run: |
           set -euo pipefail
           git fetch origin "+refs/heads/*:refs/remotes/origin/*"
-          echo "BASE_BRANCH=${BASE_BRANCH}  HEAD_BRANCH=${HEAD_BRANCH}"
-          echo "origin/${BASE_BRANCH}  -> $(git rev-parse origin/${BASE_BRANCH})"
-          echo "origin/${HEAD_BRANCH}   -> $(git rev-parse origin/${HEAD_BRANCH})" || true
-          echo "Ahead count (origin/${BASE_BRANCH}..origin/${HEAD_BRANCH}):" \
-            $(git rev-list --count "origin/${BASE_BRANCH}..origin/${HEAD_BRANCH}" || echo 0)
+          echo "BASE=origin/${BASE_BRANCH}  HEAD=origin/${HEAD_BRANCH}"
+          echo "BASE SHA: $(git rev-parse origin/${BASE_BRANCH})"
+          echo "HEAD SHA: $(git rev-parse origin/${HEAD_BRANCH} || echo 'N/A')"
 
-      - name: Ensure HEAD (remote) has commits ahead of BASE
+      - name: Check ahead commits (remote)
+        id: ahead
         run: |
           set -euo pipefail
           if ! git rev-parse --verify "origin/${HEAD_BRANCH}" >/dev/null 2>&1; then
-            echo "La branche distante origin/${HEAD_BRANCH} n'existe pas. Rien à PR."
+            echo "La branche origin/${HEAD_BRANCH} n'existe pas."
+            echo "has_ahead=false" >> "$GITHUB_OUTPUT"
+            echo "ahead_count=0"   >> "$GITHUB_OUTPUT"
             exit 0
           fi
           AHEAD=$(git rev-list --count "origin/${BASE_BRANCH}..origin/${HEAD_BRANCH}")
           echo "Commits ahead (origin/${BASE_BRANCH}..origin/${HEAD_BRANCH}) = ${AHEAD}"
-          if [ "${AHEAD}" -eq 0 ]; then
-            echo "Aucun commit 'ahead' côté Flux. Exit propre (pas de PR)."
-            exit 0
+          echo "ahead_count=${AHEAD}" >> "$GITHUB_OUTPUT"
+          if [ "$AHEAD" -gt 0 ]; then
+            echo "has_ahead=true"  >> "$GITHUB_OUTPUT"
+          else
+            echo "has_ahead=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Create unique branch from remote HEAD
+        if: steps.ahead.outputs.has_ahead == 'true'
         run: |
           set -euo pipefail
           SRC_SHA="$(git rev-parse origin/${HEAD_BRANCH})"
@@ -79,28 +82,9 @@ jobs:
           echo "New branch at $(git rev-parse HEAD) (should equal ${SRC_SHA})"
           git push origin "${NEW_BRANCH}:${NEW_BRANCH}"
           echo "Created & pushed ${NEW_BRANCH}"
-      - name: Ensure HEAD (remote) has commits ahead of BASE
-        run: |
-          set -euo pipefail
-          git fetch origin "+refs/heads/*:refs/remotes/origin/*"
-          echo "BASE=origin/${BASE_BRANCH}  HEAD=origin/${HEAD_BRANCH}"
-          echo "BASE SHA: $(git rev-parse origin/${BASE_BRANCH})"
-          echo "HEAD SHA: $(git rev-parse origin/${HEAD_BRANCH} || echo 'N/A')"
-
-          if ! git rev-parse --verify "origin/${HEAD_BRANCH}" >/dev/null 2>&1; then
-            echo "La branche origin/${HEAD_BRANCH} n'existe pas. Rien à PR."
-            exit 0
-          fi
-
-          AHEAD=$(git rev-list --count "origin/${BASE_BRANCH}..origin/${HEAD_BRANCH}")
-          echo "Commits ahead (origin/${BASE_BRANCH}..origin/${HEAD_BRANCH}) = ${AHEAD}"
-          if [ "${AHEAD}" -eq 0 ]; then
-            echo "Aucun commit en avance côté Flux → on termine proprement (pas de PR)."
-            exit 0
-          fi
-
 
       - name: Ensure labels exist (idempotent)
+        if: steps.ahead.outputs.has_ahead == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -111,6 +95,7 @@ jobs:
             || gh label edit automated-pr --color 1D76DB --description "Created by automation"
 
       - name: Open PR from unique branch to main
+        if: steps.ahead.outputs.has_ahead == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
