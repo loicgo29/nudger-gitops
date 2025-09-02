@@ -15,8 +15,8 @@ spec:
     commit:
       author:
         name: Flux Bot
-        email: flux@example.com
-        messageTemplate: "chore({{ .AutomationObject.Namespace }}/{{ .AutomationObject.Name }}): image update"
+        email: loicgourmelon@gmail.com
+      messageTemplate: "chore({{ .AutomationObject.Namespace }}/{{ .AutomationObject.Name }}): image update"
     push:
       branch: flux-imageupdates   # <— pousse sur une branche dédiée
   update:
