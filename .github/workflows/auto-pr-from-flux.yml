@@ -3,7 +3,7 @@ name: "PR: Flux image updates (unique)"
 on:
   push:
     branches:
-      - flux-imageupdates       # déclenché automatiquement par Flux
+      - flux-imageupdates
   workflow_dispatch:
     inputs:
       head_branch:
@@ -11,10 +11,6 @@ on:
         required: false
         default: flux-imageupdates
 
-# Permissions nécessaires :
-# - contents: push de la nouvelle branche
-# - pull-requests: création/maj PR
-# - issues: création/édition des labels
 permissions:
   contents: write
   pull-requests: write
@@ -32,7 +28,6 @@ jobs:
 
     steps:
       - name: Determine HEAD branch (push vs manual)
-        id: head
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.head_branch }}" ]; then
             echo "HEAD_BRANCH=${{ github.event.inputs.head_branch }}" >> "$GITHUB_ENV"
@@ -41,42 +36,52 @@ jobs:
           fi
           echo "Using HEAD_BRANCH=$(sed -n 's/^HEAD_BRANCH=//p' $GITHUB_ENV)"
 
-      - name: Checkout HEAD branch
+      - name: Checkout repository (default branch)
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.HEAD_BRANCH }}
           fetch-depth: 0
 
-      - name: Ensure HEAD has commits ahead of BASE
+      - name: Fetch branches & show SHAs
         run: |
           set -euo pipefail
-          echo "Comparing HEAD=${HEAD_BRANCH} to BASE=${BASE_BRANCH}"
-          if [ "${HEAD_BRANCH}" = "${BASE_BRANCH}" ]; then
-            echo "HEAD==BASE (lancé depuis main). Exit."
+          git fetch origin "+refs/heads/*:refs/remotes/origin/*"
+          echo "BASE_BRANCH=${BASE_BRANCH}  HEAD_BRANCH=${HEAD_BRANCH}"
+          echo "origin/${BASE_BRANCH}  -> $(git rev-parse origin/${BASE_BRANCH})"
+          echo "origin/${HEAD_BRANCH}   -> $(git rev-parse origin/${HEAD_BRANCH})" || true
+          echo "Ahead count (origin/${BASE_BRANCH}..origin/${HEAD_BRANCH}):" \
+            $(git rev-list --count "origin/${BASE_BRANCH}..origin/${HEAD_BRANCH}" || echo 0)
+
+      - name: Ensure HEAD (remote) has commits ahead of BASE
+        run: |
+          set -euo pipefail
+          if ! git rev-parse --verify "origin/${HEAD_BRANCH}" >/dev/null 2>&1; then
+            echo "La branche distante origin/${HEAD_BRANCH} n'existe pas. Rien à PR."
             exit 0
           fi
-          git fetch origin "${BASE_BRANCH}"
-          AHEAD=$(git rev-list --count "origin/${BASE_BRANCH}..HEAD")
-          echo "Commits ahead of ${BASE_BRANCH}: ${AHEAD}"
-          if [ "$AHEAD" -eq 0 ]; then
-            echo "Aucun commit 'ahead' → rien à PR. Exit."
+          AHEAD=$(git rev-list --count "origin/${BASE_BRANCH}..origin/${HEAD_BRANCH}")
+          echo "Commits ahead (origin/${BASE_BRANCH}..origin/${HEAD_BRANCH}) = ${AHEAD}"
+          if [ "${AHEAD}" -eq 0 ]; then
+            echo "Aucun commit 'ahead' côté Flux. Exit propre (pas de PR)."
             exit 0
           fi
 
-      - name: Create unique branch from HEAD
+      - name: Create unique branch from remote HEAD
         run: |
           set -euo pipefail
-          SHORT_SHA="$(git rev-parse --short=7 HEAD)"
+          SRC_SHA="$(git rev-parse origin/${HEAD_BRANCH})"
+          SHORT_SHA="${SRC_SHA:0:7}"
           STAMP="$(date +%Y%m%d-%H%M%S)"
           NEW_BRANCH="${HEAD_BRANCH}-${SHORT_SHA}-${STAMP}"
           echo "NEW_BRANCH=${NEW_BRANCH}" >> "$GITHUB_ENV"
-          git switch -c "${NEW_BRANCH}"
-          git push origin HEAD:"${NEW_BRANCH}"
+
+          git switch --detach "origin/${HEAD_BRANCH}"
+          git checkout -b "${NEW_BRANCH}"
+          echo "New branch at $(git rev-parse HEAD) (should equal ${SRC_SHA})"
+          git push origin "${NEW_BRANCH}:${NEW_BRANCH}"
           echo "Created & pushed ${NEW_BRANCH}"
 
       - name: Ensure labels exist (idempotent)
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env: { GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} }
         run: |
           set -euo pipefail
           gh label create flux --color FFD700 --description "Flux automation" \
@@ -85,8 +90,7 @@ jobs:
             || gh label edit automated-pr --color 1D76DB --description "Created by automation"
 
       - name: Open PR from unique branch to main
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env: { GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} }
         run: |
           set -euo pipefail
           gh pr create \
