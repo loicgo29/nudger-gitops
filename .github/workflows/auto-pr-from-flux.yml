@@ -26,12 +26,12 @@ jobs:
 
       - uses: peter-evans/create-pull-request@v6
         with:
-          branch: flux-image-updates
+          branch: flux-imageupdates
           base: main
           title: "chore(images): updates from Flux"
           body: |
             Mises à jour d’images proposées automatiquement par Flux.
-            - Branche source : `flux-image-updates`
+            - Branche source : `flux-imageupdates`
             - Merci de reviewer et merger si OK ✅
           labels: automated-pr, flux
           delete-branch: false
