@@ -61,15 +61,23 @@ jobs:
             echo "No diff between ${HEAD_BRANCH} and ${BASE_BRANCH}. Exiting."
             exit 0
           fi
-
       - name: Create or reopen PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          if gh pr view --head "${HEAD_BRANCH}" --base "${BASE_BRANCH}" >/dev/null 2>&1; then
-            state=$(gh pr view --head "${HEAD_BRANCH}" --base "${BASE_BRANCH}" --json state -q .state || echo "")
-            if [ "$state" = "CLOSED" ]; then gh pr reopen --head "${HEAD_BRANCH}" --base "${BASE_BRANCH}"; fi
+
+          # Cherche une PR head=HEAD_BRANCH, base=BASE_BRANCH (tous états)
+          PR_JSON=$(gh pr list --head "${HEAD_BRANCH}" --base "${BASE_BRANCH}" --state all --json number,url,state -q '.[0]' || true)
+
+          if [ -n "${PR_JSON}" ]; then
+            PR_NUMBER=$(echo "$PR_JSON" | jq -r .number)
+            PR_URL=$(echo "$PR_JSON" | jq -r .url)
+            PR_STATE=$(echo "$PR_JSON" | jq -r .state)
+            if [ "${PR_STATE}" = "CLOSED" ]; then
+              gh pr reopen "${PR_NUMBER}"
+            fi
+            echo "PR #${PR_NUMBER} → ${PR_URL}"
           else
             gh pr create \
               --head "${HEAD_BRANCH}" \
@@ -77,6 +85,7 @@ jobs:
               --title "chore(images): updates from Flux" \
               --body "PR auto générée depuis \`${HEAD_BRANCH}\` (bump images via Flux)." \
               --label flux --label automated-pr
+            # Récupérer et afficher l’URL de la PR nouvellement créée
+            gh pr list --head "${HEAD_BRANCH}" --base "${BASE_BRANCH}" --state open --json number,url -q '.[0] | "PR #"+(.number|tostring)+" → "+.url'
           fi
-          gh pr view --head "${HEAD_BRANCH}" --base "${BASE_BRANCH}" --json number,url -q '"PR #" + ( .number | tostring ) + " → " + .url'
 
