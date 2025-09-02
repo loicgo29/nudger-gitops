@@ -6,6 +6,6 @@ resources:
   - service.yaml
   - ingress.yaml
 images:
-  - name: traefik/whoami # doit matcher .spec.template.spec.containers[*].image
+  - name: traefik/whoami
     newName: traefik/whoami # {"$imagepolicy": "flux-system:whoami:name"}
-    newTag: v1.10.1 # {"$imagepolicy": "flux-system:whoami:tag"}
+    newTag: v1.10.1        # {"$imagepolicy": "flux-system:whoami:tag"}
