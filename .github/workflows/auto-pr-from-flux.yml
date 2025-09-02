@@ -2,7 +2,7 @@ name: "PR: Flux image updates"
 
 on:
   push:
-    branches: [ "flux-image-updates" ]
+    branches: [ "flux-imageupdates" ]
   workflow_dispatch: {}
 
 

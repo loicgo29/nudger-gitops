@@ -29,3 +29,11 @@ done
 # vérifier
 flux get kustomizations -A
 
+#verif reconciliation
+flux events -A --for Kustomization 
+
+
+#diagnose
+kubectl -n flux-system logs deploy/image-automation-controller --since=5m^C
+kubectl -n flux-system logs deploy/kustomize-controller --since=5m^C
+kubectl -n flux-system logs deploy/source-controller^C
