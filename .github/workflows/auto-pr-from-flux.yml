@@ -1,38 +1,58 @@
-name: "PR: Flux image updates" 
+name: "PR: Flux image updates"
 
 on:
   push:
-    branches: [ "flux-imageupdates" ]
+    branches:
+      - flux-imageupdates
   workflow_dispatch: {}
-
 
 permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: auto-pr-flux-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   create-pr:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      # (Optionnel) petite vérif YAML/K8s rapide
-      # - name: Kustomize build (lint rapide)
-      #   run: |
-      #     sudo apt-get update -y && sudo apt-get install -y git curl
-      #     curl -sLo /usr/local/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.2/kustomize_v5.4.2_linux_amd64.tar.gz
-      #     tar -xzf /usr/local/bin/kustomize -C /usr/local/bin || true
-      #     kustomize build apps/whoami >/dev/null
-
-      - uses: peter-evans/create-pull-request@v6
+      - name: Checkout branch that triggered the workflow
+        uses: actions/checkout@v4
         with:
-          branch: flux-imageupdates
-          base: main
-          title: "chore(images): updates from Flux"
-          body: |
-            Mises à jour d’images proposées automatiquement par Flux.
-            - Branche source : `flux-imageupdates`
-            - Merci de reviewer et merger si OK ✅
-          labels: automated-pr, flux
-          delete-branch: false
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+
+      - name: Ensure PR exists (from branch → main)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_BRANCH: ${{ github.ref_name }}
+          BASE_BRANCH: main
+        run: |
+          set -euo pipefail
+          echo "HEAD=$HEAD_BRANCH BASE=$BASE_BRANCH"
+
+          # Si une PR existe déjà pour cette branche → OK (ouvre rien).
+          if gh pr view --head "$HEAD_BRANCH" --base "$BASE_BRANCH" >/dev/null 2>&1; then
+            echo "PR already exists for $HEAD_BRANCH -> $BASE_BRANCH."
+            # Si fermée, on la rouvre
+            state=$(gh pr view --head "$HEAD_BRANCH" --base "$BASE_BRANCH" --json state -q .state || echo "")
+            if [ "$state" = "CLOSED" ]; then
+              gh pr reopen --head "$HEAD_BRANCH" --base "$BASE_BRANCH"
+              echo "Reopened existing PR."
+            fi
+          else
+            # Créer la PR
+            gh pr create \
+              --head "$HEAD_BRANCH" \
+              --base "$BASE_BRANCH" \
+              --title "chore(images): updates from Flux" \
+              --body "PR auto générée depuis \`$HEAD_BRANCH\` (bump images via Flux)." \
+              --label flux,automated-pr
+            echo "PR created."
+          fi
+
+          # Petit log sympa
+          gh pr view --head "$HEAD_BRANCH" --base "$BASE_BRANCH" --json number,url -q '"PR #" + ( .number | tostring ) + " → " + .url'
 
