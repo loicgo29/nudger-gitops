@@ -1,0 +1,40 @@
+name: 🔍 Trivy (K8s Manifests)
+
+on:
+  pull_request:
+    paths:
+      - 'apps/**'
+      - 'clusters/**'
+      - '**/*.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  trivy-k8s:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Trivy DB
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/trivy
+          key: trivy-db-${{ runner.os }}-${{ hashFiles('**/*.yaml') }}
+          restore-keys: trivy-db-${{ runner.os }}-
+
+      - name: Run Trivy (misconfig + secrets)
+        run: |
+          TRIVY_SEVERITY="CRITICAL,HIGH" TRIVY_EXIT_CODE=1 \
+          ./scripts/ci-on-pr/trivy.sh k8s .
+
+      - name: SARIF (misconfig)
+        if: always()
+        run: trivy config --format sarif -o trivy-k8s.sarif .
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-k8s.sarif
