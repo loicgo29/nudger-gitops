@@ -7,7 +7,7 @@ resources:
   - ingress.yaml
 images:
   - name: traefik/whoami
-    newName: ghcr.io/loicgo29/whoami # {"$imagepolicy": "flux-system:whoami:name"}
+    newName: traefik/whoami # {"$imagepolicy": "flux-system:whoami:name"}
     newTag: v1.10.4 # {"$imagepolicy": "flux-system:whoami:tag"}
   - name: whoami
     newName: traefik/whoami
