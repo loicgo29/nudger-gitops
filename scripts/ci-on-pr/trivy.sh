@@ -70,7 +70,7 @@ case "$CMD" in
   fi
 
   # 3) Scanner en parallèle
-  echo "$VALID_IMAGES" | xargs -n1 -P "$CONCURRENCY" -I{} sh -c '
+  echo "$VALID_IMAGES" | xargs -P "$CONCURRENCY" -I{} sh -c '
     echo "==> trivy image {}"
     trivy image --severity "'"$SEV"'" --exit-code "'"$EXIT"'" --ignore-unfixed --timeout 10m --format table "{}"
   '
