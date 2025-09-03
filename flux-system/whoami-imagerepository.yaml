@@ -4,5 +4,8 @@ metadata:
   name: whoami
   namespace: flux-system
 spec:
-  image: traefik/whoami
+  image: ghcr.io/loicgo29/whoami
   interval: 1m
+  filterTags:
+    pattern: '^v(?P<version>.*)$'
+    extract: '$version'
