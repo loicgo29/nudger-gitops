@@ -4,17 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       path:
-        description: "Chemin du fichier kustomization.yaml"
+        description: "Chemin du kustomization.yaml"
         required: true
         default: "apps/whoami/kustomization.yaml"
         type: string
       name:
-        description: "Nom logique de l'image dans la section images[]"
+        description: "images[].name à modifier"
         required: true
         default: "whoami"
         type: string
       image_repo:
-        description: "Repo d'image publique (ex: ghcr.io/loicgo29/nudger-ui)"
+        description: "Repo d'image (ex: ghcr.io/loicgo29/nudger-ui)"
         required: true
         type: string
       image_tag:
@@ -26,55 +26,62 @@ permissions:
   contents: write
   pull-requests: write
 
+# Évite les doublons si on spam le dispatch
+concurrency:
+  group: bump-kustomize-${{ github.event.inputs.path }}-${{ github.event.inputs.name }}
+  cancel-in-progress: true
+
 jobs:
   bump:
     runs-on: ubuntu-latest
+    env:
+      FILE: ${{ inputs.path }}
+      NAME: ${{ inputs.name }}
+      REPO: ${{ inputs.image_repo }}
+      TAG:  ${{ inputs.image_tag }}
+
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
 
-      - name: Install yq
-        run: |
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
-          sudo chmod +x /usr/local/bin/yq
-          yq --version
-
-      - name: Patch kustomization.yaml
-        id: patch
-        env:
-          FILE: ${{ inputs.path }}
-          NAME: ${{ inputs.name }}
-          REPO: ${{ inputs.image_repo }}
-          TAG: ${{ inputs.image_tag }}
+      - name: Install kustomize, yq, kubeconform
         run: |
           set -euo pipefail
-          test -f "$FILE" || { echo "Fichier introuvable: $FILE"; exit 1; }
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          KVER=5.4.2
+          curl -fsSL -o /tmp/kustomize.tgz "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KVER}/kustomize_v${KVER}_linux_amd64.tar.gz"
+          tar -xzf /tmp/kustomize.tgz -C /tmp kustomize && sudo mv /tmp/kustomize /usr/local/bin/kustomize
+          KCF=0.6.7
+          curl -fsSL -o /tmp/kc.tgz "https://github.com/yannh/kubeconform/releases/download/v${KCF}/kubeconform-linux-amd64.tar.gz"
+          tar -xzf /tmp/kc.tgz -C /tmp kubeconform && sudo mv /tmp/kubeconform /usr/local/bin/kubeconform
 
-          # Ensure images[] exists
-          if ! yq '.images' "$FILE" >/dev/null 2>&1; then
-            yq -i '.images = []' "$FILE"
-          fi
-
-          # Update or insert entry by name
-          exists=$(yq '.images[] | select(.name == env(NAME)) | length' "$FILE" 2>/dev/null || true)
-          if [ -n "$exists" ]; then
-            yq -i '(.images[] | select(.name == env(NAME)).newName) = env(REPO) |
-                   (.images[] | select(.name == env(NAME)).newTag) = env(TAG)' "$FILE"
-          else
-            yq -i '.images += [{"name": env(NAME), "newName": env(REPO), "newTag": env(TAG)}]' "$FILE"
-          fi
-
-          echo "file=$FILE" >> $GITHUB_OUTPUT
+      - name: Patch + validate (script)
+        id: bump
+        env:
+          # Permet au script d'écrire des outputs GitHub s'il le souhaite
+          GITHUB_OUTPUT: ${{ github.step_summary }} # fallback si non défini par runner
+        run: |
+          set -euo pipefail
+          bash scripts/kustomize/bump-image.sh \
+            --file "$FILE" \
+            --name "$NAME" \
+            --image-repo "$REPO" \
+            --image-tag "$TAG"
 
       - name: Create PR
+        if: steps.bump.outputs.noop != 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "chore(kustomize): ${{ inputs.image_repo }}:${{ inputs.image_tag }} (name=${{ inputs.name }})"
           title: "chore(kustomize): bump to ${{ inputs.image_repo }}:${{ inputs.image_tag }} (name=${{ inputs.name }})"
-          body: "Path: `${{ steps.patch.outputs.file }}`"
-          branch: chore/kustomize-bump-${{ github.run_id }}
+          body: "Path: `${{ steps.bump.outputs.file }}`"
+          branch: chore/kustomize-bump-${{ inputs.name }}-${{ github.run_id }}
           labels: |
             auto
             kustomize
 
+      - name: No-op
+        if: steps.bump.outputs.noop == 'true'
+        run: echo "Aucun changement (déjà ${REPO}:${TAG}). Pas de PR."
