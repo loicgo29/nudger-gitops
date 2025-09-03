@@ -72,3 +72,4 @@ if command -v gh >/dev/null 2>&1; then
 else
   echo "[WARN] GitHub CLI (gh) non dispo, PR non créée automatiquement."
 fi
+
