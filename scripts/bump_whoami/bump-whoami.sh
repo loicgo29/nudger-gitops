@@ -31,6 +31,7 @@ Options:
   -h|--help                  Affiche cette aide
 EOF
 }
+export NAME REPO TAG
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -82,6 +83,13 @@ echo "Patch de: $FILE (name=$NAME, newName=$REPO, newTag=$TAG)"
 if ! yq '.images' "$FILE" >/dev/null 2>&1; then
   yq -i '.images = []' "$FILE"
 fi
+# --- Vérif si le tag est déjà celui demandé -------------------------------
+CURRENT_TAG="$(yq -r ".images[] | select(.name == \"$NAME\") | .newTag" "$FILE" || true)"
+
+if [ "$CURRENT_TAG" = "$TAG" ]; then
+  echo "⚠️  Rien à faire: $NAME est déjà sur $REPO:$TAG"
+  exit 0
+fi
 
 # Update/insert par name
 if yq '.images[] | select(.name == env(NAME))' "$FILE" >/dev/null 2>&1; then
@@ -92,6 +100,14 @@ if yq '.images[] | select(.name == env(NAME))' "$FILE" >/dev/null 2>&1; then
 else
   yq -i '.images += [{"name": env(NAME), "newName": env(REPO), "newTag": env(TAG)}]' "$FILE"
 fi
+
+
+command -v kustomize >/dev/null || { \
+  curl -s https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh | bash && \
+  sudo mv kustomize /usr/local/bin/; }
+kustomize build "$(dirname "$FILE")" >/dev/null
+
+
 
 ### --- Commit & push -------------------------------------------------------------
 # On prépare un message fidèle au workflow
