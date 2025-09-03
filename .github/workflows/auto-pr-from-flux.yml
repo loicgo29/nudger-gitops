@@ -27,17 +27,20 @@ concurrency:
 jobs:
   create-unique-pr:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
     env:
       BASE_BRANCH: main   # branche cible par défaut
-
+      GH_TOKEN: ${{ github.token }} 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
 
       - name: Run auto-pr script
         shell: bash
         run: |
+          gh auth status || true      # debug utile
           chmod +x scripts/auto-pr-from-flux/auto-pr-from-flux.sh
           scripts/auto-pr-from-flux/auto-pr-from-flux.sh

@@ -161,8 +161,8 @@ if command -v gh >/dev/null 2>&1; then
       || gh api -X PATCH "repos/${REPO_FULL}/labels/${name}" \
         -f new_name="$name" -f color="$color" -f description="$desc" >/dev/null 2>&1 || true
     }
-    create_label "flux" "FFD700" "Flux automation"
-    create_label "automated-pr" "1D76DB" "Created by automation"
+    create_label "flux" "FFD700" "Flux automation" || true
+    create_label "automated-pr" "1D76DB" "Created by automation" ||true
     LABEL_FLAGS+=( --label "flux" --label "automated-pr" )
   else
     vlog "[WARN] gh OK mais repo introuvable, pas de labels."
@@ -187,10 +187,7 @@ if command -v gh >/dev/null 2>&1; then
       --title "${PR_TITLE}" \
       --body "PR auto générée depuis \`${NEW_BRANCH}\` (bump d’images via Flux)." \
       "${LABEL_FLAGS[@]}"; then
-    gh pr list \
-      ${REPO_FULL:+--repo "${REPO_FULL}"} \
-      --head "${NEW_BRANCH}" --base "${BASE_BRANCH}" --state open \
-      --json number,url -q '.[0] | "PR #"+(.number|tostring)+" → "+.url"' || true
+  	 echo "PR créée → https://github.com/${REPO_FULL}/compare/${BASE_BRANCH}...${NEW_BRANCH}?expand=1"
   else
     # Fallback : proposer l’URL de comparaison manuelle
     if [[ -z "${REPO_FULL}" ]]; then
