@@ -8,4 +8,4 @@ resources:
 images:
   - name: ghcr.io/loicgo29/whoami
     newName: ghcr.io/loicgo29/whoami
-    newTag: v1.11.0  # {"$imagepolicy": "flux-system:whoami:tag"}
+    newTag: 1.11.0  # {"$imagepolicy": "flux-system:whoami:tag"}
