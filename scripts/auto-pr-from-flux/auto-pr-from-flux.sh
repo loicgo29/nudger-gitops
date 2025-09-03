@@ -210,3 +210,4 @@ else
     echo "[WARN] gh non dispo et remote non GitHub. Ouvre la PR manuellement." >&2
   fi
 fi
+git checkout "${BASE_BRANCH}"
