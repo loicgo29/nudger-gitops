@@ -127,6 +127,16 @@ else
   vlog "[DRY_RUN] git checkout -b ${NEW_BRANCH}"
   vlog "[DRY_RUN] git push ${GIT_REMOTE} ${NEW_BRANCH}:${NEW_BRANCH}"
 fi
+# Si on est dans Actions, on s'attend à avoir GH_TOKEN
+if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then
+  if [[ -z "${GH_TOKEN:-}" ]]; then
+    echo "[WARN] GH_TOKEN absent dans Actions, gh risque d'échouer."
+  fi
+else
+  # En local: ne pas laisser des variables vides casser gh
+  if [[ -z "${GH_TOKEN:-}" ]]; then unset GH_TOKEN; fi
+  if [[ -z "${GITHUB_TOKEN:-}" ]]; then unset GITHUB_TOKEN; fi
+fi
 # Si gh est déjà authentifié, on ignore d’éventuels GH_TOKEN/GITHUB_TOKEN vides
 if gh auth status >/dev/null 2>&1; then
   [[ -n "${GH_TOKEN:-}" && "${GH_TOKEN}" = '""' ]] && unset GH_TOKEN
