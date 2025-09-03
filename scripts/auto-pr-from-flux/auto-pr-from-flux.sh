@@ -1,27 +1,51 @@
 #!/usr/bin/env bash
 # -------------------------------------------------------------
 # auto-pr-from-flux.sh
-# But :
-#  - Détecter la branche poussée par Flux (flux-imageupdates*),
-#  - Créer une branche unique à partir de celle-ci,
-#  - Ouvrir une PR vers main (avec labels si possible),
-#  - Ne jamais planter pour des détails (labels/gh).
+# - Détecte la branche flux-imageupdates* (ou --head fourni)
+# - Crée une branche unique et pousse
+# - Ouvre une PR vers --base (main par défaut)
+# - Best effort sur labels ; jamais bloquant
 # -------------------------------------------------------------
 set -euo pipefail
 
-# ====== Paramètres ======
-BASE_BRANCH="${BASE_BRANCH:-main}"                 # base de la PR
-HEAD_BRANCH="${HEAD_BRANCH:-}"                     # branche source explicite (sinon auto-détection)
-HEAD_PREFIX="${HEAD_PREFIX:-flux-imageupdates}"    # préfixe des branches Flux
-GIT_REMOTE="${GIT_REMOTE:-origin}"                 # remote git
-DRY_RUN="${DRY_RUN:-0}"                            # 1 = pas de push ni PR
-VERBOSE="${VERBOSE:-1}"                            # 1 = logs verbeux
-PR_TITLE_TEMPLATE='chore(images): Flux updates (%s)' # sprintf avec NEW_BRANCH
+# ====== Params & flags ======
+BASE_BRANCH="${BASE_BRANCH:-main}"
+HEAD_PREFIX="${HEAD_PREFIX:-flux-imageupdates}"
+HEAD_BRANCH="${HEAD_BRANCH:-}"
+GIT_REMOTE="${GIT_REMOTE:-origin}"
+DRY_RUN="${DRY_RUN:-0}"
+VERBOSE="${VERBOSE:-1}"
+PR_TITLE_TEMPLATE='chore(images): Flux updates (%s)'
 
-log()  { echo -e "$@"; }
-vlog() { [[ "$VERBOSE" == "1" ]] && echo -e "$@" || true; }
+usage() {
+  cat >&2 <<EOF
+Usage: $0 [--base main] [--head flux-imageupdates-...]
+  ENV support:
+    BASE_BRANCH, HEAD_PREFIX, HEAD_BRANCH, GIT_REMOTE, DRY_RUN, VERBOSE
+EOF
+}
 
-# Normalise un nom de ref → "branche" sans remote
+log()  { echo -e "$*"; }
+vlog() { [[ "$VERBOSE" == "1" ]] && echo -e "$*" || true; }
+die()  { echo -e "ERROR: $*" >&2; exit 1; }
+
+# parse flags
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --base) BASE_BRANCH="$2"; shift 2;;
+    --head) HEAD_BRANCH="$2"; shift 2;;
+    -h|--help) usage; exit 0;;
+    *) die "Unknown arg: $1";;
+  esac
+done
+
+vlog "[INFO] BASE_BRANCH=${BASE_BRANCH}"
+vlog "[INFO] HEAD_PREFIX=${HEAD_PREFIX}"
+vlog "[INFO] HEAD_BRANCH(in)=${HEAD_BRANCH}"
+vlog "[INFO] GIT_REMOTE=${GIT_REMOTE}"
+vlog "[INFO] DRY_RUN=${DRY_RUN} VERBOSE=${VERBOSE}"
+
+# ====== Helpers ======
 strip_remote() {
   local r="${1:-}"
   r="${r#refs/remotes/}"
@@ -29,26 +53,34 @@ strip_remote() {
   echo "$r"
 }
 
-vlog "[INFO] BASE_BRANCH=${BASE_BRANCH}"
-vlog "[INFO] HEAD_BRANCH(in)=${HEAD_BRANCH}"
-vlog "[INFO] HEAD_PREFIX=${HEAD_PREFIX}"
-vlog "[INFO] GIT_REMOTE=${GIT_REMOTE}"
-vlog "[INFO] DRY_RUN=${DRY_RUN}  VERBOSE=${VERBOSE}"
+repo_full_from_remote() {
+  local url
+  url="$(git remote get-url "${GIT_REMOTE}" 2>/dev/null || true)"
+  if [[ "${url}" =~ github.com[:/]+([^/]+/[^/.]+)(\.git)?$ ]]; then
+    echo "${BASH_REMATCH[1]}"
+  else
+    echo ""
+  fi
+}
 
-# ====== Fetch des refs ======
+ensure_ref_exists() {
+  local ref="$1"
+  git rev-parse --verify "$ref" >/dev/null 2>&1
+}
+
+# ====== Fetch ======
 git fetch "${GIT_REMOTE}" "+refs/heads/*:refs/remotes/${GIT_REMOTE}/*"
 
-# ====== Détermination de la branche HEAD ======
+# ====== Determine HEAD branch ======
 if [[ -z "${HEAD_BRANCH}" ]]; then
   if [[ "${GITHUB_EVENT_NAME:-}" == "workflow_dispatch" && -n "${GITHUB_EVENT_INPUTS_HEAD_BRANCH:-}" ]]; then
     HEAD_BRANCH="${GITHUB_EVENT_INPUTS_HEAD_BRANCH}"
   else
-    # branche distante la plus récente qui matche le préfixe
     DETECTED="$(git for-each-ref --sort=-committerdate --format='%(refname:short)' \
       "refs/remotes/${GIT_REMOTE}/${HEAD_PREFIX}*" | head -n1 || true)"
     if [[ -n "${DETECTED}" ]]; then
       HEAD_BRANCH="$(strip_remote "${DETECTED}")"
-    elif git rev-parse --verify "refs/remotes/${GIT_REMOTE}/${HEAD_PREFIX}" >/dev/null 2>&1; then
+    elif ensure_ref_exists "refs/remotes/${GIT_REMOTE}/${HEAD_PREFIX}"; then
       HEAD_BRANCH="${HEAD_PREFIX}"
     else
       log "[INFO] Aucune branche '${HEAD_PREFIX}*' trouvée sur ${GIT_REMOTE}. Fin."
@@ -57,7 +89,6 @@ if [[ -z "${HEAD_BRANCH}" ]]; then
   fi
 fi
 
-# On s'assure que HEAD_BRANCH n'embarque pas déjà "origin/"
 HEAD_BRANCH="$(strip_remote "${HEAD_BRANCH}")"
 BASE_REF="${GIT_REMOTE}/${BASE_BRANCH}"
 HEAD_REF="${GIT_REMOTE}/${HEAD_BRANCH}"
@@ -65,18 +96,13 @@ HEAD_REF="${GIT_REMOTE}/${HEAD_BRANCH}"
 vlog "[INFO] HEAD_BRANCH(out)=${HEAD_BRANCH}"
 vlog "BASE=${BASE_REF}  HEAD=${HEAD_REF}"
 
+ensure_ref_exists "${HEAD_REF}" || { log "[INFO] La branche ${HEAD_REF} n'existe pas. Fin."; exit 0; }
+
 BASE_SHA="$(git rev-parse "${BASE_REF}")"
-HEAD_SHA="$(git rev-parse "${HEAD_REF}" 2>/dev/null || echo 'N/A')"
+HEAD_SHA="$(git rev-parse "${HEAD_REF}")"
 vlog "BASE SHA: ${BASE_SHA}"
 vlog "HEAD SHA: ${HEAD_SHA}"
 
-# HEAD doit exister
-if ! git rev-parse --verify "${HEAD_REF}" >/dev/null 2>&1; then
-  log "[INFO] La branche ${HEAD_REF} n'existe pas. Fin."
-  exit 0
-fi
-
-# Combien de commits d'avance ?
 AHEAD="$(git rev-list --count "${BASE_REF}..${HEAD_REF}")"
 log "[INFO] Commits ahead = ${AHEAD}"
 if [[ "${AHEAD}" -le 0 ]]; then
@@ -84,16 +110,14 @@ if [[ "${AHEAD}" -le 0 ]]; then
   exit 0
 fi
 
-# ====== Création de la branche PR ======
-SRC_SHA="$(git rev-parse "${HEAD_REF}")"
-SHORT_SHA="${SRC_SHA:0:7}"
+# ====== Create unique branch ======
+SHORT_SHA="${HEAD_SHA:0:7}"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 SAFE_HEAD="$(basename "${HEAD_BRANCH}")"
 NEW_BRANCH="${SAFE_HEAD}-${SHORT_SHA}-${STAMP}"
 PR_TITLE="$(printf "${PR_TITLE_TEMPLATE}" "${NEW_BRANCH}")"
 
 if [[ "${DRY_RUN}" != "1" ]]; then
-  # On travaille détaché au commit HEAD_REF pour éviter d’impacter main
   git switch --detach "${HEAD_REF}"
   git checkout -b "${NEW_BRANCH}"
   git push "${GIT_REMOTE}" "${NEW_BRANCH}:${NEW_BRANCH}"
@@ -103,63 +127,62 @@ else
   vlog "[DRY_RUN] git checkout -b ${NEW_BRANCH}"
   vlog "[DRY_RUN] git push ${GIT_REMOTE} ${NEW_BRANCH}:${NEW_BRANCH}"
 fi
-
-# ====== Labels best-effort (jamais bloquants) ======
-LABEL_FLAGS=()
-if command -v gh >/dev/null 2>&1; then
-  REPO_FULL="$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "")"
-  if [[ -n "${REPO_FULL}" ]]; then
-    create_label() {
-      local name="$1" color="$2" desc="$3"
-      if gh help 2>&1 | grep -qE '^  label$'; then
-        gh label create "$name" --color "$color" --description "$desc" >/dev/null 2>&1 \
-          || gh label edit "$name" --color "$color" --description "$desc" >/dev/null 2>&1 || true
-      else
-        gh api -X POST "repos/${REPO_FULL}/labels" \
-          -f name="$name" -f color="$color" -f description="$desc" >/dev/null 2>&1 || true
-      fi
-    }
-    create_label "flux" "FFD700" "Flux automation"
-    create_label "automated-pr" "1D76DB" "Created by automation"
-    LABEL_FLAGS+=( --label "flux" --label "automated-pr" )
-  else
-    vlog "[WARN] gh OK mais repo introuvable, pas de labels."
-  fi
-else
-  vlog "[WARN] gh non disponible, pas de labels."
+# Si gh est déjà authentifié, on ignore d’éventuels GH_TOKEN/GITHUB_TOKEN vides
+if gh auth status >/dev/null 2>&1; then
+  [[ -n "${GH_TOKEN:-}" && "${GH_TOKEN}" = '""' ]] && unset GH_TOKEN
+  [[ -n "${GITHUB_TOKEN:-}" && "${GITHUB_TOKEN}" = '""' ]] && unset GITHUB_TOKEN
 fi
 
-# ====== Création de la PR ======
+# Détermine le repo si gh a du mal à le deviner
+if ! REPO_FULL="$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null)"; then
+  ORIGIN_URL="$(git remote get-url "${GIT_REMOTE}" 2>/dev/null || true)"
+  REPO_FULL="$(echo "$ORIGIN_URL" | sed -E 's#.*github.com[:/]+([^/]+/[^/.]+)(\.git)?$#\1#')"
+fi
+# ====== Prepare repo slug (owner/name) ======
+REPO_FULL="$(repo_full_from_remote)"
+if command -v gh >/dev/null 2>&1 && [[ -z "${REPO_FULL}" ]]; then
+  # fallback via gh si token dispo
+  REPO_FULL="$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "")"
+fi
+
+# ====== Labels (best effort) ======
+LABEL_FLAGS=()
+if command -v gh >/dev/null 2>&1 && [[ -n "${REPO_FULL}" ]]; then
+  # crée/ensure labels (indemPotent via API)
+  gh api -X POST "repos/${REPO_FULL}/labels" \
+    -f name="flux" -f color="FFD700" -f description="Flux automation" >/dev/null 2>&1 || true
+  gh api -X POST "repos/${REPO_FULL}/labels" \
+    -f name="automated-pr" -f color="1D76DB" -f description="Created by automation" >/dev/null 2>&1 || true
+  LABEL_FLAGS+=( --label "flux" --label "automated-pr" )
+else
+  vlog "[WARN] gh non dispo ou repo inconnu, pas de labels."
+fi
+
+# ====== Create PR ======
 if [[ "${DRY_RUN}" == "1" ]]; then
-  vlog "[DRY_RUN] Création PR: ${NEW_BRANCH} -> ${BASE_BRANCH}"
+  vlog "[DRY_RUN] PR: ${NEW_BRANCH} -> ${BASE_BRANCH}"
   exit 0
 fi
 
-if command -v gh >/dev/null 2>&1; then
+if command -v gh >/dev/null 2>&1 && [[ -n "${REPO_FULL}" ]]; then
   if gh pr create \
+      --repo "${REPO_FULL}" \
       --head "${NEW_BRANCH}" \
       --base "${BASE_BRANCH}" \
       --title "${PR_TITLE}" \
       --body "PR auto générée depuis \`${NEW_BRANCH}\` (bump d’images via Flux)." \
       "${LABEL_FLAGS[@]}"; then
-    gh pr list --head "${NEW_BRANCH}" --base "${BASE_BRANCH}" --state open \
+    gh pr list --repo "${REPO_FULL}" --head "${NEW_BRANCH}" --base "${BASE_BRANCH}" --state open \
       --json number,url -q '.[0] | "PR #"+(.number|tostring)+" → "+.url"' || true
   else
-    REPO_URL="$(gh repo view --json url -q .url 2>/dev/null || echo "")"
-    if [[ -n "${REPO_URL}" ]]; then
-      echo "[WARN] gh pr create a échoué. Ouvre la PR manuellement :"
-      echo "       ${REPO_URL}/compare/${BASE_BRANCH}...${NEW_BRANCH}?expand=1"
-    else
-      echo "[WARN] gh pr create a échoué et repo inconnu. Ouvre la PR dans l'UI GitHub."
-    fi
+    echo "[WARN] gh pr create a échoué. Ouvre la PR manuellement :"
+    echo "       https://github.com/${REPO_FULL}/compare/${BASE_BRANCH}...${NEW_BRANCH}?expand=1"
   fi
 else
-  ORIGIN_URL="$(git remote get-url "${GIT_REMOTE}" 2>/dev/null || echo "")"
-  if [[ "${ORIGIN_URL}" =~ github.com[:/]+([^/]+/[^/.]+)(\.git)?$ ]]; then
-    REPO_FULL="${BASH_REMATCH[1]}"
-    echo "[WARN] gh non dispo. Ouvre la PR manuellement :"
+  if [[ -n "${REPO_FULL}" ]]; then
+    echo "[WARN] gh absent. Ouvre la PR :"
     echo "       https://github.com/${REPO_FULL}/compare/${BASE_BRANCH}...${NEW_BRANCH}?expand=1"
   else
-    echo "[WARN] gh non dispo et remote non GitHub. Ouvre la PR manuellement."
+    echo "[WARN] Impossible de déterminer le repo GitHub. Ouvre la PR depuis l’UI."
   fi
 fi
