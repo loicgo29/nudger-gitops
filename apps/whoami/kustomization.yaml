@@ -6,10 +6,6 @@ resources:
   - service.yaml
   - ingress.yaml
 images:
-  - name: traefik/whoami
-    newName: traefik/whoami # {"$imagepolicy": "flux-system:whoami:name"}
-    newTag: v1.10.4 # {"$imagepolicy": "flux-system:whoami:tag"}
   - name: whoami
     newName: traefik/whoami
-    newTag: v1.11.0
-# ci-test Tue Sep  2 06:37:30 PM UTC 2025
+    NewTag: v1.11.0 # {"$imagepolicy": "flux-system:whoami:tag"}
