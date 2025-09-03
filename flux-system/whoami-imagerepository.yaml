@@ -7,5 +7,5 @@ spec:
   image: ghcr.io/loicgo29/whoami
   interval: 1m
   filterTags:
-    pattern: '^v?(?P<version>\d+\.\d+\.\d+)(?:-[0-9A-Za-z\.-]+)?$'
+    pattern: '^v?(?P<version>\d+\.\d+\.\d+)(?:[-+].*)?$'
     extract: '$version'
