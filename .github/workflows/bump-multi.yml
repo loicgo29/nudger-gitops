@@ -9,7 +9,7 @@ on:
         type: choice
         options: [helm, kustomize]
       paths:
-        description: "Fichiers séparés par des virgules"
+        description: "Fichiers séparés par virgules (ex: apps/a/values.yaml, apps/b/kustomization.yaml)"
         required: true
         type: string
       image_repo:
@@ -21,84 +21,84 @@ on:
         required: true
         type: string
       name:
-        description: "images[].name si kustomize (ex: whoami)"
+        description: "images[].name si kind=kustomize (ex: whoami)"
         required: false
         type: string
 
 permissions:
   contents: write
+  pull-requests: write
+
+concurrency:
+  group: bump-multi-${{ github.event.inputs.kind }}-${{ github.event.inputs.paths }}
+  cancel-in-progress: true
 
 jobs:
   bump:
     runs-on: ubuntu-latest
+    env:
+      KIND:  ${{ inputs.kind }}
+      FILES: ${{ inputs.paths }}
+      REPO:  ${{ inputs.image_repo }}
+      TAG:   ${{ inputs.image_tag }}
+      NAME:  ${{ inputs.name }}
+
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Install yq
+      - name: Install deps (yq + kustomize + kubeconform si besoin)
         shell: bash
         run: |
           set -euo pipefail
-          wget -qO /tmp/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
-          sudo install -m 0755 /tmp/yq /usr/local/bin/yq
+          # yq
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          yq --version
+          # kustomize + kubeconform uniquement si kind=kustomize
+          if [[ "${KIND}" == "kustomize" ]]; then
+            KVER=5.4.2
+            curl -fsSL -o /tmp/kustomize.tgz "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KVER}/kustomize_v${KVER}_linux_amd64.tar.gz"
+            tar -xzf /tmp/kustomize.tgz -C /tmp kustomize && sudo mv /tmp/kustomize /usr/local/bin/kustomize
+            kustomize version
+            KCF=0.6.7
+            curl -fsSL -o /tmp/kc.tgz "https://github.com/yannh/kubeconform/releases/download/v${KCF}/kubeconform-linux-amd64.tar.gz"
+            tar -xzf /tmp/kc.tgz -C /tmp kubeconform && sudo mv /tmp/kubeconform /usr/local/bin/kubeconform
+            kubeconform -v
+          fi
 
-      - name: Patch files
-        id: patch
-        env:
-          KIND:  ${{ inputs.kind }}
-          FILES: ${{ inputs.paths }}
-          REPO:  ${{ inputs.image_repo }}
-          TAG:   ${{ inputs.image_tag }}
-          NAME:  ${{ inputs.name }}
+      - name: Patch files (script source de vérité)
+        id: bump
         shell: bash
         run: |
           set -euo pipefail
-          changed=0
-          IFS=',' read -r -a arr <<< "$FILES"
-          for FILE in "${arr[@]}"; do
-            FILE="$(echo "$FILE" | xargs)"
-            if [ ! -f "$FILE" ]; then
-              echo "skip: $FILE introuvable"
-              continue
-            fi
-            if [ "$KIND" = "helm" ]; then
-              yq -i '.image.repository = env(REPO) | .image.tag = env(TAG)' "$FILE" && changed=1
-            else
-              if [ -z "${NAME:-}" ]; then
-                echo "name requis pour kustomize (inputs.name)"; exit 1
-              fi
-              yq '.images' "$FILE" >/dev/null 2>&1 || yq -i '.images = []' "$FILE"
-              if yq '.images[] | select(.name == env(NAME))' "$FILE" >/dev/null 2>&1; then
-                yq -i '(.images[] | select(.name == env(NAME)).newName) = env(REPO) | (.images[] | select(.name == env(NAME)).newTag) = env(TAG)' "$FILE"
-              else
-                yq -i '.images += [{"name": env(NAME), "newName": env(REPO), "newTag": env(TAG)}]' "$FILE"
-              fi
-              changed=1
-            fi
-            echo "patched: $FILE"
-          done
-          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+          chmod +x scripts/kustomize/bump-multi.sh
+          scripts/kustomize/bump-multi.sh \
+            --kind  "${KIND}" \
+            --paths "${FILES}" \
+            --image-repo "${REPO}" \
+            --image-tag  "${TAG}" \
+            ${NAME:+--name "${NAME}"}
 
       - name: Create PR
-        if: steps.patch.outputs.changed == '1'
+        if: steps.bump.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          commit-message: "chore(multi): ${{
-            inputs.image_repo }}:${{ inputs.image_tag }}"
-          title: "chore(multi): bump to ${{
-            inputs.image_repo }}:${{ inputs.image_tag }}"
+          commit-message: "chore(multi): ${{ inputs.image_repo }}:${{ inputs.image_tag }}"
+          title: "chore(multi): bump to ${{ inputs.image_repo }}:${{ inputs.image_tag }}"
           body: |
-            Kind: ${{ inputs.kind }}
-            Paths: ${{ inputs.paths }}
-            Repo: ${{ inputs.image_repo }}
-            Tag: ${{ inputs.image_tag }}
-            Name: ${{ inputs.name }}
-          branch: chore/bump-multi-${{ github.run_id }}
+            kind:  `${{ inputs.kind }}`
+            repo:  `${{ inputs.image_repo }}`
+            tag:   `${{ inputs.image_tag }}`
+            name:  `${{ inputs.name }}`
+            files: `${{ steps.bump.outputs.files }}`
+          branch: chore/bump-multi-${{ inputs.kind }}-${{ github.run_id }}
           labels: |
             auto
             bump
 
       - name: No changes
-        if: steps.patch.outputs.changed != '1'
+        if: steps.bump.outputs.changed != 'true'
         run: echo "Aucun fichier patché (déjà à jour ou fichiers manquants)."
-
