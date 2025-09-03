@@ -1,40 +1,48 @@
-name: 🔍 Trivy (K8s Manifests)
+name: 🔍 Trivy (K8s Manifests)    # Nom affiché du workflow dans GitHub Actions
 
 on:
-  pull_request:
-    paths:
-      - 'apps/**'
-      - 'clusters/**'
-      - '**/*.yaml'
-  workflow_dispatch:
+  pull_request:                  # Déclenché sur chaque PR
+    paths:                       # ... mais seulement si les fichiers modifiés correspondent à :
+      - 'apps/**'                # -> Manifests des apps
+      - 'clusters/**'            # -> Manifests des clusters
+      - '**/*.yaml'              # -> Tous les YAML
+  workflow_dispatch:             # Et exécutable à la main depuis l’UI GitHub
 
 permissions:
-  contents: read
-  security-events: write
+  contents: read                 # Lecture du repo uniquement
+  security-events: write         # Écriture pour publier les résultats de sécurité (SARIF)
 
 jobs:
   trivy-k8s:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest       # Runner GitHub standard
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4  # Récupère le code du repo
 
       - name: Cache Trivy DB
-        uses: actions/cache@v4
+        uses: actions/cache@v4     # Mise en cache de la base vulnérabilités Trivy
         with:
-          path: ~/.cache/trivy
+          path: ~/.cache/trivy     # Répertoire local utilisé par Trivy
           key: trivy-db-${{ runner.os }}-${{ hashFiles('**/*.yaml') }}
+                                   # Clé de cache dépendant du contenu YAML
           restore-keys: trivy-db-${{ runner.os }}-
+                                   # Fallback si la clé exacte n’existe pas
 
       - name: Run Trivy (misconfig + secrets)
-        run: |
+        run: |                     # Lancement Trivy via ton script maison
           TRIVY_SEVERITY="CRITICAL,HIGH" TRIVY_EXIT_CODE=1 \
           ./scripts/ci-on-pr/trivy.sh k8s .
+                                   # -> Analyse Kubernetes Manifests + secrets
+                                   # -> Échoue si CRITICAL/HIGH trouvés
 
       - name: SARIF (misconfig)
-        if: always()
+        if: always()               # Exécuté même si l’étape précédente échoue
         run: trivy config --format sarif -o trivy-k8s.sarif .
+                                   # Génère un rapport SARIF (format sécurité GitHub)
+                                   # basé sur l’analyse "config" (misconfigs YAML)
+
       - name: Upload SARIF
         if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy-k8s.sarif
+                                   # Envoie le rapport SARIF dans l’onglet "Security" de GitHub
