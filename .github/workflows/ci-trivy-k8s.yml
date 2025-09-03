@@ -46,3 +46,19 @@ jobs:
         with:
           sarif_file: trivy-k8s.sarif
                                    # Envoie le rapport SARIF dans l’onglet "Security" de GitHub
+  trivy-images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Trivy DB
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/trivy
+          key: trivy-db-${{ runner.os }}-images-${{ hashFiles('apps/**/kustomization.yaml') }}
+          restore-keys: trivy-db-${{ runner.os }}-images-
+
+      - name: Run Trivy (all images in apps)
+        run: |
+          TRIVY_SEVERITY="CRITICAL,HIGH" TRIVY_EXIT_CODE=1 \
+          ./scripts/ci-on-pr/trivy.sh images-in-apps apps

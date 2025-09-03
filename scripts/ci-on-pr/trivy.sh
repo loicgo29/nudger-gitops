@@ -34,6 +34,47 @@ case "$CMD" in
       --timeout 10m \
       "$TARGET"
     ;;
+  images-in-apps)
+  CONCURRENCY="${CONCURRENCY:-4}"
+
+  # 1) Rendre tous les kustomize sous $TARGET, extraire UNIQUEMENT les champs .image (strings)
+  IMAGES=$(
+    find "$TARGET" -name kustomization.yaml -printf '%h\n' \
+    | sort -u \
+    | while read -r d; do kustomize build "$d"; done \
+    | yq -o=json '.' \
+    | jq -r '
+        # On ne garde que les specs de Pod (direct) ou de template (workloads)
+        if .kind == "Pod" then [.spec]
+        elif (.spec // empty) and (.spec.template // empty) and (.spec.template.spec // empty) then [.spec.template.spec]
+        elif (.spec // empty) and (.spec.jobTemplate // empty) and (.spec.jobTemplate.spec.template // empty) then [.spec.jobTemplate.spec.template.spec]  # CronJob
+        else [] end
+        | .[]
+        | ((.containers // []) + (.initContainers // []))
+        | .[]?.image
+      ' 2>/dev/null \
+    | awk 'NF' \
+    | sort -u
+  )
+
+  if [ -z "$IMAGES" ]; then
+    echo "No images found under $TARGET"
+    exit 0
+  fi
+
+  # 2) Filtrer les valeurs plausibles d’images (tag ou digest, multi-registry ok)
+  VALID_IMAGES=$(echo "$IMAGES" | grep -E '^[A-Za-z0-9._/-]+(:[A-Za-z0-9._.-]+)?(@sha256:[a-f0-9]{64})?$' || true)
+  if [ -z "$VALID_IMAGES" ]; then
+    echo "No valid image references found"
+    exit 0
+  fi
+
+  # 3) Scanner en parallèle
+  echo "$VALID_IMAGES" | xargs -n1 -P "$CONCURRENCY" -I{} sh -c '
+    echo "==> trivy image {}"
+    trivy image --severity "'"$SEV"'" --exit-code "'"$EXIT"'" --ignore-unfixed --timeout 10m --format table "{}"
+  '
+  ;;
   repo)
     # Scan dépôt complet (fallback)
     trivy fs --scanners vuln,secret,config \
