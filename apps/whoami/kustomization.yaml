@@ -7,5 +7,5 @@ resources:
   - ingress.yaml
 images:
   - name: ghcr.io/loicgo29/whoami
-    newName: ghcr.io/loicgo29/whoami
-    newTag: 1.11.0  # {"$imagepolicy": "flux-system:whoami:tag"}
+    newName: ghcr.io/loicgo29/whoami  # {"$imagepolicy": "flux-system:whoami:name"}
+    newTag: 1.11.0   
