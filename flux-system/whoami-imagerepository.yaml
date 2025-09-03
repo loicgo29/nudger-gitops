@@ -1,4 +1,3 @@
-# flux-system/whoami-imagerepository.yaml
 apiVersion: image.toolkit.fluxcd.io/v1beta2
 kind: ImageRepository
 metadata:
@@ -8,6 +7,5 @@ spec:
   image: ghcr.io/loicgo29/whoami
   interval: 1m
   filterTags:
-    # garde uniquement vMAJ.MIN.PATCH, sans suffixes d’archi
     pattern: '^v(?P<version>\d+\.\d+\.\d+)$'
     extract: '$version'
