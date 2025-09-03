@@ -16,18 +16,33 @@ GIT_REMOTE="${GIT_REMOTE:-origin}"
 DRY_RUN="${DRY_RUN:-0}"
 VERBOSE="${VERBOSE:-1}"
 PR_TITLE_TEMPLATE='chore(images): Flux updates (%s)'
+DEBUG="${DEBUG:-0}"
 
 usage() {
   cat >&2 <<EOF
 Usage: $0 [--base main] [--head flux-imageupdates-...]
   ENV support:
-    BASE_BRANCH, HEAD_PREFIX, HEAD_BRANCH, GIT_REMOTE, DRY_RUN, VERBOSE
+    BASE_BRANCH, HEAD_PREFIX, HEAD_BRANCH, GIT_REMOTE, DRY_RUN, VERBOSE, DEBUG
 EOF
 }
 
 log()  { echo -e "$*"; }
 vlog() { [[ "$VERBOSE" == "1" ]] && echo -e "$*" || true; }
 die()  { echo -e "ERROR: $*" >&2; exit 1; }
+
+mask() {
+  # masque tokens éventuels dans les traces
+  sed -E 's/(ghp_[A-Za-z0-9]+|github_pat_[A-Za-z0-9_]+|gho_[A-Za-z0-9_]+|glpat-[A-Za-z0-9_]+)/***REDACTED***/g'
+}
+
+dbg() {
+  [[ "$DEBUG" == "1" ]] && echo "[DBG] $*" || true
+}
+
+if [[ "$DEBUG" == "1" ]]; then
+  # shell debug sans fuite d’arguments (nous masquons après coup si on cat des env)
+  set -x
+fi
 
 # parse flags
 while [[ $# -gt 0 ]]; do
@@ -43,7 +58,7 @@ vlog "[INFO] BASE_BRANCH=${BASE_BRANCH}"
 vlog "[INFO] HEAD_PREFIX=${HEAD_PREFIX}"
 vlog "[INFO] HEAD_BRANCH(in)=${HEAD_BRANCH}"
 vlog "[INFO] GIT_REMOTE=${GIT_REMOTE}"
-vlog "[INFO] DRY_RUN=${DRY_RUN} VERBOSE=${VERBOSE}"
+vlog "[INFO] DRY_RUN=${DRY_RUN} VERBOSE=${VERBOSE} DEBUG=${DEBUG}"
 
 # ====== Helpers ======
 strip_remote() {
@@ -56,6 +71,7 @@ strip_remote() {
 repo_full_from_remote() {
   local url
   url="$(git remote get-url "${GIT_REMOTE}" 2>/dev/null || true)"
+  dbg "remote url: ${url}" | mask
   if [[ "${url}" =~ github.com[:/]+([^/]+/[^/.]+)(\.git)?$ ]]; then
     echo "${BASH_REMATCH[1]}"
   else
@@ -68,6 +84,31 @@ ensure_ref_exists() {
   git rev-parse --verify "$ref" >/dev/null 2>&1
 }
 
+dump_git_context() {
+  echo "---- GIT CONTEXT ----"
+  git rev-parse --is-inside-work-tree >/dev/null 2>&1 || { echo "Not a git repo"; return; }
+  echo "Remote URLs:"; git remote -v | mask
+  echo "Current HEAD:"; git log --oneline -1 | mask
+  echo "Branches (last 5):"
+  git for-each-ref --sort=-committerdate --format='%(refname:short) %(objectname:short)  %(subject)' refs/heads | head -n5 | mask
+  echo "Remote branches (last 8):"
+  git for-each-ref --sort=-committerdate --format='%(refname:short) %(objectname:short)  %(subject)' "refs/remotes/${GIT_REMOTE}" | head -n8 | mask
+  echo "----------------------"
+}
+
+dump_env_context() {
+  echo "---- ENV CONTEXT ----" | mask
+  echo "GITHUB_ACTIONS=${GITHUB_ACTIONS:-}" | mask
+  echo "GH_TOKEN set? $([[ -n ${GH_TOKEN+x} ]] && echo yes || echo no)"
+  echo "GITHUB_TOKEN set? $([[ -n ${GITHUB_TOKEN+x} ]] && echo yes || echo no)"
+  echo "---------------------"
+}
+
+if [[ "$DEBUG" == "1" ]]; then
+  dump_git_context
+  dump_env_context
+fi
+
 # ====== Fetch ======
 git fetch "${GIT_REMOTE}" "+refs/heads/*:refs/remotes/${GIT_REMOTE}/*"
 
@@ -75,9 +116,11 @@ git fetch "${GIT_REMOTE}" "+refs/heads/*:refs/remotes/${GIT_REMOTE}/*"
 if [[ -z "${HEAD_BRANCH}" ]]; then
   if [[ "${GITHUB_EVENT_NAME:-}" == "workflow_dispatch" && -n "${GITHUB_EVENT_INPUTS_HEAD_BRANCH:-}" ]]; then
     HEAD_BRANCH="${GITHUB_EVENT_INPUTS_HEAD_BRANCH}"
+    dbg "HEAD from dispatch input: ${HEAD_BRANCH}"
   else
     DETECTED="$(git for-each-ref --sort=-committerdate --format='%(refname:short)' \
       "refs/remotes/${GIT_REMOTE}/${HEAD_PREFIX}*" | head -n1 || true)"
+    dbg "DETECTED remote: ${DETECTED}"
     if [[ -n "${DETECTED}" ]]; then
       HEAD_BRANCH="$(strip_remote "${DETECTED}")"
     elif ensure_ref_exists "refs/remotes/${GIT_REMOTE}/${HEAD_PREFIX}"; then
@@ -116,6 +159,7 @@ STAMP="$(date +%Y%m%d-%H%M%S)"
 SAFE_HEAD="$(basename "${HEAD_BRANCH}")"
 NEW_BRANCH="${SAFE_HEAD}-${SHORT_SHA}-${STAMP}"
 PR_TITLE="$(printf "${PR_TITLE_TEMPLATE}" "${NEW_BRANCH}")"
+dbg "NEW_BRANCH=${NEW_BRANCH}  PR_TITLE=${PR_TITLE}"
 
 if [[ "${DRY_RUN}" != "1" ]]; then
   git switch --detach "${HEAD_REF}"
@@ -127,38 +171,40 @@ else
   vlog "[DRY_RUN] git checkout -b ${NEW_BRANCH}"
   vlog "[DRY_RUN] git push ${GIT_REMOTE} ${NEW_BRANCH}:${NEW_BRANCH}"
 fi
-# Si on est dans Actions, on s'attend à avoir GH_TOKEN
+
+# ====== Tokens & gh auth sanity ======
 if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then
   if [[ -z "${GH_TOKEN:-}" ]]; then
     echo "[WARN] GH_TOKEN absent dans Actions, gh risque d'échouer."
   fi
 else
   # En local: ne pas laisser des variables vides casser gh
-  if [[ -z "${GH_TOKEN:-}" ]]; then unset GH_TOKEN; fi
-  if [[ -z "${GITHUB_TOKEN:-}" ]]; then unset GITHUB_TOKEN; fi
-fi
-# Si gh est déjà authentifié, on ignore d’éventuels GH_TOKEN/GITHUB_TOKEN vides
-if gh auth status >/dev/null 2>&1; then
-  [[ -n "${GH_TOKEN:-}" && "${GH_TOKEN}" = '""' ]] && unset GH_TOKEN
-  [[ -n "${GITHUB_TOKEN:-}" && "${GITHUB_TOKEN}" = '""' ]] && unset GITHUB_TOKEN
+  [[ -z "${GH_TOKEN:-}" ]] && unset GH_TOKEN
+  [[ -z "${GITHUB_TOKEN:-}" ]] && unset GITHUB_TOKEN
 fi
 
-# Détermine le repo si gh a du mal à le deviner
-if ! REPO_FULL="$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null)"; then
-  ORIGIN_URL="$(git remote get-url "${GIT_REMOTE}" 2>/dev/null || true)"
-  REPO_FULL="$(echo "$ORIGIN_URL" | sed -E 's#.*github.com[:/]+([^/]+/[^/.]+)(\.git)?$#\1#')"
+if gh auth status >/dev/null 2>&1; then
+  # Corrige un cas de GH_TOKEN/GITHUB_TOKEN = "" qui perturbe gh
+  [[ "${GH_TOKEN:-}" == '""' ]] && unset GH_TOKEN
+  [[ "${GITHUB_TOKEN:-}" == '""' ]] && unset GITHUB_TOKEN
+  dbg "gh auth OK (status=0)"
+else
+  echo "[WARN] gh non authentifié. PR via API risque d’échouer. Vous pouvez faire:"
+  echo "      gh auth login -w -s repo,read:org,workflow"
 fi
-# ====== Prepare repo slug (owner/name) ======
+
+# ====== Determine repo slug ======
 REPO_FULL="$(repo_full_from_remote)"
-if command -v gh >/dev/null 2>&1 && [[ -z "${REPO_FULL}" ]]; then
-  # fallback via gh si token dispo
-  REPO_FULL="$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "")"
+if [[ -z "${REPO_FULL}" ]]; then
+  if command -v gh >/dev/null 2>&1; then
+    REPO_FULL="$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "")"
+  fi
 fi
+dbg "REPO_FULL=${REPO_FULL}"
 
 # ====== Labels (best effort) ======
 LABEL_FLAGS=()
 if command -v gh >/dev/null 2>&1 && [[ -n "${REPO_FULL}" ]]; then
-  # crée/ensure labels (indemPotent via API)
   gh api -X POST "repos/${REPO_FULL}/labels" \
     -f name="flux" -f color="FFD700" -f description="Flux automation" >/dev/null 2>&1 || true
   gh api -X POST "repos/${REPO_FULL}/labels" \
