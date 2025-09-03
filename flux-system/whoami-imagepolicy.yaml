@@ -9,4 +9,4 @@ spec:
   policy:
     semver:
       # Exemple: ne prendre que les patchs de 1.10 (les tags upstream sont "v1.10.x")
-      range: ">=1.11.0 <2.0.0"
+      range: '>=1.11.0 <2.0.0'
