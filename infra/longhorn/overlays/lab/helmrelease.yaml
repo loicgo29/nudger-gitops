@@ -1,0 +1,31 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: longhorn
+  namespace: longhorn-system
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: longhorn
+      version: 1.9.1
+      sourceRef:
+        kind: HelmRepository
+        name: longhorn
+        namespace: flux-system
+  install:
+    createNamespace: false
+    remediation: { retries: 3 }
+  upgrade:
+    remediation: { retries: 3 }
+  values:
+    persistence:
+      defaultClass: false       # on garde tes SC à toi
+      reclaimPolicy: Retain
+      defaultFsType: ext4
+    defaultSettings:
+      defaultReplicaCount: 1
+      defaultDataLocality: best-effort
+      allowVolumeExpansion: true
+    ingress:
+      enabled: false

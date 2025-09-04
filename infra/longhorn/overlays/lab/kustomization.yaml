@@ -1,2 +1,14 @@
+<<<<<<< HEAD
 resources:
   - ../../base
+=======
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+  - helmrelease.yaml
+  - ingress.yaml
+  - service.yaml
+  - secret.yaml
+
+>>>>>>> e35f5cc (clean)

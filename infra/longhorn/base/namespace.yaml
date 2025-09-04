@@ -3,4 +3,10 @@ kind: Namespace
 metadata:
   name: longhorn-system
   labels:
+<<<<<<< HEAD
     pod-security.kubernetes.io/enforce: "baseline"
+=======
+    pod-security.kubernetes.io/enforce: "privileged"
+    pod-security.kubernetes.io/warn: "baseline"
+    pod-security.kubernetes.io/audit: "baseline"
+>>>>>>> e35f5cc (clean)
