@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    pod-security.kubernetes.io/enforce: baseline
+  name: longhorn-system
+---
+allowVolumeExpansion: true
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+  name: longhorn
+parameters:
+  dataLocality: best-effort
+  fsType: ext4
+  numberOfReplicas: "1"
+provisioner: driver.longhorn.io
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+---
+allowVolumeExpansion: true
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: longhorn-db
+parameters:
+  dataLocality: best-effort
+  fsType: xfs
+  numberOfReplicas: "1"
+provisioner: driver.longhorn.io
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: longhorn
+  namespace: longhorn-system
+spec:
+  chart:
+    spec:
+      chart: longhorn
+      sourceRef:
+        kind: HelmRepository
+        name: longhorn
+        namespace: flux-system
+      version: '*'
+  install:
+    createNamespace: false
+  interval: 5m
+  values:
+    defaultSettings:
+      allowVolumeExpansion: true
+      defaultDataLocality: best-effort
+      defaultReplicaCount: 1
+    ingress:
+      enabled: false
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: longhorn
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://charts.longhorn.io
