@@ -1,0 +1,2 @@
+gitops_root: "{{ playbook_dir | realpath | regex_replace('/tools/ansible/playbooks$', '') }}"
+branch_name: "feat/longhorn-init"

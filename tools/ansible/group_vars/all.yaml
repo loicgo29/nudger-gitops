@@ -1,0 +1,6 @@
+# Racine du repo à partir du chemin du playbook (ne pas modifier)
+gitops_root: "{{ playbook_dir | realpath | regex_replace('/tools/ansible/playbooks$', '') }}"
+branch_name: "feat/longhorn-init"
+
+# Garde-fous
+fail_on_apply: true

@@ -1,0 +1,6 @@
+- name: Generate Longhorn manifests (GitOps only)
+  hosts: local
+  gather_facts: false
+  roles:
+    - role: gitops_writer
+      tags: [longhorn]

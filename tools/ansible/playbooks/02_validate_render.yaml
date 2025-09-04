@@ -1,0 +1,80 @@
+- name: Validate kustomize rendering for Longhorn overlay (lab)
+  hosts: local
+  gather_facts: false
+  vars:
+    gitops_root: "{{ playbook_dir | realpath | regex_replace('/tools/ansible/playbooks$', '') }}"
+    overlay_path: "{{ gitops_root }}/infra/longhorn/overlays/lab"
+
+  tasks:
+    - name: Check overlay exists
+      ansible.builtin.stat:
+        path: "{{ overlay_path }}"
+      register: st
+
+    - name: Fail if overlay not found
+      ansible.builtin.fail:
+        msg: "Overlay {{ overlay_path }} introuvable. Lance `make gen` d'abord."
+      when: not st.stat.exists
+
+    - name: kustomize build
+      ansible.builtin.command: kustomize build {{ overlay_path }}
+      register: render
+      changed_when: false
+
+    - name: Detect kubeconform
+      ansible.builtin.command: which kubeconform
+      register: has_kubeconform
+      failed_when: false
+      changed_when: false
+
+    - name: Detect kubeval
+      ansible.builtin.command: which kubeval
+      register: has_kubeval
+      failed_when: false
+      changed_when: false
+
+    # Validation stricte pour API "core" / standards, on skippe les CRDs Flux
+    - name: Validate manifests with kubeconform (strict)
+      ansible.builtin.command: >
+        kubeconform
+        -strict
+        -kubernetes-version 1.29.0
+        -schema-location default
+        -skip 'CustomResourceDefinition,HelmRelease,HelmRepository,Kustomization,GitRepository,OCIRepository,Bucket,ImageRepository,ImagePolicy,ImageUpdateAutomation'
+        -
+      args:
+        stdin: "{{ render.stdout }}"
+      when: has_kubeconform.rc == 0
+      changed_when: false
+
+    - name: Validate manifests with kubeval (strict)  # fallback
+      ansible.builtin.command: >
+        kubeval
+        --strict
+        -
+      args:
+        stdin: "{{ render.stdout }}"
+      when: has_kubeval.rc == 0 and has_kubeconform.rc != 0
+      changed_when: false
+
+    - name: Skip validation (no kubeconform/kubeval found)
+      ansible.builtin.debug:
+        msg: "Aucun kubeconform/kubeval installé : validation sautée."
+      when: has_kubeconform.rc != 0 and has_kubeval.rc != 0
+
+    - name: kubelinter lint
+      ansible.builtin.command: kube-linter lint -
+      args:
+        stdin: "{{ render.stdout }}"
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/usr/local/bin"
+      register: linter
+      failed_when: linter.rc not in [0,3]  # 3 = findings
+      changed_when: false
+
+    - name: Show linter findings (if any)
+      ansible.builtin.debug:
+        msg: "{{ linter.stdout }}"
+      when: linter.rc == 3
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/usr/local/bin"

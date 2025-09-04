@@ -1,0 +1,9 @@
+- name: Ensure clusters/lab/apps.kustomization.yaml includes longhorn overlay
+  ansible.builtin.lineinfile:
+    path: "{{ gitops_root }}/clusters/lab/apps.kustomization.yaml"
+    regexp: 'infra/longhorn/overlays/lab'
+    line: "- ../../infra/longhorn/overlays/lab"
+    insertafter: EOF
+    state: present
+  when: >
+    lookup('ansible.builtin.fileglob', gitops_root + '/clusters/lab/apps.kustomization.yaml', wantlist=False) != ''

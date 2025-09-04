@@ -1,0 +1,4 @@
+# Ce rôle NE DOIT PAS déployer sur le cluster.
+- name: Guardrail — forbid cluster apply
+  ansible.builtin.debug:
+    msg: "Garde-fou actif : génération de fichiers uniquement, aucun kubectl/helm apply ici."

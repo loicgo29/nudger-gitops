@@ -1,0 +1,28 @@
+- name: Create PR to main (requires GH_TOKEN)
+  hosts: local
+  gather_facts: false
+  tasks:
+    - name: Git branch/add/commit
+      ansible.builtin.shell: |
+        set -e
+        cd "{{ gitops_root }}"
+        git checkout -b "{{ branch_name }}" || git checkout "{{ branch_name }}"
+        git add infra/longhorn clusters/lab/apps.kustomization.yaml
+        git commit -m "feat(longhorn): add HelmRelease + SC (replicas=1)"
+      args: { executable: /bin/bash }
+
+    - name: Push branch
+      ansible.builtin.shell: |
+        cd "{{ gitops_root }}"
+        git push -u origin "{{ branch_name }}" || true
+      args: { executable: /bin/bash }
+
+    - name: Open PR with gh
+      ansible.builtin.shell: |
+        cd "{{ gitops_root }}"
+        gh pr create --fill --base main --title "feat(longhorn): init" \
+          --body "Ajout HelmRelease Longhorn + 2 StorageClasses (ext4/xfs, replicas=1)"
+      args: { executable: /bin/bash }
+      environment:
+        GH_TOKEN: "{{ lookup('env','GH_TOKEN') }}"
+      when: lookup('env','GH_TOKEN') | length > 0

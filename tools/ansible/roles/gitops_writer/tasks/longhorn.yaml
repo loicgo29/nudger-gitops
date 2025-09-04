@@ -1,0 +1,122 @@
+- name: Create directories for Longhorn GitOps
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ gitops_root }}/infra/longhorn/base"
+    - "{{ gitops_root }}/infra/longhorn/overlays/lab"
+
+- name: namespace.yaml
+  ansible.builtin.copy:
+    dest: "{{ gitops_root }}/infra/longhorn/base/namespace.yaml"
+    mode: "0644"
+    content: |
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: longhorn-system
+        labels:
+          pod-security.kubernetes.io/enforce: "baseline"
+
+- name: helmrepository.yaml
+  ansible.builtin.copy:
+    dest: "{{ gitops_root }}/infra/longhorn/base/helmrepository.yaml"
+    mode: "0644"
+    content: |
+      apiVersion: source.toolkit.fluxcd.io/v1
+      kind: HelmRepository
+      metadata:
+        name: longhorn
+        namespace: flux-system
+      spec:
+        url: https://charts.longhorn.io
+        interval: 1h
+
+- name: helmrelease.yaml
+  ansible.builtin.copy:
+    dest: "{{ gitops_root }}/infra/longhorn/base/helmrelease.yaml"
+    mode: "0644"
+    content: |
+      apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      metadata:
+        name: longhorn
+        namespace: longhorn-system
+      spec:
+        interval: 5m
+        chart:
+          spec:
+            chart: longhorn
+            version: "*"
+            sourceRef:
+              kind: HelmRepository
+              name: longhorn
+              namespace: flux-system
+        install:
+          createNamespace: false
+        values:
+          defaultSettings:
+            defaultReplicaCount: 1
+            defaultDataLocality: "best-effort"
+            allowVolumeExpansion: true
+          ingress:
+            enabled: false
+
+- name: storageclass-longhorn.yaml (default)
+  ansible.builtin.copy:
+    dest: "{{ gitops_root }}/infra/longhorn/base/storageclass-longhorn.yaml"
+    mode: "0644"
+    content: |
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        name: longhorn
+        annotations:
+          storageclass.kubernetes.io/is-default-class: "true"
+      provisioner: driver.longhorn.io
+      reclaimPolicy: Retain
+      allowVolumeExpansion: true
+      volumeBindingMode: Immediate
+      parameters:
+        numberOfReplicas: "1"
+        dataLocality: "best-effort"
+        fsType: ext4
+
+- name: storageclass-longhorn-db.yaml (xfs, WFFC)
+  ansible.builtin.copy:
+    dest: "{{ gitops_root }}/infra/longhorn/base/storageclass-longhorn-db.yaml"
+    mode: "0644"
+    content: |
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        name: longhorn-db
+      provisioner: driver.longhorn.io
+      reclaimPolicy: Retain
+      allowVolumeExpansion: true
+      volumeBindingMode: WaitForFirstConsumer
+      parameters:
+        numberOfReplicas: "1"
+        dataLocality: "best-effort"
+        fsType: xfs
+
+- name: kustomization.yaml (base)
+  ansible.builtin.copy:
+    dest: "{{ gitops_root }}/infra/longhorn/base/kustomization.yaml"
+    mode: "0644"
+    content: |
+      resources:
+        - namespace.yaml
+        - helmrepository.yaml
+        - helmrelease.yaml
+        - storageclass-longhorn.yaml
+        - storageclass-longhorn-db.yaml
+
+- name: kustomization.yaml (overlay lab)
+  ansible.builtin.copy:
+    dest: "{{ gitops_root }}/infra/longhorn/overlays/lab/kustomization.yaml"
+    mode: "0644"
+    content: |
+      resources:
+        - ../../base
