@@ -20,7 +20,7 @@ on:
 
 jobs:
   bump:
-    runs-on: [self-hosted, nudger-gitops]
+    runs-on: arc-runner-set
     steps:
       - uses: actions/checkout@v4
 
