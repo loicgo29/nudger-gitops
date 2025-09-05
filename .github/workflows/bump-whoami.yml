@@ -1,66 +1,84 @@
-name: 🔧 Bump whoami (Kustomize)
-permissions:
-  contents: write
-  pull-requests: write
-
+name: "🔧 Bump whoami (Kustomize)"
 
 on:
   workflow_dispatch:
     inputs:
       image_repo:
-        description: "Repo d'image (public) – ex: ghcr.io/loicgo29/nudger-whoami ou traefik/whoami"
+        description: "Repo d'image (ex: traefik/whoami ou ghcr.io/loicgo29/nudger-whoami)"
         required: true
         type: string
         default: traefik/whoami
       image_tag:
-        description: "v1.10.1"
+        description: "Tag d'image (ex: v1.10.1)"
         required: true
         type: string
+        default: latest
 
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: bump-whoami-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   bump:
     runs-on: arc-runner-set
+    env:
+      FILE: apps/whoami/kustomization.yaml
+      NAME: whoami
+      REPO: ${{ inputs.image_repo }}
+      TAG:  ${{ inputs.image_tag }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install yq
+      # yq via action officielle (pas d'installation manuelle)
+      - name: Ensure images[] exists
+        uses: mikefarah/yq@v4.44.3
+        with:
+          cmd: yq -i '.images = (.images // [])' "${{ env.FILE }}"
+
+      - name: Upsert image entry
+        uses: mikefarah/yq@v4.44.3
+        with:
+          cmd: |
+            # met à jour si .images[].name == NAME, sinon ajoute
+            if yq '.images[] | select(.name == env(NAME))' "${{ env.FILE }}" >/dev/null 2>&1; then
+              yq -i '(.images[] | select(.name == env(NAME)).newName) = env(REPO) |
+                     (.images[] | select(.name == env(NAME)).newTag)  = env(TAG)' "${{ env.FILE }}"
+            else
+              yq -i '.images += [{"name": env(NAME), "newName": env(REPO), "newTag": env(TAG)}]' "${{ env.FILE }}"
+            fi
+
+      - name: Show diff & detect changes
+        id: diff
         run: |
           set -euo pipefail
-          mkdir -p "$HOME/bin"
-          curl -fsSL https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64 -o "$HOME/bin/yq"
-          chmod +x "$HOME/bin/yq"
-          echo "$HOME/bin" >> "$GITHUB_PATH"
-          yq --version
-      - name: Patch apps/whoami/kustomization.yaml
-        id: patch
-        env:
-          FILE: apps/whoami/kustomization.yaml
-          NAME: whoami
-          REPO: ${{ inputs.image_repo }}
-          TAG:  ${{ inputs.image_tag }}
-        run: |
-          set -euo pipefail
-          test -f "$FILE" || { echo "Introuvable: $FILE"; exit 1; }
-          # Garantir le bloc images[]
-          if ! yq '.images' "$FILE" >/dev/null 2>&1; then yq -i '.images = []' "$FILE"; fi
-          # Update/insert l'entrée par name
-          if yq '.images[] | select(.name == env(NAME))' "$FILE" >/dev/null 2>&1; then
-            yq -i '(.images[] | select(.name == env(NAME)).newName) = env(REPO) | (.images[] | select(.name == env(NAME)).newTag) = env(TAG)' "$FILE"
+          git status --porcelain
+          if git diff --quiet --exit-code -- "${FILE}"; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes."
           else
-            yq -i '.images += [{"name": env(NAME), "newName": env(REPO), "newTag": env(TAG)}]' "$FILE"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "----- DIFF -----"
+            git --no-pager diff -- "${FILE}" || true
           fi
-          echo "file=$FILE" >> $GITHUB_OUTPUT
 
       - name: Create PR
+        if: steps.diff.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          commit-message: "chore(whoami): bump to ${{ inputs.image_repo }}:${{ inputs.image_tag }}"
-          title: "chore(whoami): ${{ inputs.image_repo }}:${{ inputs.image_tag }}"
-          body: "Path: `${{ steps.patch.outputs.file }}`"
-          branch: chore/whoami-bump-${{ github.run_id }}
-          labels: |
-            auto
-            whoami
-            kustomize
-
+          # si ton repo autorise le GITHUB_TOKEN en écriture, c'est suffisant
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(whoami): bump to ${{ env.REPO }}:${{ env.TAG }}"
+          title: "chore(whoami): ${{ env.REPO }}:${{ env.TAG }}"
+          body: |
+            Update `${{ env.FILE }}`
+            - images[].name: ${{ env.NAME }}
+            - newName: ${{ env.REPO }}
+            - newTag:  ${{ env.TAG }}
+          branch: bump/whoami
+          branch-suffix: timestamp
+          delete-branch: true
+          labels: bump, whoami, kustomize
