@@ -1,0 +1,2 @@
+helm install arc-runner-set --namespace arc-runners --create-namespace --set githubConfigUrl=https://github.com/loicgo29/nudger-gitops --set githubConfigSecret.github_token=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 oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
+helm install arc     --namespace arc-runners     --create-namespace     oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
