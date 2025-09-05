@@ -20,7 +20,7 @@ on:
 
 jobs:
   bump:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nudger-gitops]
     steps:
       - uses: actions/checkout@v4
 
