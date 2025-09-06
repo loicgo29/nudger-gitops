@@ -15,6 +15,14 @@ spec:
     volumeMounts:
     - mountPath: /data
       name: test-volume
+    securityContext:
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      capabilities:
+        drop: ["ALL"]
+      seccompProfile:
+        type: RuntimeDefault  
   volumes:
   - name: test-volume
     persistentVolumeClaim:
