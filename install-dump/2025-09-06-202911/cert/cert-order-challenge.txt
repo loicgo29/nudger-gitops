@@ -1,0 +1,5 @@
+NAMESPACE   NAME                                     READY   SECRET       ISSUER                STATUS                                          AGE
+whoami      certificate.cert-manager.io/whoami-tls   True    whoami-tls   letsencrypt-staging   Certificate is up to date and has not expired   4h17m
+
+NAMESPACE   NAME                                                 STATE   ISSUER                REASON   AGE
+whoami      order.acme.cert-manager.io/whoami-tls-1-1988155283   valid   letsencrypt-staging            4h17m

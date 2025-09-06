@@ -1,0 +1,11 @@
+NAME                                            READY   STATUS    RESTARTS   AGE   IP             NODE      NOMINATED NODE   READINESS GATES
+pod/ingress-nginx-controller-5b97d9c4df-n6926   1/1     Running   0          27m   10.244.0.202   master1   <none>           <none>
+
+NAME                               TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE   SELECTOR
+service/ingress-nginx-controller   NodePort   10.104.168.151   <none>        80:30080/TCP,443:30443/TCP   27m   app.kubernetes.io/component=controller,app.kubernetes.io/instance=ingress-nginx,app.kubernetes.io/name=ingress-nginx
+
+NAME                                       READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES                                                                                                                     SELECTOR
+deployment.apps/ingress-nginx-controller   1/1     1            1           27m   controller   registry.k8s.io/ingress-nginx/controller:v1.11.3@sha256:d56f135b6462cfc476447cfe564b83a45e8bb7da2774963b00d12161112270b7   app.kubernetes.io/component=controller,app.kubernetes.io/instance=ingress-nginx,app.kubernetes.io/name=ingress-nginx
+
+NAME                                                  DESIRED   CURRENT   READY   AGE   CONTAINERS   IMAGES                                                                                                                     SELECTOR
+replicaset.apps/ingress-nginx-controller-5b97d9c4df   1         1         1       27m   controller   registry.k8s.io/ingress-nginx/controller:v1.11.3@sha256:d56f135b6462cfc476447cfe564b83a45e8bb7da2774963b00d12161112270b7   app.kubernetes.io/component=controller,app.kubernetes.io/instance=ingress-nginx,app.kubernetes.io/name=ingress-nginx,pod-template-hash=5b97d9c4df

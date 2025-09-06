@@ -1,0 +1,49 @@
+apiVersion: v1
+items:
+- apiVersion: source.toolkit.fluxcd.io/v1
+  kind: GitRepository
+  metadata:
+    annotations:
+      reconcile.fluxcd.io/requestedAt: "2025-09-06T20:12:02.142960124Z"
+    creationTimestamp: "2025-09-01T11:17:23Z"
+    finalizers:
+    - finalizers.fluxcd.io
+    generation: 2
+    name: gitops
+    namespace: flux-system
+    resourceVersion: "1600667"
+    uid: cdef13ed-c1eb-49f9-8030-c938a8bbf14f
+  spec:
+    interval: 100m
+    ref:
+      branch: main
+    secretRef:
+      name: gitops-credentials
+    timeout: 60s
+    url: https://github.com/loicgo29/nudger-gitops.git
+  status:
+    artifact:
+      digest: sha256:3aa560d8337606537d2dcc2488fe11a6d526eb83e6a3e95e0516cf3b53118d95
+      lastUpdateTime: "2025-09-06T20:12:00Z"
+      path: gitrepository/flux-system/gitops/8ac6d4a61b63e01145e3441703581edfcc8fb776.tar.gz
+      revision: main@sha1:8ac6d4a61b63e01145e3441703581edfcc8fb776
+      size: 58068
+      url: http://source-controller.flux-system.svc.cluster.local./gitrepository/flux-system/gitops/8ac6d4a61b63e01145e3441703581edfcc8fb776.tar.gz
+    conditions:
+    - lastTransitionTime: "2025-09-06T20:12:00Z"
+      message: stored artifact for revision 'main@sha1:8ac6d4a61b63e01145e3441703581edfcc8fb776'
+      observedGeneration: 2
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    - lastTransitionTime: "2025-09-06T20:12:00Z"
+      message: stored artifact for revision 'main@sha1:8ac6d4a61b63e01145e3441703581edfcc8fb776'
+      observedGeneration: 2
+      reason: Succeeded
+      status: "True"
+      type: ArtifactInStorage
+    lastHandledReconcileAt: "2025-09-06T20:12:02.142960124Z"
+    observedGeneration: 2
+kind: List
+metadata:
+  resourceVersion: ""

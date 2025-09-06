@@ -1,0 +1,10 @@
+NAME         READY   STATUS    RESTARTS      AGE   IP            NODE      NOMINATED NODE   READINESS GATES
+pod/loki-0   1/1     Running   3 (13h ago)   33h   10.244.0.14   master1   <none>           <none>
+
+NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE   SELECTOR
+service/loki              ClusterIP   10.99.113.119   <none>        3100/TCP   34h   app=loki,release=loki
+service/loki-headless     ClusterIP   None            <none>        3100/TCP   34h   app=loki,release=loki
+service/loki-memberlist   ClusterIP   None            <none>        7946/TCP   34h   app=loki,release=loki
+
+NAME                    READY   AGE   CONTAINERS   IMAGES
+statefulset.apps/loki   1/1     34h   loki         grafana/loki:2.9.3

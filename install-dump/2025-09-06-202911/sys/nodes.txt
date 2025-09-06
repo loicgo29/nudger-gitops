@@ -1,0 +1,2 @@
+NAME      STATUS   ROLES           AGE    VERSION    INTERNAL-IP    EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION       CONTAINER-RUNTIME
+master1   Ready    control-plane   5d9h   v1.31.12   91.98.16.184   <none>        Ubuntu 22.04.5 LTS   5.15.0-153-generic   containerd://1.7.27

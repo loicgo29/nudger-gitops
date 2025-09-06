@@ -1,0 +1,18 @@
+NAME                                           READY   STATUS    RESTARTS   AGE
+pod/cert-manager-7f77f84594-vjps2              1/1     Running   0          7h18m
+pod/cert-manager-cainjector-5f66d7bc74-fd2jk   1/1     Running   0          7h18m
+pod/cert-manager-webhook-676797f984-rq52b      1/1     Running   0          7h18m
+
+NAME                           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/cert-manager           ClusterIP   10.109.145.15   <none>        9402/TCP   7h18m
+service/cert-manager-webhook   ClusterIP   10.102.87.65    <none>        443/TCP    7h18m
+
+NAME                                      READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/cert-manager              1/1     1            1           7h18m
+deployment.apps/cert-manager-cainjector   1/1     1            1           7h18m
+deployment.apps/cert-manager-webhook      1/1     1            1           7h18m
+
+NAME                                                 DESIRED   CURRENT   READY   AGE
+replicaset.apps/cert-manager-7f77f84594              1         1         1       7h18m
+replicaset.apps/cert-manager-cainjector-5f66d7bc74   1         1         1       7h18m
+replicaset.apps/cert-manager-webhook-676797f984      1         1         1       7h18m

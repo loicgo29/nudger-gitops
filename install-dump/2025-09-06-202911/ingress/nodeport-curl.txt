@@ -1,0 +1,23 @@
+# Test HTTP NodePort
+curl -I http://91.98.16.184:30080 -H 'Host: whoami.91-98-16-184.nip.io'
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0   456    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+HTTP/1.1 200 OK
+Date: Sat, 06 Sep 2025 20:29:17 GMT
+Content-Type: text/plain; charset=utf-8
+Content-Length: 456
+Connection: keep-alive
+
+
+# Test HTTPS NodePort (insecure)
+curl -kI https://91.98.16.184:30443 -H 'Host: whoami.91-98-16-184.nip.io'
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0   460    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+HTTP/2 200 
+date: Sat, 06 Sep 2025 20:29:17 GMT
+content-type: text/plain; charset=utf-8
+content-length: 460
+strict-transport-security: max-age=31536000; includeSubDomains
+
