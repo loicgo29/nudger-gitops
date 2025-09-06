@@ -1,0 +1,19 @@
+name: automerge
+on:
+  pull_request:
+    types: [labeled, synchronize]
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    if: contains(github.event.pull_request.labels.*.name, 'automerge')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: peter-evans/enable-pull-request-automerge@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: squash
