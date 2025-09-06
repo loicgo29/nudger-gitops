@@ -3,5 +3,4 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - helmrepository.yaml
-  - storageclass-longhorn.yaml
   - storageclass-longhorn-db.yaml

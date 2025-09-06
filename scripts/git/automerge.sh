@@ -16,8 +16,8 @@ echo "➡️ Fusion de $CURRENT_BRANCH dans main ..."
 git checkout main
 git pull --ff-only origin main
 
-# Merger la branche courante
-git merge --no-ff "$CURRENT_BRANCH"
+# Merger la branche courante avec un message auto
+git merge --no-ff "$CURRENT_BRANCH" -m "merge branch '$CURRENT_BRANCH' into main"
 
 # Push vers le remote
 git push origin main
@@ -25,4 +25,4 @@ git push origin main
 # Supprimer la branche locale
 git branch -d "$CURRENT_BRANCH"
 
-echo "✅ Branche $CURRENT_BRANCH mergée dans main et supprimée."
+echo "✅ Branche $CURRENT_BRANCH mergée dans main avec commit auto et supprimée."

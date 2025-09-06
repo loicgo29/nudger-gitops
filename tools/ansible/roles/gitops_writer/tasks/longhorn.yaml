@@ -63,25 +63,6 @@
           ingress:
             enabled: false
 
-- name: storageclass-longhorn.yaml (default)
-  ansible.builtin.copy:
-    dest: "{{ gitops_root }}/infra/longhorn/base/storageclass-longhorn.yaml"
-    mode: "0644"
-    content: |
-      apiVersion: storage.k8s.io/v1
-      kind: StorageClass
-      metadata:
-        name: longhorn
-        annotations:
-          storageclass.kubernetes.io/is-default-class: "true"
-      provisioner: driver.longhorn.io
-      reclaimPolicy: Retain
-      allowVolumeExpansion: true
-      volumeBindingMode: Immediate
-      parameters:
-        numberOfReplicas: "1"
-        dataLocality: "best-effort"
-        fsType: ext4
 
 - name: storageclass-longhorn-db.yaml (xfs, WFFC)
   ansible.builtin.copy:
