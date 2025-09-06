@@ -20,13 +20,9 @@ spec:
     remediation: { retries: 3 }
   values:
     controller:
-      service:
-        type: NodePort
-        nodePorts:
-          http: 30080
-          https: 30443
-      admissionWebhooks:
-        enabled: false
-        patch:
-          enabled: false
-
+      kind: DaemonSet
+      hostPort:
+        enabled: true
+        ports:
+          http: 80
+          https: 443
