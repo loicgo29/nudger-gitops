@@ -4,7 +4,7 @@ metadata:
   name: ingress-nginx
   namespace: ingress-nginx
 spec:
-  interval: 1m           # << OBLIGATOIRE
+  interval: 1m # << OBLIGATOIRE
   chart:
     spec:
       chart: ingress-nginx
@@ -14,15 +14,19 @@ spec:
         name: ingress-nginx
         namespace: flux-system
   install:
-    remediation: { retries: 3 }
+    remediation: {retries: 3}
     timeout: 10m
   upgrade:
-    remediation: { retries: 3 }
+    remediation: {retries: 3}
   values:
     controller:
-      kind: DaemonSet
-      hostPort:
-        enabled: true
-        ports:
-          http: 80
-          https: 443
+      kind: Deployment
+      admissionWebhooks:
+        enabled: false
+        patch:
+          enabled: false
+      service:
+        type: NodePort
+        nodePorts:
+          http: 30080
+          https: 30443
