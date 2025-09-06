@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   image: ghcr.io/loicgo29/whoami
-  interval: 1m
+  interval: 100m
   filterTags:
     pattern: '^v?(?P<version>\d+\.\d+\.\d+)(?:[-+].*)?$'
     extract: '$version'
