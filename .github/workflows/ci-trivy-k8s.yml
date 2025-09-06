@@ -28,11 +28,7 @@ jobs:
                                    # Fallback si la clé exacte n’existe pas
 
       - name: Run Trivy (misconfig + secrets)
-        run: |                     # Lancement Trivy via ton script maison
-          TRIVY_SEVERITY="CRITICAL,HIGH" TRIVY_EXIT_CODE=1 \
-          ./scripts/ci-on-pr/trivy.sh k8s . \
-            --skip-dirs "smoke-tests" \
-            --ignorefile .trivyignore
+        run: ./scripts/ci-on-pr/trivy-k8s.sh .
                                    # -> Analyse Kubernetes Manifests + secrets
                                    # -> Échoue si CRITICAL/HIGH trouvés
 
