@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: whoami.localtest.me
+    - host: whoami.91-98-16-184.nip.io
       http:
         paths:
           - path: /
