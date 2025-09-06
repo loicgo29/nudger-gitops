@@ -1,14 +1,7 @@
-<<<<<<< HEAD
-resources:
-  - namespace.yaml
-  - helmrepository.yaml
-  - helmrelease.yaml
-  - storageclass-longhorn.yaml
-  - storageclass-longhorn-db.yaml
-=======
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - namespace.yaml
   - helmrepository.yaml
->>>>>>> e35f5cc (clean)
+  - storageclass-longhorn.yaml
+  - storageclass-longhorn-db.yaml
