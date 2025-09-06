@@ -15,8 +15,6 @@ spec:
   path: apps/whoami
   dependsOn:
     - name: ingress-nginx
-=======
 resources:
   - ../../apps/whoami
   - ../../infra/longhorn/overlays/lab
->>>>>>> e35f5cc (clean)
