@@ -28,16 +28,20 @@ jobs:
                                    # Fallback si la clé exacte n’existe pas
 
       - name: Run Trivy (misconfig + secrets)
-        run: |                     # Lancement Trivy via ton script maison
-          TRIVY_SEVERITY="CRITICAL,HIGH" TRIVY_EXIT_CODE=1 \
-          ./scripts/ci-on-pr/trivy.sh k8s .
+        run: ./scripts/ci-on-pr/trivy-k8s.sh .
                                    # -> Analyse Kubernetes Manifests + secrets
                                    # -> Échoue si CRITICAL/HIGH trouvés
 
       - name: SARIF (misconfig)
         if: always()               # Exécuté même si l’étape précédente échoue
-        run: trivy config --format sarif -o trivy-k8s.sarif .
-                                   # Génère un rapport SARIF (format sécurité GitHub)
+          run: |
+            trivy config . \
+              --format sarif \
+              --output trivy-k8s.sarif \
+              --exit-code 0 \
+              --skip-dirs "smoke-tests" \
+              --ignorefile .trivyignore
+          # Génère un rapport SARIF (format sécurité GitHub)
                                    # basé sur l’analyse "config" (misconfigs YAML)
 
       - name: Upload SARIF

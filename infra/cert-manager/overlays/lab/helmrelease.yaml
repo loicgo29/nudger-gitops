@@ -19,8 +19,8 @@ spec:
   upgrade:
     remediation: { retries: 3 }
   values:
-    installCRDs: true
     extraArgs:
-      - --dns01-recursive-nameservers-only
+      - --v=2
+    installCRDs: true
     podSecurityContext:
       seccompProfile: { type: RuntimeDefault }

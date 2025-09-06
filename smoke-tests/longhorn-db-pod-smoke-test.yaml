@@ -3,6 +3,11 @@ kind: Pod
 metadata:
   name: longhorn-smoke-pod-db
 spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000 
   containers:
   - name: tester
     image: busybox
@@ -10,6 +15,14 @@ spec:
     volumeMounts:
     - mountPath: /data
       name: test-volume
+    securityContext:
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      capabilities:
+        drop: ["ALL"]
+      seccompProfile:
+        type: RuntimeDefault
   volumes:
   - name: test-volume
     persistentVolumeClaim:
