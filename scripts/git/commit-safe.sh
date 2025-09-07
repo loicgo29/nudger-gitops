@@ -61,4 +61,10 @@ fi
 echo "➡️ Commit sur '$branch' avec : \"$msg\""
 git add -A
 git commit -m "$msg" -n
+# ... après le commit, juste avant le push :
+echo "🔄 Sync avec origin/main (fetch + rebase autostash)"
+git fetch origin
+git rebase --autostash origin/main
+
+echo "🚀 Push"
 git push -u origin "$branch"
