@@ -23,12 +23,13 @@ timeout: 10m
     remediation: {retries: 3}
   values:
     controller:
-      kind: DaemonSet
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
+      kind: Deployment
       admissionWebhooks:
         enabled: false
         patch:
           enabled: false
       service:
-        type: ClusterIP
+        type: NodePort
+        nodePorts:
+          http: 30080
+          https: 30443
