@@ -1,0 +1,50 @@
+# cloudflared.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflared
+  namespace: observability
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: cloudflared } }
+  template:
+    metadata: { labels: { app: cloudflared } }
+    spec:
+      containers:
+      - name: cloudflared
+        image: cloudflare/cloudflared:latest
+        args:
+          - tunnel
+          - --no-autoupdate
+          - run
+          - --token
+          - $(TUNNEL_TOKEN)
+        env:
+        - name: TUNNEL_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: cloudflared-cred
+              key: token   # (si tu as un token)
+        # Si tu as des "credentials.json" au lieu d’un token, utilise:
+        # args: ["tunnel","--no-autoupdate","run","--cred-file","/etc/cloudflared/credentials.json"]
+        volumeMounts:
+        - name: cred
+          mountPath: /etc/cloudflared
+      volumes:
+      - name: cred
+        secret:
+          secretName: cloudflared-cred
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflared-config
+  namespace: observability
+data:
+  config.yaml: |
+    tunnel: <TUNNEL-NAME-OU-ID>
+    credentials-file: /etc/cloudflared/credentials.json
+    ingress:
+      - hostname: grafana.nudger.logo-solutions.fr
+        service: http://kube-prometheus-stack-grafana.observability.svc.cluster.local:80
+      - service: http_status:404
