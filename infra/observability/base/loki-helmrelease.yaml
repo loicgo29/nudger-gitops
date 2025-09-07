@@ -7,13 +7,14 @@ spec:
   interval: 10m
   chart:
     spec:
-      sourceRef:
-        kind: HelmRepository
-        name: grafana
-        namespace: flux-system
-      chart: loki-stack
-      version: "2.9.3" # adapte si besoin
+      sourceRef: { kind: HelmRepository, name: grafana, namespace: flux-system }
+      chart: loki-stack              # 👈 tu utilises bien loki-stack
+      version: "2.10.2"              # 👈 corrige la version du CHART (pas de l’image)
   values:
+    grafana:
+      enabled: false                 # 👈 laisse à false (tu as Grafana à part)
+    promtail:
+      enabled: true
     loki:
       enabled: true
       auth_enabled: false
@@ -21,7 +22,3 @@ spec:
         enabled: true
         size: 10Gi
         storageClassName: longhorn
-    promtail:
-      enabled: true
-    grafana:
-      enabled: false  # tu as déjà Grafana via kube-prometheus-stack
