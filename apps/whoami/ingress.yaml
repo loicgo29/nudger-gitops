@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: whoami.91-98-16-184.nip.io
+    - host: whoami.nudger.logo-solutions.fr
       http:
         paths:
           - path: /
