@@ -24,7 +24,7 @@ spec:
         explore:
           logsPanel:
             defaultLogVolumeEnabled: false
-      enabled: false
+      enabled: true
       defaultDashboardsTimezone: "Europe/Paris"
       service:
         type: ClusterIP
