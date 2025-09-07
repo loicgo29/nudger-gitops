@@ -39,3 +39,6 @@ spec:
       explore:
         logsPanel:
           defaultLogVolumeEnabled: false
+    grafana:
+      plugins:
+        - grafana-lokiexplore-app

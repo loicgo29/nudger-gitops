@@ -1,0 +1,99 @@
+>> flux build kustomization apps -n flux-system
+flux build kustomization apps -n flux-system
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: whoami
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami
+  namespace: whoami
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: whoami
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whoami
+  namespace: whoami
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: whoami
+  template:
+    metadata:
+      labels:
+        app: whoami
+    spec:
+      containers:
+      - args:
+        - --port=8080
+        image: ghcr.io/loicgo29/whoami:1.11.1
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        name: whoami
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 1
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsGroup: 10001
+          runAsNonRoot: true
+          runAsUser: 10001
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "30"
+  name: whoami
+  namespace: whoami
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: whoami.nudger.logo-solutions.fr
+    http:
+      paths:
+      - backend:
+          service:
+            name: whoami
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+namespace/whoami configured (server dry run)
+service/whoami configured (server dry run)
+deployment.apps/whoami configured (server dry run)
+ingress.networking.k8s.io/whoami configured (server dry run)
