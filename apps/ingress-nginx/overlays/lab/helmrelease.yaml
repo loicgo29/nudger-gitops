@@ -20,13 +20,13 @@ spec:
     remediation: {retries: 3}
   values:
     controller:
-      kind: Deployment
+      kind: DaemonSet
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       admissionWebhooks:
         enabled: false
         patch:
           enabled: false
       service:
-        type: NodePort
-        nodePorts:
-          http: 30080
-          https: 30443
+        type: ClusterIP
+        externalTrafficPolicy: Local
