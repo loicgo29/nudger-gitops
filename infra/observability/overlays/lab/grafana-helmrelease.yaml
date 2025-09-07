@@ -97,7 +97,7 @@ spec:
         # Tu peux aussi charger depuis des Secrets :
         # foldersFromFilesStructure: true
       datasources:
-        enabled: true
+        enabled: false
         label: grafana_datasource
         labelValue: "1"
         searchNamespace: ALL
