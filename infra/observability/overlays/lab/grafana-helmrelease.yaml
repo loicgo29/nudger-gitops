@@ -31,17 +31,11 @@ spec:
             access: proxy
             url: http://loki.logging.svc.cluster.local:3100
             isDefault: false
-          - name: Loki
-            type: loki
-            access: proxy
-            url: http://loki.logging.svc.cluster.local:3100
-            isDefault: false
     persistence:
       enabled: true
       size: 5Gi
       storageClassName: longhorn   # adapte si besoin
-
-    grafana.ini:             # 👈 Ajout
+    grafana.ini:    
       explore:
         logsPanel:
           defaultLogVolumeEnabled: false
