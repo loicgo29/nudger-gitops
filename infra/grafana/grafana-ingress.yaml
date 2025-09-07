@@ -7,13 +7,13 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: grafana.91-98-16-184.nip.io   # <<< tirets !
+  - host: grafana.nudger.logo-solutions.fr
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: grafana
+            name: kube-prometheus-stack-grafana
             port:
               number: 80
