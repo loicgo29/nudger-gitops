@@ -1,0 +1,28 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: promtail
+  namespace: logging
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: promtail
+      version: 6.x.x
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: flux-system
+  values:
+    config:
+      clients:
+        - url: http://loki.logging.svc:3100/loki/api/v1/push
+      snippets:
+        pipelineStages:
+          - cri: {}   # parse logs CRI (containerd)
+    daemonset:
+      enabled: true
+    tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
