@@ -1,2 +1,0 @@
-NAME                       TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE   SELECTOR
-ingress-nginx-controller   NodePort   10.104.168.151   <none>        80:30080/TCP,443:30443/TCP   27m   app.kubernetes.io/component=controller,app.kubernetes.io/instance=ingress-nginx,app.kubernetes.io/name=ingress-nginx

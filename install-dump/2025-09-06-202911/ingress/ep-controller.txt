@@ -1,2 +1,0 @@
-NAME                       ENDPOINTS                          AGE
-ingress-nginx-controller   10.244.0.202:443,10.244.0.202:80   27m
