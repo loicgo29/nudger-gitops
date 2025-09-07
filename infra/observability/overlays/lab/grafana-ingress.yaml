@@ -5,8 +5,13 @@ metadata:
   namespace: observability
   annotations:
     kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - grafana.nudger.logo-solutions.fr
+      secretName: grafana-tls
   rules:
     - host: grafana.nudger.logo-solutions.fr
       http:
