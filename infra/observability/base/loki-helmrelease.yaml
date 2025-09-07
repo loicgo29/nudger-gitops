@@ -12,7 +12,7 @@ spec:
         name: grafana
         namespace: flux-system
       chart: loki-stack
-      version: ">=2.10.0" # adapte si besoin
+      version: "2.9.3" # adapte si besoin
   values:
     loki:
       enabled: true
