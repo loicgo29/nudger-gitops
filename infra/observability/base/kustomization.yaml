@@ -7,3 +7,4 @@ resources:
   - loki-datasource.yaml                # ← AJOUT
   - logging-namespace.yaml              # ← AJOUT
   - promtail-helmrelease.yaml  
+  - loki-helmrelease.yaml         # ← AJOUT
