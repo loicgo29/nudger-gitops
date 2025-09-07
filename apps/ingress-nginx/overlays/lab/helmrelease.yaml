@@ -23,7 +23,7 @@ spec:
     controller:
       kind: Deployment
       admissionWebhooks:
-        enabled: false
+        enabled: true
         patch:
           enabled: false
       service:
