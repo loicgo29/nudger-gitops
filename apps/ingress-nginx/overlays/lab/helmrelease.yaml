@@ -4,7 +4,7 @@ metadata:
   name: ingress-nginx
   namespace: ingress-nginx
 spec:
-  interval: 1m # << OBLIGATOIRE
+  interval: 1m
   chart:
     spec:
       chart: ingress-nginx
@@ -14,13 +14,11 @@ spec:
         name: ingress-nginx
         namespace: flux-system
   install:
-    remediation: {retries: 3}
-    timeout: 10m
     createNamespace: true
     remediation: { retries: 3 }
-timeout: 10m
+    timeout: 10m
   upgrade:
-    remediation: {retries: 3}
+    remediation: { retries: 3 }
   values:
     controller:
       kind: Deployment
