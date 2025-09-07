@@ -14,10 +14,13 @@ spec:
     grafana:
       enabled: false                 # 👈 laisse à false (tu as Grafana à part)
     promtail:
-      enabled: true
+      enabled: false
     loki:
       enabled: true
       auth_enabled: false
+      image:
+        repository: grafana/loki
+        tag: "2.9.3"
       persistence:
         enabled: true
         size: 10Gi
