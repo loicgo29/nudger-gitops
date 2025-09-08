@@ -1,0 +1,65 @@
+apiVersion: v1
+items:
+- apiVersion: source.toolkit.fluxcd.io/v1
+  kind: GitRepository
+  metadata:
+    annotations:
+      reconcile.fluxcd.io/requestedAt: "2025-09-08T11:18:21.063570895Z"
+    creationTimestamp: "2025-09-01T11:17:23Z"
+    finalizers:
+    - finalizers.fluxcd.io
+    generation: 4
+    name: gitops
+    namespace: flux-system
+    resourceVersion: "2202029"
+    uid: cdef13ed-c1eb-49f9-8030-c938a8bbf14f
+  spec:
+    interval: 100m
+    ref:
+      branch: main
+    secretRef:
+      name: gitops-credentials
+    timeout: 60s
+    url: https://github.com/loicgo29/nudger-gitops.git
+  status:
+    artifact:
+      digest: sha256:867377cb8559f2fb05c8cb51b07241d73fcd78eb77eb118c6eff999d16d032a8
+      lastUpdateTime: "2025-09-08T11:17:58Z"
+      path: gitrepository/flux-system/gitops/37a971067471445e399241f8ffb6aa0422a3b8b6.tar.gz
+      revision: main@sha1:37a971067471445e399241f8ffb6aa0422a3b8b6
+      size: 399825
+      url: http://source-controller.flux-system.svc.cluster.local./gitrepository/flux-system/gitops/37a971067471445e399241f8ffb6aa0422a3b8b6.tar.gz
+    conditions:
+    - lastTransitionTime: "2025-09-08T11:43:37Z"
+      message: reconciliation in progress
+      observedGeneration: 4
+      reason: ProgressingWithRetry
+      status: "True"
+      type: Reconciling
+    - lastTransitionTime: "2025-09-08T12:54:15Z"
+      message: 'failed to checkout and determine revision: unable to list remote for
+        ''https://github.com/loicgo29/nudger-gitops.git'': Get "https://github.com/loicgo29/nudger-gitops.git/info/refs?service=git-upload-pack":
+        dial tcp 140.82.121.3:443: connect: connection refused'
+      observedGeneration: 4
+      reason: GitOperationFailed
+      status: "False"
+      type: Ready
+    - lastTransitionTime: "2025-09-08T11:17:58Z"
+      message: stored artifact for revision 'main@sha1:37a971067471445e399241f8ffb6aa0422a3b8b6'
+      observedGeneration: 4
+      reason: Succeeded
+      status: "True"
+      type: ArtifactInStorage
+    - lastTransitionTime: "2025-09-08T12:54:15Z"
+      message: 'failed to checkout and determine revision: unable to list remote for
+        ''https://github.com/loicgo29/nudger-gitops.git'': Get "https://github.com/loicgo29/nudger-gitops.git/info/refs?service=git-upload-pack":
+        dial tcp 140.82.121.3:443: connect: connection refused'
+      observedGeneration: 4
+      reason: GitOperationFailed
+      status: "True"
+      type: FetchFailed
+    lastHandledReconcileAt: "2025-09-08T11:18:21.063570895Z"
+    observedGeneration: 4
+kind: List
+metadata:
+  resourceVersion: ""

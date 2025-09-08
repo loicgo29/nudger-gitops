@@ -1,0 +1,86 @@
+apiVersion: v1
+items:
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/whitelist-source-range: 0.0.0.0/0,::/0
+    creationTimestamp: "2025-09-08T07:52:24Z"
+    generateName: cm-acme-http-solver-
+    generation: 1
+    labels:
+      acme.cert-manager.io/http-domain: "3761376541"
+      acme.cert-manager.io/http-token: "1058213523"
+      acme.cert-manager.io/http01-solver: "true"
+    name: cm-acme-http-solver-xr55x
+    namespace: longhorn-system
+    ownerReferences:
+    - apiVersion: acme.cert-manager.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Challenge
+      name: longhorn-tls-1-394146762-2562472507
+      uid: 2d3fd422-8a3c-4c76-b133-77f95d149808
+    resourceVersion: "2123309"
+    uid: e152dd74-aa04-4549-8f28-99d6ecef46e1
+  spec:
+    rules:
+    - host: longhorn.nudger.logo-solutions.fr
+      http:
+        paths:
+        - backend:
+            service:
+              name: cm-acme-http-solver-gbpvt
+              port:
+                number: 8089
+          path: /.well-known/acme-challenge/zEJ9KlfgWipoa8KX807oDqGn9_5bzlXGA5TVuJGZmuc
+          pathType: ImplementationSpecific
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 10.111.78.164
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+      nginx.ingress.kubernetes.io/auth-realm: Authentication Required
+      nginx.ingress.kubernetes.io/auth-secret: longhorn-basic-auth
+      nginx.ingress.kubernetes.io/auth-type: basic
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
+      nginx.ingress.kubernetes.io/whitelist-source-range: 91.98.16.184/32
+    creationTimestamp: "2025-09-04T17:18:34Z"
+    generation: 2
+    labels:
+      kustomize.toolkit.fluxcd.io/name: infra-longhorn
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: longhorn-ui
+    namespace: longhorn-system
+    resourceVersion: "2158752"
+    uid: e0e0e9ba-9edb-4750-8d46-779b79d718ff
+  spec:
+    ingressClassName: nginx
+    rules:
+    - host: longhorn.nudger.logo-solutions.fr
+      http:
+        paths:
+        - backend:
+            service:
+              name: longhorn-frontend
+              port:
+                number: 80
+          path: /
+          pathType: Prefix
+    tls:
+    - hosts:
+      - longhorn.nudger.logo-solutions.fr
+      secretName: longhorn-tls
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 10.111.78.164
+kind: List
+metadata:
+  resourceVersion: ""

@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: smoke
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-smoke-script
+  namespace: smoke
+data:
+  nginx-smoke.sh: |
+    #!/usr/bin/env bash
+    set -euo pipefail
+    {{SCRIPT_CONTENT}}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nginx-smoke-external
+  namespace: smoke
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: curl
+          image: curlimages/curl:8.9.1
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh","-c"]
+          args: ["chmod +x /smoke/nginx-smoke.sh && /smoke/nginx-smoke.sh"]
+          env:
+            - name: HOST
+              value: "grafana.nudger.logo-solutions.fr"
+            - name: SCHEME
+              value: "https"
+            - name: PORT
+              value: "30443"
+            - name: PATH_CHECK
+              value: "/"
+            - name: RESOLVE_IP
+              value: "91.98.16.184"
+            - name: INSECURE
+              value: "true"
+            - name: EXPECT_CODES
+              value: "200,301,302"
+            - name: CHECK_REACH
+              value: "true"
+            - name: CHECK_REDIRECT
+              value: "true"
+            - name: CHECK_TLS
+              value: "true"
+            - name: CHECK_GZIP
+              value: "true"
+          volumeMounts:
+            - name: script
+              mountPath: /smoke
+      volumes:
+        - name: script
+          configMap:
+            name: nginx-smoke-script
+            defaultMode: 0755

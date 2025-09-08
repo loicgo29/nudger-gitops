@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: smoke
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smoke-grafana-script
+  namespace: smoke
+data:
+  smoke-curl.sh: |
+    #!/usr/bin/env bash
+    set -euo pipefail
+    {{SCRIPT_CONTENT}}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: smoke-grafana
+  namespace: smoke
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: curl
+          image: curlimages/curl:8.9.1
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh","-c"]
+          args:
+            - |
+              chmod +x /smoke/smoke-curl.sh
+              /smoke/smoke-curl.sh
+          env:
+            # 🔧 Adapte ces variables selon ton setup
+            - name: HOST
+              value: "grafana.logo-solutions.fr"     # FQDN de ton Ingress
+            - name: PATH_CHECK
+              value: "/login"                        # page publique attendue
+            - name: SCHEME
+              value: "https"
+            - name: PORT
+              value: ""                              # vide = 443 implicite
+            - name: EXPECT_CODES
+              value: "200,302"                      # Grafana renvoie souvent 302->/login
+            - name: EXPECT_BODY_REGEX
+              value: "Grafana|Sign in|Connexion"     # une des signatures possibles
+            - name: INSECURE
+              value: "false"                         # true si cert non valide
+            - name: FOLLOW_REDIRECTS
+              value: "true"
+            - name: RETRIES
+              value: "20"
+            - name: SLEEP_SECONDS
+              value: "5"
+            - name: TIMEOUT
+              value: "10"
+            # Si tu testes via IP + Host SNI (ex. NodePort/VM sans DNS), décommente:
+            # - name: RESOLVE_IP
+            #   value: "91.98.16.184"
+          volumeMounts:
+            - name: script
+              mountPath: /smoke
+      volumes:
+        - name: script
+          configMap:
+            name: smoke-grafana-script
+            defaultMode: 0755

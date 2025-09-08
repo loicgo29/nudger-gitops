@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nginx-controller-health
+  namespace: ingress-nginx
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: curl
+          image: curlimages/curl:8.9.1
+          command: ["/bin/sh","-c"]
+          args:
+            - |
+              set -euo pipefail
+              SVC="http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:10254/healthz"
+              for i in $(seq 1 20); do
+                code="$(curl -s -S --show-error -o /dev/null -w "%{http_code}" "$SVC" || true)"
+                echo "Try $i: /healthz => $code"
+                if [ "$code" = "200" ]; then
+                  echo "✅ controller /healthz OK"; exit 0
+                fi
+                sleep 3
+              done
+              echo "❌ controller /healthz KO"; exit 1

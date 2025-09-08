@@ -1,0 +1,1 @@
+5: cni0    inet 10.244.0.1/24 brd 10.244.0.255 scope global cni0\       valid_lft forever preferred_lft forever

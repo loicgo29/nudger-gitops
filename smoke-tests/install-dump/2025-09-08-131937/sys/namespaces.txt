@@ -1,0 +1,16 @@
+NAME              STATUS   AGE
+arc-runners       Active   3d
+arc-systems       Active   3d
+cert-manager      Active   2d
+default           Active   7d2h
+flux-system       Active   7d2h
+gha-runners       Active   3d18h
+ingress-nginx     Active   7d2h
+kube-flannel      Active   7d2h
+kube-node-lease   Active   7d2h
+kube-public       Active   7d2h
+kube-system       Active   7d2h
+logging           Active   3d3h
+longhorn-system   Active   4d
+observability     Active   3d20h
+whoami            Active   7d2h

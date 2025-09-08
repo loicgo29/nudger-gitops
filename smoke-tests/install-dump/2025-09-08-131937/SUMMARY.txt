@@ -1,0 +1,32 @@
+== RÉSUMÉ ==
+Dossier: ./install-dump/2025-09-08-131937
+
+Ingress:
+NAME                       TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE   SELECTOR
+ingress-nginx-controller   NodePort   10.111.78.164   <none>        80:30080/TCP,443:30443/TCP   32h   app.kubernetes.io/component=controller,app.kubernetes.io/instance=ingress-nginx,app.kubernetes.io/name=ingress-nginx
+
+Whoami:
+NAME     CLASS   HOSTS                             ADDRESS         PORTS   AGE
+whoami   nginx   whoami.nudger.logo-solutions.fr   10.111.78.164   80      7d2h
+
+Flux:
+NAMESPACE  	NAME                	REVISION          	SUSPENDED	READY  	MESSAGE                                                                                                                         
+flux-system	apps                	main@sha1:37a97106	False    	False  	dependency 'flux-system/infra-longhorn' is not ready                                                                           	
+flux-system	cert-manager        	main@sha1:37a97106	False    	True   	Applied revision: main@sha1:37a97106                                                                                           	
+flux-system	cert-manager-issuers	main@sha1:37a97106	False    	True   	Applied revision: main@sha1:37a97106                                                                                           	
+flux-system	infra-longhorn      	main@sha1:37a97106	False    	Unknown	Reconciliation in progress                                                                                                     	
+flux-system	ingress-nginx       	main@sha1:37a97106	False    	True   	Applied revision: main@sha1:37a97106                                                                                           	
+flux-system	lab-root            	main@sha1:37a97106	False    	True   	Applied revision: main@sha1:37a97106                                                                                           	
+flux-system	observability       	main@sha1:37a97106	False    	True   	Applied revision: main@sha1:37a97106                                                                                           	
+flux-system	sources             	main@sha1:37a97106	False    	False  	health check failed after 9m30.027655203s: timeout waiting for: [HelmRepository/flux-system/ingress-nginx status: 'InProgress']	
+flux-system	whoami              	main@sha1:37a97106	False    	True   	Applied revision: main@sha1:37a97106                                                                                           	
+
+NodePorts counters (iptables):
+Chain KUBE-NODEPORTS (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 KUBE-EXT-CG5I4G2RS3ZVWGLK  tcp  --  *      *       0.0.0.0/0            127.0.0.0/8          /* ingress-nginx/ingress-nginx-controller:http */ nfacct-name  localhost_nps_accepted_pkts
+   29  1850 KUBE-EXT-CG5I4G2RS3ZVWGLK  tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            /* ingress-nginx/ingress-nginx-controller:http */
+    0     0 KUBE-EXT-EDNDUDH2C75GIR6O  tcp  --  *      *       0.0.0.0/0            127.0.0.0/8          /* ingress-nginx/ingress-nginx-controller:https */ nfacct-name  localhost_nps_accepted_pkts
+    0     0 KUBE-EXT-EDNDUDH2C75GIR6O  tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            /* ingress-nginx/ingress-nginx-controller:https */
+    0     0 KUBE-EXT-TNNNYFLPHFEGJBFE  tcp  --  *      *       0.0.0.0/0            127.0.0.0/8          /* longhorn-system/cm-acme-http-solver-gbpvt:http */ nfacct-name  localhost_nps_accepted_pkts
+    0     0 KUBE-EXT-TNNNYFLPHFEGJBFE  tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            /* longhorn-system/cm-acme-http-solver-gbpvt:http */
