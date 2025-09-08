@@ -4,6 +4,7 @@ resources:
   - ../../base
   - params.yaml
   - clusterissuers.yaml
+  - namespace.yaml
 replacements:
   - source:
       kind: ConfigMap
