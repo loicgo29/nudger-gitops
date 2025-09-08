@@ -94,7 +94,6 @@ spec:
         label: grafana_dashboard
         labelValue: "1"
         searchNamespace: ALL
-        label: grafana_dashboard
         folder: "Kubernetes"
         # Tu peux aussi charger depuis des Secrets :
         # foldersFromFilesStructure: true
