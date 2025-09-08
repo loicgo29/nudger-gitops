@@ -4,4 +4,5 @@ resources:
   - infra.kustomization.yaml
   - ingress-nginx.kustomization.yaml
   - infra-longhorn.kustomization.yaml
+  - ingress-sources.kustomization.yaml
   - apps.kustomization.yaml
