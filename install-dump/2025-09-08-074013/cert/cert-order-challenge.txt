@@ -1,0 +1,7 @@
+NAMESPACE       NAME                                      READY   SECRET        ISSUER                 STATUS                                          AGE
+observability   certificate.cert-manager.io/grafana-tls   True    grafana-tls   letsencrypt-prod-dns   Certificate is up to date and has not expired   3h18m
+whoami          certificate.cert-manager.io/whoami-tls    True    whoami-tls    letsencrypt-staging    Certificate is up to date and has not expired   39h
+
+NAMESPACE       NAME                                                  STATE   ISSUER                 REASON   AGE
+observability   order.acme.cert-manager.io/grafana-tls-1-3356940101   valid   letsencrypt-prod-dns            3h18m
+whoami          order.acme.cert-manager.io/whoami-tls-1-1988155283    valid   letsencrypt-staging             39h

@@ -1,0 +1,37 @@
+NAME                                                       READY   STATUS    RESTARTS   AGE     IP             NODE      NOMINATED NODE   READINESS GATES
+pod/grafana-d5f64bccf-xfqdg                                2/2     Running   0          28m     10.244.0.84    master1   <none>           <none>
+pod/kube-prometheus-stack-operator-844d4cdd76-mxd87        1/1     Running   0          3h41m   10.244.0.61    master1   <none>           <none>
+pod/kube-prometheus-stack-prometheus-node-exporter-kd4dt   1/1     Running   0          3h41m   91.98.16.184   master1   <none>           <none>
+pod/netshoot                                               1/1     Running   0          3h39m   10.244.0.65    master1   <none>           <none>
+pod/prometheus-kube-prometheus-stack-prometheus-0          2/2     Running   0          3h41m   10.244.0.62    master1   <none>           <none>
+
+NAME                                                     TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE     SELECTOR
+service/grafana                                          ClusterIP   10.102.104.73    <none>        80/TCP              3h18m   app.kubernetes.io/instance=grafana,app.kubernetes.io/name=grafana
+service/kube-prometheus-stack-operator                   ClusterIP   10.108.123.244   <none>        443/TCP             3h41m   app=kube-prometheus-stack-operator,release=kube-prometheus-stack
+service/kube-prometheus-stack-prometheus                 ClusterIP   10.109.196.173   <none>        9090/TCP,8080/TCP   3h41m   app.kubernetes.io/name=prometheus,operator.prometheus.io/name=kube-prometheus-stack-prometheus
+service/kube-prometheus-stack-prometheus-node-exporter   ClusterIP   10.101.122.159   <none>        9100/TCP            3h41m   app.kubernetes.io/instance=kube-prometheus-stack,app.kubernetes.io/name=prometheus-node-exporter
+service/prometheus-operated                              ClusterIP   None             <none>        9090/TCP            3h41m   app.kubernetes.io/name=prometheus
+
+NAME                                                            DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE     CONTAINERS      IMAGES                                    SELECTOR
+daemonset.apps/kube-prometheus-stack-prometheus-node-exporter   1         1         1       1            1           kubernetes.io/os=linux   3h41m   node-exporter   quay.io/prometheus/node-exporter:v1.8.2   app.kubernetes.io/instance=kube-prometheus-stack,app.kubernetes.io/name=prometheus-node-exporter
+
+NAME                                             READY   UP-TO-DATE   AVAILABLE   AGE     CONTAINERS                     IMAGES                                                                 SELECTOR
+deployment.apps/grafana                          1/1     1            1           3h18m   grafana-sc-dashboard,grafana   quay.io/kiwigrid/k8s-sidecar:1.30.0,docker.io/grafana/grafana:11.6.1   app.kubernetes.io/instance=grafana,app.kubernetes.io/name=grafana
+deployment.apps/kube-prometheus-stack-operator   1/1     1            1           3h41m   kube-prometheus-stack          quay.io/prometheus-operator/prometheus-operator:v0.75.2                app=kube-prometheus-stack-operator,release=kube-prometheus-stack
+
+NAME                                                        DESIRED   CURRENT   READY   AGE     CONTAINERS                     IMAGES                                                                 SELECTOR
+replicaset.apps/grafana-58846857f6                          0         0         0       32m     grafana-sc-dashboard,grafana   quay.io/kiwigrid/k8s-sidecar:1.30.0,docker.io/grafana/grafana:11.6.1   app.kubernetes.io/instance=grafana,app.kubernetes.io/name=grafana,pod-template-hash=58846857f6
+replicaset.apps/grafana-5fc95bdf                            0         0         0       3h5m    grafana-sc-dashboard,grafana   quay.io/kiwigrid/k8s-sidecar:1.30.0,docker.io/grafana/grafana:11.6.1   app.kubernetes.io/instance=grafana,app.kubernetes.io/name=grafana,pod-template-hash=5fc95bdf
+replicaset.apps/grafana-64cd7c9fb7                          0         0         0       81m     grafana-sc-dashboard,grafana   quay.io/kiwigrid/k8s-sidecar:1.30.0,docker.io/grafana/grafana:11.6.1   app.kubernetes.io/instance=grafana,app.kubernetes.io/name=grafana,pod-template-hash=64cd7c9fb7
+replicaset.apps/grafana-65fc754c86                          0         0         0       3h4m    grafana-sc-dashboard,grafana   quay.io/kiwigrid/k8s-sidecar:1.30.0,docker.io/grafana/grafana:11.6.1   app.kubernetes.io/instance=grafana,app.kubernetes.io/name=grafana,pod-template-hash=65fc754c86
+replicaset.apps/grafana-6dc69c9d6b                          0         0         0       123m    grafana-sc-dashboard,grafana   quay.io/kiwigrid/k8s-sidecar:1.30.0,docker.io/grafana/grafana:11.6.1   app.kubernetes.io/instance=grafana,app.kubernetes.io/name=grafana,pod-template-hash=6dc69c9d6b
+replicaset.apps/grafana-7569ccdc5b                          0         0         0       59m     grafana-sc-dashboard,grafana   quay.io/kiwigrid/k8s-sidecar:1.30.0,docker.io/grafana/grafana:11.6.1   app.kubernetes.io/instance=grafana,app.kubernetes.io/name=grafana,pod-template-hash=7569ccdc5b
+replicaset.apps/grafana-77959b4b47                          0         0         0       55m     grafana-sc-dashboard,grafana   quay.io/kiwigrid/k8s-sidecar:1.30.0,docker.io/grafana/grafana:11.6.1   app.kubernetes.io/instance=grafana,app.kubernetes.io/name=grafana,pod-template-hash=77959b4b47
+replicaset.apps/grafana-79fc98d754                          0         0         0       60m     grafana-sc-dashboard,grafana   quay.io/kiwigrid/k8s-sidecar:1.30.0,docker.io/grafana/grafana:11.6.1   app.kubernetes.io/instance=grafana,app.kubernetes.io/name=grafana,pod-template-hash=79fc98d754
+replicaset.apps/grafana-86dc55f5d9                          0         0         0       3h1m    grafana-sc-dashboard,grafana   quay.io/kiwigrid/k8s-sidecar:1.30.0,docker.io/grafana/grafana:11.6.1   app.kubernetes.io/instance=grafana,app.kubernetes.io/name=grafana,pod-template-hash=86dc55f5d9
+replicaset.apps/grafana-c56874fcc                           0         0         0       79m     grafana-sc-dashboard,grafana   quay.io/kiwigrid/k8s-sidecar:1.30.0,docker.io/grafana/grafana:11.6.1   app.kubernetes.io/instance=grafana,app.kubernetes.io/name=grafana,pod-template-hash=c56874fcc
+replicaset.apps/grafana-d5f64bccf                           1         1         1       28m     grafana-sc-dashboard,grafana   quay.io/kiwigrid/k8s-sidecar:1.30.0,docker.io/grafana/grafana:11.6.1   app.kubernetes.io/instance=grafana,app.kubernetes.io/name=grafana,pod-template-hash=d5f64bccf
+replicaset.apps/kube-prometheus-stack-operator-844d4cdd76   1         1         1       3h41m   kube-prometheus-stack          quay.io/prometheus-operator/prometheus-operator:v0.75.2                app=kube-prometheus-stack-operator,pod-template-hash=844d4cdd76,release=kube-prometheus-stack
+
+NAME                                                           READY   AGE     CONTAINERS                   IMAGES
+statefulset.apps/prometheus-kube-prometheus-stack-prometheus   1/1     3h41m   prometheus,config-reloader   quay.io/prometheus/prometheus:v2.54.0,quay.io/prometheus-operator/prometheus-config-reloader:v0.75.2

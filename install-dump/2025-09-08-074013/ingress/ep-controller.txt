@@ -1,0 +1,2 @@
+NAME                       ENDPOINTS                          AGE
+ingress-nginx-controller   91.98.16.184:443,91.98.16.184:80   26h

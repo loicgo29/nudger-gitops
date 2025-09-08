@@ -1,0 +1,25 @@
+== RÉSUMÉ ==
+Dossier: ./install-dump/2025-09-08-074013
+
+Ingress:
+NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE   SELECTOR
+ingress-nginx-controller   ClusterIP   10.111.78.164   <none>        80/TCP,443/TCP   26h   app.kubernetes.io/component=controller,app.kubernetes.io/instance=ingress-nginx,app.kubernetes.io/name=ingress-nginx
+
+Whoami:
+NAME     CLASS   HOSTS                             ADDRESS         PORTS   AGE
+whoami   nginx   whoami.nudger.logo-solutions.fr   10.111.78.164   80      6d20h
+
+Flux:
+NAMESPACE  	NAME                	REVISION          	SUSPENDED	READY	MESSAGE                              
+flux-system	apps                	main@sha1:82be0e14	False    	True 	Applied revision: main@sha1:82be0e14	
+flux-system	cert-manager        	main@sha1:82be0e14	False    	True 	Applied revision: main@sha1:82be0e14	
+flux-system	cert-manager-issuers	main@sha1:82be0e14	False    	True 	Applied revision: main@sha1:82be0e14	
+flux-system	infra-longhorn      	main@sha1:82be0e14	False    	True 	Applied revision: main@sha1:82be0e14	
+flux-system	ingress-nginx       	main@sha1:82be0e14	False    	True 	Applied revision: main@sha1:82be0e14	
+flux-system	lab-root            	main@sha1:82be0e14	False    	True 	Applied revision: main@sha1:82be0e14	
+flux-system	observability       	main@sha1:82be0e14	False    	True 	Applied revision: main@sha1:82be0e14	
+flux-system	whoami              	main@sha1:82be0e14	False    	True 	Applied revision: main@sha1:82be0e14	
+
+NodePorts counters (iptables):
+Chain KUBE-NODEPORTS (1 references)
+ pkts bytes target     prot opt in     out     source               destination         

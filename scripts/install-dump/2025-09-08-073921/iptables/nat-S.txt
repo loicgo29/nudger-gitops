@@ -1,0 +1,193 @@
+-P PREROUTING ACCEPT
+-P INPUT ACCEPT
+-P OUTPUT ACCEPT
+-P POSTROUTING ACCEPT
+-N DOCKER
+-N FLANNEL-POSTRTG
+-N KUBE-KUBELET-CANARY
+-N KUBE-MARK-MASQ
+-N KUBE-NODEPORTS
+-N KUBE-POSTROUTING
+-N KUBE-PROXY-CANARY
+-N KUBE-SEP-42HHU7KTSEQQMHVI
+-N KUBE-SEP-5SFWUAPE7EOMZ7SK
+-N KUBE-SEP-6O4SRZAZSEIY5VW4
+-N KUBE-SEP-73PS7HRC6U73N4K5
+-N KUBE-SEP-B3RMR4KDTV67RTGW
+-N KUBE-SEP-C5S3TXQNGOR6IHYL
+-N KUBE-SEP-DIY7K5HEWYAI56CJ
+-N KUBE-SEP-FEIN473MDYAZ2PEZ
+-N KUBE-SEP-FUV4MECLAIR2OJLR
+-N KUBE-SEP-HWBIQIEFV2RYFZ45
+-N KUBE-SEP-JK2EJC4Q2CE66NQY
+-N KUBE-SEP-MMQX5WT32FKRJIXH
+-N KUBE-SEP-N6QWYJD2PPBCQNGS
+-N KUBE-SEP-NI6EZWULIRGLLBGD
+-N KUBE-SEP-NZIJA3WKPMR6MKLM
+-N KUBE-SEP-O6F2LINRX4DJ5P2F
+-N KUBE-SEP-OB7ZHFGJOAC2WVTC
+-N KUBE-SEP-PD7ZQ5AD4WY5POF5
+-N KUBE-SEP-PMS3PVW3F6VN7ZCB
+-N KUBE-SEP-QBKQZR66AFJUHFSU
+-N KUBE-SEP-RCPS6RGFDNBHQALK
+-N KUBE-SEP-REZNDG7PS4GBIDDE
+-N KUBE-SEP-RZKVZ5K5FODBBON3
+-N KUBE-SEP-TEAPQMIQ7V64PDNJ
+-N KUBE-SEP-UEBJQRCEMTQVJNNU
+-N KUBE-SEP-ULJJKFSC4YGIFRKX
+-N KUBE-SEP-WYF5MQOXI2X726RO
+-N KUBE-SEP-YTNLWO5XLFDVNMET
+-N KUBE-SEP-ZYTNSR7KHGIVBVV7
+-N KUBE-SERVICES
+-N KUBE-SVC-23PZZN2UKY3TJBX2
+-N KUBE-SVC-4W2AJSVLC4TCPD3X
+-N KUBE-SVC-5P7QYFVHGOC5IOJ6
+-N KUBE-SVC-CG5I4G2RS3ZVWGLK
+-N KUBE-SVC-DZOWW63ZZHJ73RZG
+-N KUBE-SVC-E3IBCFULSWKQCT47
+-N KUBE-SVC-EDNDUDH2C75GIR6O
+-N KUBE-SVC-ELE3EOWUPGZLKWXO
+-N KUBE-SVC-ERIFXISQEP7F7OF4
+-N KUBE-SVC-JD5MR3NA4I4DYORP
+-N KUBE-SVC-MZHGT6CDAGMW2KTF
+-N KUBE-SVC-NGSMBSSFRDULITT4
+-N KUBE-SVC-NPX46M4PTMTKRN6Y
+-N KUBE-SVC-NQL64TY2T3FWFXFQ
+-N KUBE-SVC-OKOAGQILQ2QU2JM4
+-N KUBE-SVC-S4EMHPZ44GDBMEWI
+-N KUBE-SVC-SLR7RBONOEYPJ4X2
+-N KUBE-SVC-TCOU7JCQXEZGVUNU
+-N KUBE-SVC-TD5WHLPT5YWZCX2A
+-N KUBE-SVC-TYVUZ72JN6SHFAXC
+-N KUBE-SVC-U7SXUNEARU4YPLE2
+-N KUBE-SVC-VCJD5DMHTZGOKGNJ
+-N KUBE-SVC-ZUD4L6KQKCHD52W4
+-A PREROUTING -m comment --comment "kubernetes service portals" -j KUBE-SERVICES
+-A PREROUTING -m addrtype --dst-type LOCAL -j DOCKER
+-A OUTPUT -m comment --comment "kubernetes service portals" -j KUBE-SERVICES
+-A OUTPUT ! -d 127.0.0.0/8 -m addrtype --dst-type LOCAL -j DOCKER
+-A POSTROUTING -m comment --comment "kubernetes postrouting rules" -j KUBE-POSTROUTING
+-A POSTROUTING -s 172.17.0.0/16 ! -o docker0 -j MASQUERADE
+-A POSTROUTING -m comment --comment "flanneld masq" -j FLANNEL-POSTRTG
+-A DOCKER -i docker0 -j RETURN
+-A FLANNEL-POSTRTG -m comment --comment "flanneld masq" -j RETURN
+-A FLANNEL-POSTRTG -s 10.244.0.0/24 -d 10.244.0.0/16 -m comment --comment "flanneld masq" -j RETURN
+-A FLANNEL-POSTRTG -s 10.244.0.0/16 -d 10.244.0.0/24 -m comment --comment "flanneld masq" -j RETURN
+-A FLANNEL-POSTRTG ! -s 10.244.0.0/16 -d 10.244.0.0/24 -m comment --comment "flanneld masq" -j RETURN
+-A FLANNEL-POSTRTG -s 10.244.0.0/16 ! -d 224.0.0.0/4 -m comment --comment "flanneld masq" -j MASQUERADE --random-fully
+-A FLANNEL-POSTRTG ! -s 10.244.0.0/16 -d 10.244.0.0/16 -m comment --comment "flanneld masq" -j MASQUERADE --random-fully
+-A KUBE-MARK-MASQ -j MARK --set-xmark 0x4000/0x4000
+-A KUBE-POSTROUTING -j RETURN
+-A KUBE-POSTROUTING -j MARK --set-xmark 0x4000/0x0
+-A KUBE-POSTROUTING -m comment --comment "kubernetes service traffic requiring SNAT" -j MASQUERADE --random-fully
+-A KUBE-SEP-42HHU7KTSEQQMHVI -s 10.244.0.24/32 -m comment --comment "longhorn-system/longhorn-admission-webhook:admission-webhook" -j KUBE-MARK-MASQ
+-A KUBE-SEP-42HHU7KTSEQQMHVI -p tcp -m comment --comment "longhorn-system/longhorn-admission-webhook:admission-webhook" -m tcp -j DNAT --to-destination 10.244.0.24:9502
+-A KUBE-SEP-5SFWUAPE7EOMZ7SK -s 91.98.16.184/32 -m comment --comment "ingress-nginx/ingress-nginx-controller:http" -j KUBE-MARK-MASQ
+-A KUBE-SEP-5SFWUAPE7EOMZ7SK -p tcp -m comment --comment "ingress-nginx/ingress-nginx-controller:http" -m tcp -j DNAT --to-destination 91.98.16.184:80
+-A KUBE-SEP-6O4SRZAZSEIY5VW4 -s 91.98.16.184/32 -m comment --comment "observability/kube-prometheus-stack-prometheus-node-exporter:http-metrics" -j KUBE-MARK-MASQ
+-A KUBE-SEP-6O4SRZAZSEIY5VW4 -p tcp -m comment --comment "observability/kube-prometheus-stack-prometheus-node-exporter:http-metrics" -m tcp -j DNAT --to-destination 91.98.16.184:9100
+-A KUBE-SEP-73PS7HRC6U73N4K5 -s 10.244.0.34/32 -m comment --comment "flux-system/source-controller:http" -j KUBE-MARK-MASQ
+-A KUBE-SEP-73PS7HRC6U73N4K5 -p tcp -m comment --comment "flux-system/source-controller:http" -m tcp -j DNAT --to-destination 10.244.0.34:9090
+-A KUBE-SEP-B3RMR4KDTV67RTGW -s 10.244.0.23/32 -m comment --comment "whoami/whoami" -j KUBE-MARK-MASQ
+-A KUBE-SEP-B3RMR4KDTV67RTGW -p tcp -m comment --comment "whoami/whoami" -m tcp -j DNAT --to-destination 10.244.0.23:8080
+-A KUBE-SEP-C5S3TXQNGOR6IHYL -s 10.244.0.24/32 -m comment --comment "longhorn-system/longhorn-backend:manager" -j KUBE-MARK-MASQ
+-A KUBE-SEP-C5S3TXQNGOR6IHYL -p tcp -m comment --comment "longhorn-system/longhorn-backend:manager" -m tcp -j DNAT --to-destination 10.244.0.24:9500
+-A KUBE-SEP-DIY7K5HEWYAI56CJ -s 91.98.16.184/32 -m comment --comment "ingress-nginx/ingress-nginx-controller:https" -j KUBE-MARK-MASQ
+-A KUBE-SEP-DIY7K5HEWYAI56CJ -p tcp -m comment --comment "ingress-nginx/ingress-nginx-controller:https" -m tcp -j DNAT --to-destination 91.98.16.184:443
+-A KUBE-SEP-FEIN473MDYAZ2PEZ -s 10.244.0.27/32 -m comment --comment "flux-system/webhook-receiver:http" -j KUBE-MARK-MASQ
+-A KUBE-SEP-FEIN473MDYAZ2PEZ -p tcp -m comment --comment "flux-system/webhook-receiver:http" -m tcp -j DNAT --to-destination 10.244.0.27:9292
+-A KUBE-SEP-FUV4MECLAIR2OJLR -s 10.244.0.24/32 -m comment --comment "longhorn-system/longhorn-conversion-webhook:conversion-webhook" -j KUBE-MARK-MASQ
+-A KUBE-SEP-FUV4MECLAIR2OJLR -p tcp -m comment --comment "longhorn-system/longhorn-conversion-webhook:conversion-webhook" -m tcp -j DNAT --to-destination 10.244.0.24:9501
+-A KUBE-SEP-HWBIQIEFV2RYFZ45 -s 10.244.0.33/32 -m comment --comment "cert-manager/cert-manager:tcp-prometheus-servicemonitor" -j KUBE-MARK-MASQ
+-A KUBE-SEP-HWBIQIEFV2RYFZ45 -p tcp -m comment --comment "cert-manager/cert-manager:tcp-prometheus-servicemonitor" -m tcp -j DNAT --to-destination 10.244.0.33:9402
+-A KUBE-SEP-JK2EJC4Q2CE66NQY -s 10.244.0.28/32 -m comment --comment "kube-system/kube-dns:metrics" -j KUBE-MARK-MASQ
+-A KUBE-SEP-JK2EJC4Q2CE66NQY -p tcp -m comment --comment "kube-system/kube-dns:metrics" -m tcp -j DNAT --to-destination 10.244.0.28:9153
+-A KUBE-SEP-MMQX5WT32FKRJIXH -s 10.244.0.32/32 -m comment --comment "kube-system/kube-dns:metrics" -j KUBE-MARK-MASQ
+-A KUBE-SEP-MMQX5WT32FKRJIXH -p tcp -m comment --comment "kube-system/kube-dns:metrics" -m tcp -j DNAT --to-destination 10.244.0.32:9153
+-A KUBE-SEP-N6QWYJD2PPBCQNGS -s 10.244.0.28/32 -m comment --comment "kube-system/kube-dns:dns-tcp" -j KUBE-MARK-MASQ
+-A KUBE-SEP-N6QWYJD2PPBCQNGS -p tcp -m comment --comment "kube-system/kube-dns:dns-tcp" -m tcp -j DNAT --to-destination 10.244.0.28:53
+-A KUBE-SEP-NI6EZWULIRGLLBGD -s 10.244.0.62/32 -m comment --comment "observability/kube-prometheus-stack-prometheus:reloader-web" -j KUBE-MARK-MASQ
+-A KUBE-SEP-NI6EZWULIRGLLBGD -p tcp -m comment --comment "observability/kube-prometheus-stack-prometheus:reloader-web" -m tcp -j DNAT --to-destination 10.244.0.62:8080
+-A KUBE-SEP-NZIJA3WKPMR6MKLM -s 10.244.0.40/32 -m comment --comment "longhorn-system/longhorn-frontend:http" -j KUBE-MARK-MASQ
+-A KUBE-SEP-NZIJA3WKPMR6MKLM -p tcp -m comment --comment "longhorn-system/longhorn-frontend:http" -m tcp -j DNAT --to-destination 10.244.0.40:8000
+-A KUBE-SEP-O6F2LINRX4DJ5P2F -s 10.244.0.61/32 -m comment --comment "observability/kube-prometheus-stack-operator:https" -j KUBE-MARK-MASQ
+-A KUBE-SEP-O6F2LINRX4DJ5P2F -p tcp -m comment --comment "observability/kube-prometheus-stack-operator:https" -m tcp -j DNAT --to-destination 10.244.0.61:10250
+-A KUBE-SEP-OB7ZHFGJOAC2WVTC -s 10.244.0.62/32 -m comment --comment "observability/kube-prometheus-stack-prometheus:http-web" -j KUBE-MARK-MASQ
+-A KUBE-SEP-OB7ZHFGJOAC2WVTC -p tcp -m comment --comment "observability/kube-prometheus-stack-prometheus:http-web" -m tcp -j DNAT --to-destination 10.244.0.62:9090
+-A KUBE-SEP-PD7ZQ5AD4WY5POF5 -s 10.244.0.32/32 -m comment --comment "kube-system/kube-dns:dns" -j KUBE-MARK-MASQ
+-A KUBE-SEP-PD7ZQ5AD4WY5POF5 -p udp -m comment --comment "kube-system/kube-dns:dns" -m udp -j DNAT --to-destination 10.244.0.32:53
+-A KUBE-SEP-PMS3PVW3F6VN7ZCB -s 10.244.0.26/32 -m comment --comment "whoami/whoami" -j KUBE-MARK-MASQ
+-A KUBE-SEP-PMS3PVW3F6VN7ZCB -p tcp -m comment --comment "whoami/whoami" -m tcp -j DNAT --to-destination 10.244.0.26:8080
+-A KUBE-SEP-QBKQZR66AFJUHFSU -s 10.244.0.32/32 -m comment --comment "kube-system/kube-dns:dns-tcp" -j KUBE-MARK-MASQ
+-A KUBE-SEP-QBKQZR66AFJUHFSU -p tcp -m comment --comment "kube-system/kube-dns:dns-tcp" -m tcp -j DNAT --to-destination 10.244.0.32:53
+-A KUBE-SEP-RCPS6RGFDNBHQALK -s 10.244.0.64/32 -m comment --comment "logging/loki:http-metrics" -j KUBE-MARK-MASQ
+-A KUBE-SEP-RCPS6RGFDNBHQALK -p tcp -m comment --comment "logging/loki:http-metrics" -m tcp -j DNAT --to-destination 10.244.0.64:3100
+-A KUBE-SEP-REZNDG7PS4GBIDDE -s 10.244.0.35/32 -m comment --comment "whoami/whoami" -j KUBE-MARK-MASQ
+-A KUBE-SEP-REZNDG7PS4GBIDDE -p tcp -m comment --comment "whoami/whoami" -m tcp -j DNAT --to-destination 10.244.0.35:8080
+-A KUBE-SEP-RZKVZ5K5FODBBON3 -s 10.244.0.46/32 -m comment --comment "longhorn-system/longhorn-frontend:http" -j KUBE-MARK-MASQ
+-A KUBE-SEP-RZKVZ5K5FODBBON3 -p tcp -m comment --comment "longhorn-system/longhorn-frontend:http" -m tcp -j DNAT --to-destination 10.244.0.46:8000
+-A KUBE-SEP-TEAPQMIQ7V64PDNJ -s 10.244.0.84/32 -m comment --comment "observability/grafana:service" -j KUBE-MARK-MASQ
+-A KUBE-SEP-TEAPQMIQ7V64PDNJ -p tcp -m comment --comment "observability/grafana:service" -m tcp -j DNAT --to-destination 10.244.0.84:3000
+-A KUBE-SEP-UEBJQRCEMTQVJNNU -s 10.244.0.53/32 -m comment --comment "cert-manager/cert-manager-webhook:https" -j KUBE-MARK-MASQ
+-A KUBE-SEP-UEBJQRCEMTQVJNNU -p tcp -m comment --comment "cert-manager/cert-manager-webhook:https" -m tcp -j DNAT --to-destination 10.244.0.53:10250
+-A KUBE-SEP-ULJJKFSC4YGIFRKX -s 91.98.16.184/32 -m comment --comment "default/kubernetes:https" -j KUBE-MARK-MASQ
+-A KUBE-SEP-ULJJKFSC4YGIFRKX -p tcp -m comment --comment "default/kubernetes:https" -m tcp -j DNAT --to-destination 91.98.16.184:6443
+-A KUBE-SEP-WYF5MQOXI2X726RO -s 10.244.0.28/32 -m comment --comment "kube-system/kube-dns:dns" -j KUBE-MARK-MASQ
+-A KUBE-SEP-WYF5MQOXI2X726RO -p udp -m comment --comment "kube-system/kube-dns:dns" -m udp -j DNAT --to-destination 10.244.0.28:53
+-A KUBE-SEP-YTNLWO5XLFDVNMET -s 10.244.0.24/32 -m comment --comment "longhorn-system/longhorn-recovery-backend:recovery-backend" -j KUBE-MARK-MASQ
+-A KUBE-SEP-YTNLWO5XLFDVNMET -p tcp -m comment --comment "longhorn-system/longhorn-recovery-backend:recovery-backend" -m tcp -j DNAT --to-destination 10.244.0.24:9503
+-A KUBE-SEP-ZYTNSR7KHGIVBVV7 -s 10.244.0.27/32 -m comment --comment "flux-system/notification-controller:http" -j KUBE-MARK-MASQ
+-A KUBE-SEP-ZYTNSR7KHGIVBVV7 -p tcp -m comment --comment "flux-system/notification-controller:http" -m tcp -j DNAT --to-destination 10.244.0.27:9090
+-A KUBE-SERVICES -d 10.109.213.103/32 -p tcp -m comment --comment "longhorn-system/longhorn-admission-webhook:admission-webhook cluster IP" -j KUBE-SVC-S4EMHPZ44GDBMEWI
+-A KUBE-SERVICES -d 10.110.78.92/32 -p tcp -m comment --comment "longhorn-system/longhorn-backend:manager cluster IP" -j KUBE-SVC-NQL64TY2T3FWFXFQ
+-A KUBE-SERVICES -d 10.108.176.77/32 -p tcp -m comment --comment "cert-manager/cert-manager-webhook:https cluster IP" -j KUBE-SVC-ZUD4L6KQKCHD52W4
+-A KUBE-SERVICES -d 10.96.0.10/32 -p udp -m comment --comment "kube-system/kube-dns:dns cluster IP" -j KUBE-SVC-TCOU7JCQXEZGVUNU
+-A KUBE-SERVICES -d 10.97.225.223/32 -p tcp -m comment --comment "longhorn-system/longhorn-frontend:http cluster IP" -j KUBE-SVC-ELE3EOWUPGZLKWXO
+-A KUBE-SERVICES -d 10.101.122.159/32 -p tcp -m comment --comment "observability/kube-prometheus-stack-prometheus-node-exporter:http-metrics cluster IP" -j KUBE-SVC-5P7QYFVHGOC5IOJ6
+-A KUBE-SERVICES -d 10.109.196.173/32 -p tcp -m comment --comment "observability/kube-prometheus-stack-prometheus:http-web cluster IP" -j KUBE-SVC-OKOAGQILQ2QU2JM4
+-A KUBE-SERVICES -d 10.109.196.173/32 -p tcp -m comment --comment "observability/kube-prometheus-stack-prometheus:reloader-web cluster IP" -j KUBE-SVC-SLR7RBONOEYPJ4X2
+-A KUBE-SERVICES -d 10.108.169.136/32 -p tcp -m comment --comment "flux-system/webhook-receiver:http cluster IP" -j KUBE-SVC-VCJD5DMHTZGOKGNJ
+-A KUBE-SERVICES -d 10.105.145.149/32 -p tcp -m comment --comment "longhorn-system/longhorn-recovery-backend:recovery-backend cluster IP" -j KUBE-SVC-TYVUZ72JN6SHFAXC
+-A KUBE-SERVICES -d 10.107.225.124/32 -p tcp -m comment --comment "logging/loki:http-metrics cluster IP" -j KUBE-SVC-TD5WHLPT5YWZCX2A
+-A KUBE-SERVICES -d 10.106.108.181/32 -p tcp -m comment --comment "whoami/whoami cluster IP" -j KUBE-SVC-23PZZN2UKY3TJBX2
+-A KUBE-SERVICES -d 10.96.0.1/32 -p tcp -m comment --comment "default/kubernetes:https cluster IP" -j KUBE-SVC-NPX46M4PTMTKRN6Y
+-A KUBE-SERVICES -d 10.108.123.244/32 -p tcp -m comment --comment "observability/kube-prometheus-stack-operator:https cluster IP" -j KUBE-SVC-MZHGT6CDAGMW2KTF
+-A KUBE-SERVICES -d 10.102.104.73/32 -p tcp -m comment --comment "observability/grafana:service cluster IP" -j KUBE-SVC-4W2AJSVLC4TCPD3X
+-A KUBE-SERVICES -d 10.105.203.251/32 -p tcp -m comment --comment "flux-system/notification-controller:http cluster IP" -j KUBE-SVC-DZOWW63ZZHJ73RZG
+-A KUBE-SERVICES -d 10.108.197.66/32 -p tcp -m comment --comment "longhorn-system/longhorn-conversion-webhook:conversion-webhook cluster IP" -j KUBE-SVC-NGSMBSSFRDULITT4
+-A KUBE-SERVICES -d 10.103.166.110/32 -p tcp -m comment --comment "cert-manager/cert-manager:tcp-prometheus-servicemonitor cluster IP" -j KUBE-SVC-E3IBCFULSWKQCT47
+-A KUBE-SERVICES -d 10.111.109.215/32 -p tcp -m comment --comment "flux-system/source-controller:http cluster IP" -j KUBE-SVC-U7SXUNEARU4YPLE2
+-A KUBE-SERVICES -d 10.111.78.164/32 -p tcp -m comment --comment "ingress-nginx/ingress-nginx-controller:http cluster IP" -j KUBE-SVC-CG5I4G2RS3ZVWGLK
+-A KUBE-SERVICES -d 10.111.78.164/32 -p tcp -m comment --comment "ingress-nginx/ingress-nginx-controller:https cluster IP" -j KUBE-SVC-EDNDUDH2C75GIR6O
+-A KUBE-SERVICES -d 10.96.0.10/32 -p tcp -m comment --comment "kube-system/kube-dns:dns-tcp cluster IP" -j KUBE-SVC-ERIFXISQEP7F7OF4
+-A KUBE-SERVICES -d 10.96.0.10/32 -p tcp -m comment --comment "kube-system/kube-dns:metrics cluster IP" -j KUBE-SVC-JD5MR3NA4I4DYORP
+-A KUBE-SERVICES -m comment --comment "kubernetes service nodeports; NOTE: this must be the last rule in this chain" -m addrtype --dst-type LOCAL -j KUBE-NODEPORTS
+-A KUBE-SVC-23PZZN2UKY3TJBX2 -m comment --comment "whoami/whoami -> 10.244.0.23:8080" -m statistic --mode random --probability 0.33333333349 -j KUBE-SEP-B3RMR4KDTV67RTGW
+-A KUBE-SVC-23PZZN2UKY3TJBX2 -m comment --comment "whoami/whoami -> 10.244.0.26:8080" -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-PMS3PVW3F6VN7ZCB
+-A KUBE-SVC-23PZZN2UKY3TJBX2 -m comment --comment "whoami/whoami -> 10.244.0.35:8080" -j KUBE-SEP-REZNDG7PS4GBIDDE
+-A KUBE-SVC-4W2AJSVLC4TCPD3X -m comment --comment "observability/grafana:service -> 10.244.0.84:3000" -j KUBE-SEP-TEAPQMIQ7V64PDNJ
+-A KUBE-SVC-5P7QYFVHGOC5IOJ6 -m comment --comment "observability/kube-prometheus-stack-prometheus-node-exporter:http-metrics -> 91.98.16.184:9100" -j KUBE-SEP-6O4SRZAZSEIY5VW4
+-A KUBE-SVC-CG5I4G2RS3ZVWGLK -m comment --comment "ingress-nginx/ingress-nginx-controller:http -> 91.98.16.184:80" -j KUBE-SEP-5SFWUAPE7EOMZ7SK
+-A KUBE-SVC-DZOWW63ZZHJ73RZG -m comment --comment "flux-system/notification-controller:http -> 10.244.0.27:9090" -j KUBE-SEP-ZYTNSR7KHGIVBVV7
+-A KUBE-SVC-E3IBCFULSWKQCT47 -m comment --comment "cert-manager/cert-manager:tcp-prometheus-servicemonitor -> 10.244.0.33:9402" -j KUBE-SEP-HWBIQIEFV2RYFZ45
+-A KUBE-SVC-EDNDUDH2C75GIR6O -m comment --comment "ingress-nginx/ingress-nginx-controller:https -> 91.98.16.184:443" -j KUBE-SEP-DIY7K5HEWYAI56CJ
+-A KUBE-SVC-ELE3EOWUPGZLKWXO -m comment --comment "longhorn-system/longhorn-frontend:http -> 10.244.0.40:8000" -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-NZIJA3WKPMR6MKLM
+-A KUBE-SVC-ELE3EOWUPGZLKWXO -m comment --comment "longhorn-system/longhorn-frontend:http -> 10.244.0.46:8000" -j KUBE-SEP-RZKVZ5K5FODBBON3
+-A KUBE-SVC-ERIFXISQEP7F7OF4 -m comment --comment "kube-system/kube-dns:dns-tcp -> 10.244.0.28:53" -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-N6QWYJD2PPBCQNGS
+-A KUBE-SVC-ERIFXISQEP7F7OF4 -m comment --comment "kube-system/kube-dns:dns-tcp -> 10.244.0.32:53" -j KUBE-SEP-QBKQZR66AFJUHFSU
+-A KUBE-SVC-JD5MR3NA4I4DYORP -m comment --comment "kube-system/kube-dns:metrics -> 10.244.0.28:9153" -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-JK2EJC4Q2CE66NQY
+-A KUBE-SVC-JD5MR3NA4I4DYORP -m comment --comment "kube-system/kube-dns:metrics -> 10.244.0.32:9153" -j KUBE-SEP-MMQX5WT32FKRJIXH
+-A KUBE-SVC-MZHGT6CDAGMW2KTF -m comment --comment "observability/kube-prometheus-stack-operator:https -> 10.244.0.61:10250" -j KUBE-SEP-O6F2LINRX4DJ5P2F
+-A KUBE-SVC-NGSMBSSFRDULITT4 -m comment --comment "longhorn-system/longhorn-conversion-webhook:conversion-webhook -> 10.244.0.24:9501" -j KUBE-SEP-FUV4MECLAIR2OJLR
+-A KUBE-SVC-NPX46M4PTMTKRN6Y -m comment --comment "default/kubernetes:https -> 91.98.16.184:6443" -j KUBE-SEP-ULJJKFSC4YGIFRKX
+-A KUBE-SVC-NQL64TY2T3FWFXFQ -m comment --comment "longhorn-system/longhorn-backend:manager -> 10.244.0.24:9500" -j KUBE-SEP-C5S3TXQNGOR6IHYL
+-A KUBE-SVC-OKOAGQILQ2QU2JM4 -m comment --comment "observability/kube-prometheus-stack-prometheus:http-web -> 10.244.0.62:9090" -j KUBE-SEP-OB7ZHFGJOAC2WVTC
+-A KUBE-SVC-S4EMHPZ44GDBMEWI -m comment --comment "longhorn-system/longhorn-admission-webhook:admission-webhook -> 10.244.0.24:9502" -j KUBE-SEP-42HHU7KTSEQQMHVI
+-A KUBE-SVC-SLR7RBONOEYPJ4X2 -m comment --comment "observability/kube-prometheus-stack-prometheus:reloader-web -> 10.244.0.62:8080" -j KUBE-SEP-NI6EZWULIRGLLBGD
+-A KUBE-SVC-TCOU7JCQXEZGVUNU -m comment --comment "kube-system/kube-dns:dns -> 10.244.0.28:53" -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-WYF5MQOXI2X726RO
+-A KUBE-SVC-TCOU7JCQXEZGVUNU -m comment --comment "kube-system/kube-dns:dns -> 10.244.0.32:53" -j KUBE-SEP-PD7ZQ5AD4WY5POF5
+-A KUBE-SVC-TD5WHLPT5YWZCX2A -m comment --comment "logging/loki:http-metrics -> 10.244.0.64:3100" -j KUBE-SEP-RCPS6RGFDNBHQALK
+-A KUBE-SVC-TYVUZ72JN6SHFAXC -m comment --comment "longhorn-system/longhorn-recovery-backend:recovery-backend -> 10.244.0.24:9503" -j KUBE-SEP-YTNLWO5XLFDVNMET
+-A KUBE-SVC-U7SXUNEARU4YPLE2 -m comment --comment "flux-system/source-controller:http -> 10.244.0.34:9090" -j KUBE-SEP-73PS7HRC6U73N4K5
+-A KUBE-SVC-VCJD5DMHTZGOKGNJ -m comment --comment "flux-system/webhook-receiver:http -> 10.244.0.27:9292" -j KUBE-SEP-FEIN473MDYAZ2PEZ
+-A KUBE-SVC-ZUD4L6KQKCHD52W4 -m comment --comment "cert-manager/cert-manager-webhook:https -> 10.244.0.53:10250" -j KUBE-SEP-UEBJQRCEMTQVJNNU

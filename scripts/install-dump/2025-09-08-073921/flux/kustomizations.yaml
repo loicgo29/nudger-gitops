@@ -1,0 +1,435 @@
+apiVersion: v1
+items:
+- apiVersion: kustomize.toolkit.fluxcd.io/v1
+  kind: Kustomization
+  metadata:
+    annotations:
+      reconcile.fluxcd.io/requestedAt: "2025-09-08T04:01:13.352572737Z"
+    creationTimestamp: "2025-09-01T11:17:27Z"
+    finalizers:
+    - finalizers.fluxcd.io
+    generation: 18
+    labels:
+      kustomize.toolkit.fluxcd.io/name: lab-root
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: apps
+    namespace: flux-system
+    resourceVersion: "2119739"
+    uid: 99d7c494-e1a8-4865-8793-85b49ccbeb13
+  spec:
+    dependsOn:
+    - name: ingress-nginx
+    - name: infra-longhorn
+    force: false
+    interval: 1m
+    path: ./apps/whoami
+    prune: true
+    sourceRef:
+      kind: GitRepository
+      name: gitops
+    timeout: 5m
+    wait: true
+  status:
+    conditions:
+    - lastTransitionTime: "2025-09-08T07:39:21Z"
+      message: 'Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2'
+      observedGeneration: 18
+      reason: ReconciliationSucceeded
+      status: "True"
+      type: Ready
+    - lastTransitionTime: "2025-09-08T07:39:21Z"
+      message: Health check passed in 48.871321ms
+      observedGeneration: 18
+      reason: Succeeded
+      status: "True"
+      type: Healthy
+    inventory:
+      entries:
+      - id: _whoami__Namespace
+        v: v1
+      - id: whoami_whoami__Service
+        v: v1
+      - id: whoami_whoami_apps_Deployment
+        v: v1
+      - id: whoami_whoami_networking.k8s.io_Ingress
+        v: v1
+    lastAppliedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastAttemptedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastHandledReconcileAt: "2025-09-08T04:01:13.352572737Z"
+    observedGeneration: 18
+- apiVersion: kustomize.toolkit.fluxcd.io/v1
+  kind: Kustomization
+  metadata:
+    annotations:
+      reconcile.fluxcd.io/requestedAt: "2025-09-08T04:01:17.434190027Z"
+    creationTimestamp: "2025-09-06T07:08:57Z"
+    finalizers:
+    - finalizers.fluxcd.io
+    generation: 13
+    labels:
+      kustomize.toolkit.fluxcd.io/name: lab-root
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: cert-manager
+    namespace: flux-system
+    resourceVersion: "2118460"
+    uid: 13829fe1-2ac6-4184-809a-43fd28aded03
+  spec:
+    force: false
+    interval: 5m
+    path: ./infra/cert-manager/overlays/lab
+    prune: true
+    sourceRef:
+      kind: GitRepository
+      name: gitops
+  status:
+    conditions:
+    - lastTransitionTime: "2025-09-08T07:34:30Z"
+      message: 'Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2'
+      observedGeneration: 13
+      reason: ReconciliationSucceeded
+      status: "True"
+      type: Ready
+    inventory:
+      entries:
+      - id: _cert-manager__Namespace
+        v: v1
+      - id: cert-manager_cert-manager_helm.toolkit.fluxcd.io_HelmRelease
+        v: v2
+      - id: flux-system_cert-manager_source.toolkit.fluxcd.io_HelmRepository
+        v: v1
+    lastAppliedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastAttemptedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastHandledReconcileAt: "2025-09-08T04:01:17.434190027Z"
+    observedGeneration: 13
+- apiVersion: kustomize.toolkit.fluxcd.io/v1
+  kind: Kustomization
+  metadata:
+    annotations:
+      reconcile.fluxcd.io/requestedAt: "2025-09-08T04:01:21.529088809Z"
+    creationTimestamp: "2025-09-06T07:08:57Z"
+    finalizers:
+    - finalizers.fluxcd.io
+    generation: 3
+    labels:
+      kustomize.toolkit.fluxcd.io/name: lab-root
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: cert-manager-issuers
+    namespace: flux-system
+    resourceVersion: "2119555"
+    uid: 90e0ef14-5872-4688-8827-f7702f490c4f
+  spec:
+    dependsOn:
+    - name: cert-manager
+    force: false
+    interval: 5m
+    path: ./infra/cert-manager-issuers/overlays/lab
+    prune: true
+    sourceRef:
+      kind: GitRepository
+      name: gitops
+  status:
+    conditions:
+    - lastTransitionTime: "2025-09-08T07:38:41Z"
+      message: 'Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2'
+      observedGeneration: 3
+      reason: ReconciliationSucceeded
+      status: "True"
+      type: Ready
+    inventory:
+      entries:
+      - id: cert-manager_cert-manager-params__ConfigMap
+        v: v1
+      - id: _letsencrypt-prod_cert-manager.io_ClusterIssuer
+        v: v1
+      - id: _letsencrypt-staging_cert-manager.io_ClusterIssuer
+        v: v1
+    lastAppliedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastAttemptedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastHandledReconcileAt: "2025-09-08T04:01:21.529088809Z"
+    observedGeneration: 3
+- apiVersion: kustomize.toolkit.fluxcd.io/v1
+  kind: Kustomization
+  metadata:
+    annotations:
+      reconcile.fluxcd.io/requestedAt: "2025-09-08T04:01:25.617929682Z"
+    creationTimestamp: "2025-09-06T16:00:01Z"
+    finalizers:
+    - finalizers.fluxcd.io
+    generation: 3
+    labels:
+      kustomize.toolkit.fluxcd.io/name: lab-root
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: infra-longhorn
+    namespace: flux-system
+    resourceVersion: "2119622"
+    uid: 1385a0d0-e58b-4222-ad87-78ed9908ade6
+  spec:
+    dependsOn: []
+    force: false
+    interval: 1m
+    path: infra/longhorn/overlays/lab
+    prune: true
+    sourceRef:
+      kind: GitRepository
+      name: gitops
+    timeout: 5m
+    wait: true
+  status:
+    conditions:
+    - lastTransitionTime: "2025-09-08T07:38:57Z"
+      message: 'Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2'
+      observedGeneration: 3
+      reason: ReconciliationSucceeded
+      status: "True"
+      type: Ready
+    - lastTransitionTime: "2025-09-08T07:38:57Z"
+      message: Health check passed in 16.529918ms
+      observedGeneration: 3
+      reason: Succeeded
+      status: "True"
+      type: Healthy
+    inventory:
+      entries:
+      - id: _longhorn-system__Namespace
+        v: v1
+      - id: _longhorn-db_storage.k8s.io_StorageClass
+        v: v1
+      - id: longhorn-system_longhorn-basic-auth__Secret
+        v: v1
+      - id: longhorn-system_longhorn-frontend__Service
+        v: v1
+      - id: longhorn-system_longhorn_helm.toolkit.fluxcd.io_HelmRelease
+        v: v2
+      - id: longhorn-system_longhorn-ui_networking.k8s.io_Ingress
+        v: v1
+      - id: flux-system_longhorn_source.toolkit.fluxcd.io_HelmRepository
+        v: v1
+    lastAppliedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastAttemptedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastHandledReconcileAt: "2025-09-08T04:01:25.617929682Z"
+    observedGeneration: 3
+- apiVersion: kustomize.toolkit.fluxcd.io/v1
+  kind: Kustomization
+  metadata:
+    annotations:
+      reconcile.fluxcd.io/requestedAt: "2025-09-08T04:01:29.713294194Z"
+    creationTimestamp: "2025-09-01T11:17:27Z"
+    finalizers:
+    - finalizers.fluxcd.io
+    generation: 11
+    labels:
+      kustomize.toolkit.fluxcd.io/name: lab-root
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: ingress-nginx
+    namespace: flux-system
+    resourceVersion: "2119551"
+    uid: c9ad82ec-3196-425a-aaad-09e5836e1712
+  spec:
+    dependsOn: []
+    force: false
+    healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: ingress-nginx-controller
+      namespace: ingress-nginx
+    interval: 1m
+    path: apps/ingress-nginx/overlays/lab
+    prune: true
+    sourceRef:
+      kind: GitRepository
+      name: gitops
+    timeout: 5m
+    wait: true
+  status:
+    conditions:
+    - lastTransitionTime: "2025-09-08T07:38:41Z"
+      message: 'Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2'
+      observedGeneration: 11
+      reason: ReconciliationSucceeded
+      status: "True"
+      type: Ready
+    - lastTransitionTime: "2025-09-08T07:38:41Z"
+      message: Health check passed in 27.306457ms
+      observedGeneration: 11
+      reason: Succeeded
+      status: "True"
+      type: Healthy
+    inventory:
+      entries:
+      - id: _ingress-nginx__Namespace
+        v: v1
+      - id: ingress-nginx_ingress-nginx_helm.toolkit.fluxcd.io_HelmRelease
+        v: v2
+      - id: flux-system_ingress-nginx_source.toolkit.fluxcd.io_HelmRepository
+        v: v1
+    lastAppliedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastAttemptedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastHandledReconcileAt: "2025-09-08T04:01:29.713294194Z"
+    observedGeneration: 11
+- apiVersion: kustomize.toolkit.fluxcd.io/v1
+  kind: Kustomization
+  metadata:
+    annotations:
+      reconcile.fluxcd.io/requestedAt: "2025-09-08T04:01:33.79618356Z"
+    creationTimestamp: "2025-09-01T11:17:27Z"
+    finalizers:
+    - finalizers.fluxcd.io
+    generation: 1
+    name: lab-root
+    namespace: flux-system
+    resourceVersion: "2119495"
+    uid: b3ecd5e0-e807-4081-8a20-f11c71527fbb
+  spec:
+    force: false
+    interval: 1m
+    path: ./clusters/lab
+    prune: true
+    sourceRef:
+      kind: GitRepository
+      name: gitops
+    timeout: 5m
+    wait: false
+  status:
+    conditions:
+    - lastTransitionTime: "2025-09-08T07:38:28Z"
+      message: 'Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2'
+      observedGeneration: 1
+      reason: ReconciliationSucceeded
+      status: "True"
+      type: Ready
+    inventory:
+      entries:
+      - id: flux-system_apps_kustomize.toolkit.fluxcd.io_Kustomization
+        v: v1
+      - id: flux-system_cert-manager_kustomize.toolkit.fluxcd.io_Kustomization
+        v: v1
+      - id: flux-system_cert-manager-issuers_kustomize.toolkit.fluxcd.io_Kustomization
+        v: v1
+      - id: flux-system_infra-longhorn_kustomize.toolkit.fluxcd.io_Kustomization
+        v: v1
+      - id: flux-system_ingress-nginx_kustomize.toolkit.fluxcd.io_Kustomization
+        v: v1
+      - id: flux-system_observability_kustomize.toolkit.fluxcd.io_Kustomization
+        v: v1
+    lastAppliedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastAttemptedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastHandledReconcileAt: "2025-09-08T04:01:33.79618356Z"
+    observedGeneration: 1
+- apiVersion: kustomize.toolkit.fluxcd.io/v1
+  kind: Kustomization
+  metadata:
+    annotations:
+      reconcile.fluxcd.io/requestedAt: "2025-09-08T07:13:13.984031253Z"
+    creationTimestamp: "2025-09-06T07:08:57Z"
+    finalizers:
+    - finalizers.fluxcd.io
+    generation: 5
+    labels:
+      kustomize.toolkit.fluxcd.io/name: lab-root
+      kustomize.toolkit.fluxcd.io/namespace: flux-system
+    name: observability
+    namespace: flux-system
+    resourceVersion: "2118422"
+    uid: ce7830d2-ff85-49a3-940d-70c93d085bf1
+  spec:
+    force: false
+    interval: 5m
+    path: ./infra/observability/overlays/lab
+    prune: true
+    sourceRef:
+      kind: GitRepository
+      name: gitops
+  status:
+    conditions:
+    - lastTransitionTime: "2025-09-08T07:34:24Z"
+      message: 'Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2'
+      observedGeneration: 5
+      reason: ReconciliationSucceeded
+      status: "True"
+      type: Ready
+    inventory:
+      entries:
+      - id: _logging__Namespace
+        v: v1
+      - id: _observability__Namespace
+        v: v1
+      - id: observability_grafana-dashboard-app-exceptions__ConfigMap
+        v: v1
+      - id: observability_grafana-dashboard-flux-errors__ConfigMap
+        v: v1
+      - id: observability_grafana-dashboard-ingress-5xx__ConfigMap
+        v: v1
+      - id: observability_grafana-datasource-loki__ConfigMap
+        v: v1
+      - id: logging_loki_helm.toolkit.fluxcd.io_HelmRelease
+        v: v2
+      - id: logging_promtail_helm.toolkit.fluxcd.io_HelmRelease
+        v: v2
+      - id: observability_grafana_helm.toolkit.fluxcd.io_HelmRelease
+        v: v2
+      - id: observability_kube-prometheus-stack_helm.toolkit.fluxcd.io_HelmRelease
+        v: v2
+      - id: flux-system_grafana_source.toolkit.fluxcd.io_HelmRepository
+        v: v1
+      - id: flux-system_prometheus-community_source.toolkit.fluxcd.io_HelmRepository
+        v: v1
+    lastAppliedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastAttemptedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastHandledReconcileAt: "2025-09-08T07:13:13.984031253Z"
+    observedGeneration: 5
+- apiVersion: kustomize.toolkit.fluxcd.io/v1
+  kind: Kustomization
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"kustomize.toolkit.fluxcd.io/v1","kind":"Kustomization","metadata":{"annotations":{},"name":"whoami","namespace":"flux-system"},"spec":{"dependsOn":[{"name":"ingress-nginx"}],"interval":"1m","path":"./apps/whoami","prune":true,"sourceRef":{"kind":"GitRepository","name":"gitops"},"timeout":"5m","wait":true}}
+      reconcile.fluxcd.io/requestedAt: "2025-09-08T04:01:42.02024457Z"
+    creationTimestamp: "2025-09-06T19:39:39Z"
+    finalizers:
+    - finalizers.fluxcd.io
+    generation: 2
+    name: whoami
+    namespace: flux-system
+    resourceVersion: "2119665"
+    uid: 56e5ef6e-e309-4c0a-bf78-5cfa0f009424
+  spec:
+    force: false
+    interval: 1m
+    path: ./apps/whoami
+    prune: true
+    sourceRef:
+      kind: GitRepository
+      name: gitops
+    timeout: 5m
+    wait: true
+  status:
+    conditions:
+    - lastTransitionTime: "2025-09-08T07:39:04Z"
+      message: 'Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2'
+      observedGeneration: 2
+      reason: ReconciliationSucceeded
+      status: "True"
+      type: Ready
+    - lastTransitionTime: "2025-09-08T07:39:04Z"
+      message: Health check passed in 39.141531ms
+      observedGeneration: 2
+      reason: Succeeded
+      status: "True"
+      type: Healthy
+    inventory:
+      entries:
+      - id: _whoami__Namespace
+        v: v1
+      - id: whoami_whoami__Service
+        v: v1
+      - id: whoami_whoami_apps_Deployment
+        v: v1
+      - id: whoami_whoami_networking.k8s.io_Ingress
+        v: v1
+    lastAppliedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastAttemptedRevision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+    lastHandledReconcileAt: "2025-09-08T04:01:42.02024457Z"
+    observedGeneration: 2
+kind: List
+metadata:
+  resourceVersion: ""
