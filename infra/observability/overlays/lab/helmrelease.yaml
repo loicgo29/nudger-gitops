@@ -19,12 +19,14 @@ spec:
   upgrade:
     remediation: { retries: 3 }
   values:
+    alertmanager:
+      enabled: false
     grafana:
       grafana.ini:
         explore:
           logsPanel:
             defaultLogVolumeEnabled: false
-      enabled: true
+      enabled: false
       defaultDashboardsTimezone: "Europe/Paris"
       service:
         type: ClusterIP
@@ -34,21 +36,26 @@ spec:
           access: proxy
           url: http://loki.logging.svc.cluster.local:3100
           isDefault: false
+    kubeStateMetrics:
+      enabled: false
     prometheus:
       service:
         type: ClusterIP
       prometheusSpec:
-        retention: 24h               # avant: 15d+ par défaut => trop
+        retention: 2h               # avant: 15d+ par défaut => trop
         retentionSize: "1GB"         # borne dure d’espace
         walCompression: true
         scrapeInterval: 60s          # passe de 30s à 60s
         evaluationInterval: 60s
         resources:
           requests:
-            cpu: 100m
-            memory: 300Mi
+            cpu: 50m
+            memory: 200Mi
           limits:
-            memory: 800Mi
+            memory: 400Mi
+        enableAdminAPI: false
+      # Désactive des targets verbeuses pour soulager apiserver/etcd :
+        additionalScrapeConfigs: []
         readinessProbe:
           timeoutSeconds: 5
           periodSeconds: 10
@@ -76,7 +83,7 @@ spec:
       hostPID: false
       resources:
         requests:
-          cpu: 25m
-          memory: 30Mi
+          cpu: 10m
+          memory: 20Mi
         limits:
-          memory: 100Mi
+          memory: 50Mi

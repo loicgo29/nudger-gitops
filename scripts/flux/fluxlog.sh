@@ -23,7 +23,8 @@ else
   # filtre par défaut (inclut l'app + termes flux/erreurs usuels)
   KW_REGEX="${APP}|reconcil|error|failed|degrad|commit|push|image|policy|apply|health|alert"
 fi
-
+# Phrases à exclure des logs (séparées par |). Surcharge possible via EXCLUDE_REGEX env var.
+EXCLUDE_REGEX="${EXCLUDE_REGEX:-discarding event, no alerts found|no alerts found for the involved object}"
 echo "== Flux log/search =="
 echo "NS=${NS}  APP=${APP}  SINCE=${SINCE}"
 echo "FILTER=${KW_REGEX}"
@@ -34,9 +35,11 @@ section() { echo; echo "## $*"; }
 filter_or_cat() {
   # lit stdin ; si KW_REGEX est vide => cat, sinon grep -Ei
   if [[ -n "${KW_REGEX}" ]]; then
-    grep -Ei -- "${KW_REGEX}" || true
+        grep -Ei -- "${KW_REGEX}" | { [[ -n "${EXCLUDE_REGEX}" ]] && grep -Eiv -- "${EXCLUDE_REGEX}" || cat; } || true
+
   else
-    cat
+    { [[ -n "${EXCLUDE_REGEX}" ]] && grep -Eiv -- "${EXCLUDE_REGEX}" || cat; } || true
+
   fi
 }
 
@@ -50,24 +53,36 @@ log_if_exists() {
 
 # --- Résumé des CRs image* et kustomizations (filtrés par KW si fourni)
 section "Image resources (ImageRepository / ImagePolicy / ImageUpdateAutomation)"
-kubectl -n "$NS" get imagerepository,imagepolicy,imageupdateautomation 2>/dev/null | filter_or_cat
+echo "kubectl -n $NS get imagerepository,imagepolicy,imageupdateautomation"
+kubectl -n "$NS" get imagerepository,imagepolicy,imageupdateautomation 2>/dev/null | filter_or_cat || true
 
 section "Kustomizations"
+echo "kubectl -n $NS get kustomizations -o wide 2"
 kubectl -n "$NS" get kustomizations -o wide 2>/dev/null | filter_or_cat
 
 section "Dernière résolution ImagePolicy.latestImage"
+echo "kubectl -n $NS get imagepolicy -o yaml"
 kubectl -n "$NS" get imagepolicy -o yaml 2>/dev/null \
-  | yq -r '.items[] | [.metadata.name, .status.latestImage] | @tsv' \
+	  | yq -r '.items[] | select(.status.latestImage) | [.metadata.name, .status.latestImage] | @tsv' \
   | filter_or_cat
-
 section "ImageRepository dernier scan (top 10 tags vus)"
+echo "kubectl -n $NS get imagerepository -o yam"
 kubectl -n "$NS" get imagerepository -o yaml 2>/dev/null \
-  | yq -r '.items[] | .metadata.name as $n | .status.lastScanResult.latestTags[0:10][] | "\($n)\t"+.' \
+	  | yq -r '
+      .items[] |
+      (.status.lastScanResult.latestTags // []) as $tags |
+      $tags[0:10][] as $t |
+      "\(.metadata.name)\t\($t)"
+    ' \
   | filter_or_cat
-
 # --- Événements utiles
 section "Events (Flux NS) — derniers 200 (filtrés)"
+echo "kubectl -n $NS get events --sort-by=.lastTimestamp"
 kubectl -n "$NS" get events --sort-by=.lastTimestamp 2>/dev/null | tail -n 200 | filter_or_cat
+section "HelmReleases (résumé)"
+echo "kubectl -n $NS get helmrelease -o wide"
+kubectl -n "$NS" get helmrelease -o wide 2>/dev/null | filter_or_cat
+kubectl -n "${APP}" get events --sort-by=.lastTimestamp 2>/dev/null | tail -n 50 | filter_or_cat
 
 # --- Logs des contrôleurs Flux
 log_if_exists source-controller
