@@ -10,8 +10,8 @@ spec:
       chart: ingress-nginx
       version: 4.11.3
       sourceRef:
-        kind: HelmRepository
-        name: ingress-nginx
+        kind: GitRepository
+        name: ingress-nginx-chart
         namespace: flux-system
   install:
     createNamespace: true
