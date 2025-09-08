@@ -1,0 +1,15 @@
+# clusters/lab/ingress-sources.kustomization.yaml (emplacement à ta convenance)
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: sources
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: ./flux-system/gitrepository
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: <ROOT_GITREPO_NAME>
+    namespace: flux-system
