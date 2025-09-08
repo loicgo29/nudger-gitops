@@ -1,40 +1,13 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cert-manager
+  name: infra-namespaces
   namespace: flux-system
 spec:
-  interval: 5m
-  path: ./infra/cert-manager/overlays/lab
-  prune: true
+  interval: 10m
+  prune: false
   sourceRef:
     kind: GitRepository
     name: gitops
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: cert-manager-issuers
-  namespace: flux-system
-spec:
-  dependsOn:
-    - name: cert-manager
-  interval: 5m
-  path: ./infra/cert-manager-issuers/overlays/lab
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: gitops
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: observability
-  namespace: flux-system
-spec:
-  interval: 5m
-  path: ./infra/observability/overlays/lab
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: gitops
+  path: ./infra/namespaces
+  wait: true

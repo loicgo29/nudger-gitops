@@ -1,3 +1,0 @@
-ansible pour gérer l'environnement , les librairies, l'install
-pour l'app , manifest k8s
-Faire un brief sur l'industrialisation
