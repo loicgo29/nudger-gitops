@@ -97,9 +97,17 @@ spec:
         label: grafana_dashboard
         labelValue: "1"
         searchNamespace: ALL
-        folder: "Kubernetes"
+        folder: /var/lib/grafana/dashboards/Kubernetes
         # Tu peux aussi charger depuis des Secrets :
         # foldersFromFilesStructure: true
+        provider:
+          # Le chart crée déjà ce provider, on force ses options
+          foldersFromFilesStructure: false
+          # Dossier LOGIQUE dans l’UI Grafana
+          folder: "Kubernetes"
+          # Et surtout, chemin ABSOLU lu par Grafana
+        options:
+          path: /var/lib/grafana/dashboards/Kubernetes
       datasources:
         enabled: false
         label: grafana_datasource
