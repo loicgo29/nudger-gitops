@@ -1,8 +1,0 @@
-NAME                                 READY   STATUS    RESTARTS        AGE   IP             NODE      NOMINATED NODE   READINESS GATES
-pod/ingress-nginx-controller-wzsk9   1/1     Running   7 (3h42m ago)   12h   91.98.16.184   master1   <none>           <none>
-
-NAME                               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE   SELECTOR
-service/ingress-nginx-controller   ClusterIP   10.111.78.164   <none>        80/TCP,443/TCP   26h   app.kubernetes.io/component=controller,app.kubernetes.io/instance=ingress-nginx,app.kubernetes.io/name=ingress-nginx
-
-NAME                                      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE   CONTAINERS   IMAGES                                                                                                                     SELECTOR
-daemonset.apps/ingress-nginx-controller   1         1         1       1            1           kubernetes.io/os=linux   12h   controller   registry.k8s.io/ingress-nginx/controller:v1.11.3@sha256:d56f135b6462cfc476447cfe564b83a45e8bb7da2774963b00d12161112270b7   app.kubernetes.io/component=controller,app.kubernetes.io/instance=ingress-nginx,app.kubernetes.io/name=ingress-nginx

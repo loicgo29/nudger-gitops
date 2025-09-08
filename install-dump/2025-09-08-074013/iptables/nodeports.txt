@@ -1,5 +1,0 @@
-### KUBE-NODEPORTS (résumé)
-Chain KUBE-NODEPORTS (1 references)
- pkts bytes target     prot opt in     out     source               destination         
-
-### Détail des chains cibles depuis KUBE-NODEPORTS
