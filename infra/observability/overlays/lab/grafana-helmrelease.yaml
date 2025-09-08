@@ -51,6 +51,7 @@ spec:
     #####################################
     env:
       TZ: Europe/Paris
+      GF_INSTALL_PLUGINS: ""
       # Important pour générer des URLs correctes
       GF_SERVER_ROOT_URL: https://grafana.nudger.logo-solutions.fr
       GF_SECURITY_COOKIE_SAMESITE: lax
@@ -148,9 +149,7 @@ spec:
     #####################################
     # Plugins (facultatif)
     #####################################
-    plugins:
-      - grafana-piechart-panel
-      # - grafana-lokiexplore-app   # souvent déprécié; garde Loki via Explore natif
+    plugins: []
 
     #####################################
     # Resources & PodSecurity
