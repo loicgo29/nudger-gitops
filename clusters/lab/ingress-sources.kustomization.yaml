@@ -11,5 +11,5 @@ spec:
   wait: true
   sourceRef:
     kind: GitRepository
-    name: <ROOT_GITREPO_NAME>
+    name: https://github.com/loicgo29/nudger-gitops.git
     namespace: flux-system
