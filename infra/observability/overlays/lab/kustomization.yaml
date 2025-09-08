@@ -4,3 +4,4 @@ resources:
   - ../../base
   - helmrelease.yaml
   - grafana-helmrelease.yaml   
+  - ../../dashboard

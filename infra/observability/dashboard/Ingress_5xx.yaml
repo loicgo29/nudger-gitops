@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-ingress-5xx
+  namespace: observability
+  labels:
+    grafana_dashboard: "1"
+data:
+  ingress-5xx.json: |
+    {
+      "title": "Ingress NGINX — 5xx",
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "version": 1,
+      "tags": ["ingress-nginx","loki"],
+      "time": { "from": "now-6h", "to": "now" },
+      "templating": {
+        "list": [
+          {
+            "name": "host",
+            "type": "query",
+            "datasource": {"type":"loki","uid":"loki"},
+            "query": "label_values({namespace=\"ingress-nginx\", container=\"controller\"}, pod)",
+            "includeAll": true,
+            "multi": true
+          }
+        ]
+      },
+      "panels": [
+        {
+          "type": "stat",
+          "title": "5xx (last 15m)",
+          "gridPos": {"x":0,"y":0,"w":6,"h":6},
+          "datasource": {"type":"loki","uid":"loki"},
+          "options": {"reduceOptions":{"calcs":["sum"]}},
+          "targets": [
+            { "expr": "sum(count_over_time({namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \" [15m]))" }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "5xx over time (by pod)",
+          "gridPos": {"x":6,"y":0,"w":18,"h":6},
+          "datasource": {"type":"loki","uid":"loki"},
+          "targets": [
+            { "expr": "sum by (pod) (count_over_time({namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \" [5m]))" }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Top URLs (best effort)",
+          "gridPos": {"x":0,"y":6,"w":12,"h":10},
+          "datasource": {"type":"loki","uid":"loki"},
+          "targets": [
+            { "expr": "topk(20, sum by (line) (count_over_time({namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \" [10m])))" }
+          ]
+        },
+        {
+          "type": "logs",
+          "title": "5xx raw",
+          "gridPos": {"x":12,"y":6,"w":12,"h":10},
+          "datasource": {"type":"loki","uid":"loki"},
+          "targets": [
+            { "expr": "{namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \"" }
+          ]
+        }
+      ]
+    }

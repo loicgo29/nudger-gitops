@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-app-exceptions
+  namespace: observability
+  labels:
+    grafana_dashboard: "1"
+data:
+  app-exceptions.json: |
+    {
+      "title": "Apps — Exceptions & Errors",
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "version": 1,
+      "tags": ["apps","loki","prometheus"],
+      "time": { "from": "now-6h", "to": "now" },
+      "templating": {
+        "list": [
+          {
+            "name": "ns",
+            "type": "query",
+            "datasource": {"type":"loki","uid":"loki"},
+            "query": "label_values({namespace!=\"\",namespace!=\"kube-system\"}, namespace)",
+            "includeAll": true,
+            "multi": true
+          },
+          {
+            "name": "pod",
+            "type": "query",
+            "datasource": {"type":"loki","uid":"loki"},
+            "query": "label_values({namespace=~\"$ns\"}, pod)",
+            "includeAll": true,
+            "multi": true
+          }
+        ]
+      },
+      "panels": [
+        {
+          "type": "stat",
+          "title": "Exceptions (last 15m)",
+          "gridPos": {"x":0,"y":0,"w":6,"h":6},
+          "datasource": {"type":"loki","uid":"loki"},
+          "options": {"reduceOptions":{"calcs":["sum"]}},
+          "targets": [
+            { "expr": "sum(count_over_time({namespace=~\"$ns\", pod=~\"$pod\"} |~ \"(?i)exception|traceback|panic|error\" [15m]))" }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Error rate by pod",
+          "gridPos": {"x":6,"y":0,"w":18,"h":6},
+          "datasource": {"type":"loki","uid":"loki"},
+          "targets": [
+            { "expr": "sum by (pod) (count_over_time({namespace=~\"$ns\", pod=~\"$pod\"} |~ \"(?i)exception|panic|error\" [5m]))" }
+          ]
+        },
+        {
+          "type": "logs",
+          "title": "Raw app logs (filtered)",
+          "gridPos": {"x":0,"y":6,"w":24,"h":10},
+          "datasource": {"type":"loki","uid":"loki"},
+          "targets": [
+            { "expr": "{namespace=~\"$ns\", pod=~\"$pod\"} |~ \"(?i)exception|panic|error\"" }
+          ]
+        }
+      ]
+    }
