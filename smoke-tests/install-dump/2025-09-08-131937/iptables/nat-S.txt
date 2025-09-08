@@ -1,2 +1,0 @@
-iptables v1.8.7 (nf_tables): table `nat' is incompatible, use 'nft' tool.
-
