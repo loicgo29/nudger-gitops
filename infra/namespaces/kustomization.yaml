@@ -4,4 +4,3 @@ resources:
   - ns-open4goods-prod.yaml
   - ns-open4goods-integration.yaml
   - ns-open4goods-recette.yaml
-  - ns-observability.yaml
