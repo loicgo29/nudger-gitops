@@ -23,6 +23,10 @@ spec:
     controller:
       kind: DaemonSet
       hostNetwork: true
+    ingressClassResource:
+      name: nginx
+      default: true
+    ingressClass: nginx      
       dnsPolicy: ClusterFirstWithHostNet
       admissionWebhooks:
         enabled: false
