@@ -50,5 +50,8 @@ spec:
         hsts-max-age: "31536000"
       admissionWebhooks:
         enabled: true
+        patch:
+          enabled: true
+        failurePolicy: Ignore
     defaultBackend:
       enabled: true
