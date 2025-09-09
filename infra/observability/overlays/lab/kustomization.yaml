@@ -5,5 +5,4 @@ resources:
   - helmrelease.yaml
   - grafana-helmrelease.yaml   
   - ../../dashboard
-
-    #  - ../../../grafana/grafana-ingress.yaml     
+  - grafana-ingress.yaml
