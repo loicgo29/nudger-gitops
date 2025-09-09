@@ -5,3 +5,4 @@ resources:
   - helmrepository.yaml
   - storageclass-longhorn-db.yaml
   - storageclass-longhorn.yaml
+  - storageclass-longhorn-delete.yaml
