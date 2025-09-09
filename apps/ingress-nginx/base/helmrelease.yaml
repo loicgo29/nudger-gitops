@@ -21,7 +21,6 @@ spec:
         useHostPort: true      # lie 80/443 aussi par hostPort (utile si hostNetwork est désactivé un jour)
       service:
         type: ClusterIP        # ⬅️ plus de NodePort
-        externalTrafficPolicy: Local
       metrics:
         enabled: true
       config:
