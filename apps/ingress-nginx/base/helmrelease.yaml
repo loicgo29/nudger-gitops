@@ -16,42 +16,16 @@ spec:
   values:
     controller:
       kind: DaemonSet
-
-      # ✅ Exposition directe sans DNAT/NodePort
-      hostNetwork: false
+      hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
-      daemonset:
-        useHostPort: true
-        hostPorts:
-          http: 80
-          https: 443
-
       service:
         type: ClusterIP
-
-      # Tolérer le/les control-plane si besoin
-      tolerations:
-        - key: "node-role.kubernetes.io/control-plane"
-          operator: "Exists"
-          effect: "NoSchedule"
-        - key: "node-role.kubernetes.io/master"
-          operator: "Exists"
-          effect: "NoSchedule"
-
-      metrics:
-        enabled: true
-        patch:
-          enabled: true
-        failurePolicy: Ignore
-      config:
-        use-forwarded-headers: "true"
-        server-tokens: "false"
-        hsts: "true"
-        hsts-max-age: "31536000"
       admissionWebhooks:
         enabled: true
         patch:
           enabled: true
         failurePolicy: Ignore
+      metrics:
+        enabled: true
     defaultBackend:
       enabled: true
