@@ -12,3 +12,4 @@ parameters:
   numberOfReplicas: "1"
   dataLocality: best-effort
   fsType: ext4
+
