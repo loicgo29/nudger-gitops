@@ -1,0 +1,11 @@
+# infra/observability/base/logging-namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: observability
+  labels:
+    environment: observability
+  annotations:
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/warn: baseline
+    pod-security.kubernetes.io/audit: baseline
