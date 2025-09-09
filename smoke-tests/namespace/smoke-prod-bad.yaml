@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: smoke-bad-prod
+  namespace: open4goods-prod
+  labels: { app: smoke, env: prod }
+spec:
+  containers:
+    - name: web
+      image: nginx:1.27-alpine
+      # Aucune securityContext → root, APE possible, pas de seccomp, etc.
+      # PSA restricted doit REJETER ce pod à l'admission.

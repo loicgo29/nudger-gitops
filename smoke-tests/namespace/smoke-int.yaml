@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: smoke-ok-int
+  namespace: open4goods-integration
+  labels: { app: smoke, env: integration }
+spec:
+  automountServiceAccountToken: false
+  # Baseline autorise large; on reste propre mais simple
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 101
+    runAsGroup: 101
+    seccompProfile: { type: RuntimeDefault }
+  containers:
+    - name: web
+      image: nginxinc/nginx-unprivileged:1.27-alpine
+      ports: [ { containerPort: 8080 } ]
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: false  # simple pour le smoke (pas de volumes)
+        capabilities: { drop: ["ALL"] }
+        runAsNonRoot: true
