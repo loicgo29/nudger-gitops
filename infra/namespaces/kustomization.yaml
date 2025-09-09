@@ -1,8 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - ns-open4goods-prod.yaml
-  - ns-open4goods-integration.yaml
-  - ns-open4goods-recette.yaml
-  - ns-open4goods-logging.yaml
-  - ns-open4goods-observability.yaml

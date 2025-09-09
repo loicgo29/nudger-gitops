@@ -1,0 +1,15 @@
+# infra/namespaces/base/ns-logging.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: logging
+  labels:
+    environment: observability
+    app.kubernetes.io/part-of: open4goods
+    # PSA en labels (efficace)
+    pod-security.kubernetes.io/warn:  baseline
+    pod-security.kubernetes.io/audit: baseline
+    # ⚠️ pas d'enforce ici pour éviter de bloquer un futur rollout
+  annotations:
+    nudger.logo-solutions.fr/managed-by: gitops
+    nudger.logo-solutions.fr/protect: "true"

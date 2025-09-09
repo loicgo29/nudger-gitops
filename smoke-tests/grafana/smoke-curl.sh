@@ -5,7 +5,7 @@ set -euo pipefail
 HOST="${HOST:-grafana.nudger.logo-solutions.fr}"            # FQDN de l'Ingress
 PATH_CHECK="${PATH_CHECK:-/}"                  # Chemin à tester (ex: /login)
 SCHEME="${SCHEME:-https}"                      # http|https
-PORT="${PORT:-30443}"                               # vide => par défaut (80/443). Exemple pour NodePort: 30443 avec SCHEME=https
+PORT="${PORT:-80}"                               # vide => par défaut (80/443). Exemple pour NodePort: 30443 avec SCHEME=https
 EXPECT_CODES="${EXPECT_CODES:-200,302}"        # Liste de codes autorisés séparés par des virgules
 EXPECT_BODY_REGEX="${EXPECT_BODY_REGEX:-}"     # Optionnel: regex à trouver dans la réponse
 INSECURE="${INSECURE:-true}"                   # true => ignore cert (curl -k)
@@ -54,7 +54,7 @@ in_list() {
 
 # --- Loop tries ---
 for try in $(seq 1 "$RETRIES"); do
-  echo "Attempt ${try}/${RETRIES} …"
+  echo "Attempt ${try}/${RETRIES} … curl ${CURL_OPTS[@]} $URL"
   HTTP_CODE="$(curl "${CURL_OPTS[@]}" -D /tmp/smoke_headers "$URL" || true)"
   echo "HTTP_CODE=${HTTP_CODE}"
 
