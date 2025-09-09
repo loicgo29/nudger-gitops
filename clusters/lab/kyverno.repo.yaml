@@ -1,4 +1,3 @@
-# clusters/lab/kyverno.repo.yaml
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
@@ -7,25 +6,3 @@ metadata:
 spec:
   interval: 1h
   url: https://kyverno.github.io/kyverno/
-
-# clusters/lab/kyverno.hr.yaml
-apiVersion: helm.toolkit.fluxcd.io/v2
-kind: HelmRelease
-metadata:
-  name: kyverno
-  namespace: kyverno
-spec:
-  interval: 15m
-  chart:
-    spec:
-      chart: kyverno
-      version: "3.5.1"   # pin !
-      sourceRef:
-        kind: HelmRepository
-        name: kyverno
-        namespace: flux-system
-  install:
-    createNamespace: true
-  values:
-    admissionController:
-      replicas: 1  # tu n’as qu’un nœud
