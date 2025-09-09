@@ -37,21 +37,6 @@ spec:
       runAsUser: 0
       runAsGroup: 0
       fsGroup: 0
-    extraVolumes:
-      - name: varlog
-        hostPath:
-          path: /var/log
-          type: Directory
-      - name: containers
-        hostPath:
-          path: /var/lib/docker/containers
-          type: DirectoryOrCreate
-    extraVolumeMounts:
-      - name: varlog
-        mountPath: /var/log
-      - name: containers
-        mountPath: /var/lib/docker/containers
-        readOnly: true
     config:
       server:
         http_listen_port: 3101
