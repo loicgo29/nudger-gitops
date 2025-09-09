@@ -4,24 +4,32 @@ metadata:
   name: ingress-nginx
   namespace: ingress-nginx
 spec:
-  interval: 30m
   chart:
     spec:
       chart: ingress-nginx
-      version: 4.11.3
+      version: "4.11.3"        # garde ta version actuelle
       sourceRef:
         kind: HelmRepository
         name: ingress-nginx
         namespace: flux-system
-  install:
-    createNamespace: false
-  upgrade:
-    remediation:
-      retries: 3
+  interval: 10m
   values:
     controller:
+      kind: DaemonSet          # simple et robuste en mono-nœud
+      hostNetwork: true        # ⬅️ clé : écoute directement sur l’hôte
+      daemonset:
+        useHostPort: true      # lie 80/443 aussi par hostPort (utile si hostNetwork est désactivé un jour)
       service:
-        type: NodePort
-        nodePorts:
-          http: 30080
-          https: 30443
+        type: ClusterIP        # ⬅️ plus de NodePort
+        externalTrafficPolicy: Local
+      metrics:
+        enabled: true
+      config:
+        use-forwarded-headers: "true"
+        server-tokens: "false"
+        hsts: "true"
+        hsts-max-age: "31536000"
+      admissionWebhooks:
+        enabled: true
+    defaultBackend:
+      enabled: true            # garde une 404 propre

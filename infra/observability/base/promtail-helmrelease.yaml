@@ -1,3 +1,4 @@
+# infra/observability/base/promtail-helmrelease.yaml
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -8,7 +9,7 @@ spec:
   chart:
     spec:
       chart: promtail
-      version: 6.x.x
+      version: "6.x.x"
       sourceRef:
         kind: HelmRepository
         name: grafana
@@ -28,11 +29,34 @@ spec:
       - key: "node-role.kubernetes.io/control-plane"
         operator: "Exists"
         effect: "NoSchedule"
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+    # promtail lit les logs hôte -> root + hostPath
+    securityContext:
+      runAsUser: 0
+      runAsGroup: 0
+      fsGroup: 0
+    extraVolumes:
+      - name: varlog
+        hostPath:
+          path: /var/log
+          type: Directory
+      - name: containers
+        hostPath:
+          path: /var/lib/docker/containers
+          type: DirectoryOrCreate
+    extraVolumeMounts:
+      - name: varlog
+        mountPath: /var/log
+      - name: containers
+        mountPath: /var/lib/docker/containers
+        readOnly: true
     config:
       server:
         http_listen_port: 3101
       clients:
-        - url: http://loki.logging.svc.cluster.local:3100/loki/api/v1/push
+        - url: http://loki.logging:3100/loki/api/v1/push
       positions:
         filename: /run/promtail/positions.yaml
       scrape_configs:
@@ -44,3 +68,4 @@ spec:
               separator: /
               target_label: __path__
               replacement: /var/log/pods/*$1/*/*.log
+
