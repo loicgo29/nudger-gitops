@@ -34,6 +34,11 @@ case "$APP" in
     flux -n logging reconcile helmrelease "${APP}" --with-source || true
     ;;
 
+  observability)
+flux -n flux-system reconcile source git gitops
+flux -n flux-system resume kustomization observability
+flux -n flux-system reconcile kustomization observability --with-source
+
   *)
     echo ">> Reconcile ALL Kustomizations (fallback)"
     flux get kustomizations -A
