@@ -1,0 +1,13 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: kyverno
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: ./clusters/lab        # <-- là où se trouvent kyverno.repo.yaml et kyverno.hr.yaml
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: gitops
+    namespace: flux-system
