@@ -19,6 +19,7 @@ spec:
 
       # ✅ Exposition directe sans DNAT/NodePort
       hostNetwork: false
+      dnsPolicy: ClusterFirstWithHostNet
       daemonset:
         useHostPort: true
         hostPorts:
@@ -39,6 +40,9 @@ spec:
 
       metrics:
         enabled: true
+        patch:
+          enabled: true
+        failurePolicy: Ignore
       config:
         use-forwarded-headers: "true"
         server-tokens: "false"
