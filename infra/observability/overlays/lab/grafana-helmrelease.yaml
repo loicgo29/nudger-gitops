@@ -132,7 +132,7 @@ spec:
       enabled: true
       type: pvc
       size: 5Gi
-      storageClassName: longhorn
+      storageClassName: longhorn-delete
       accessModes: ["ReadWriteOnce"]
 
     #####################################
