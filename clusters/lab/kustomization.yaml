@@ -6,3 +6,4 @@ resources:
   - infra-longhorn.kustomization.yaml
   - ingress-sources.kustomization.yaml
   - apps.kustomization.yaml
+  - observability.kustomization.yaml
