@@ -1,19 +1,16 @@
-# clusters/lab/kyverno.ks.yaml
+# clusters/lab/infra-namespaces.ks.yaml
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: kyverno-install
+  name: infra-namespaces
   namespace: flux-system
 spec:
   interval: 10m
-  path: ./clusters/lab
+  path: ./infra/namespaces/base
   prune: true
   sourceRef:
     kind: GitRepository
     name: gitops
     namespace: flux-system
-  healthChecks:
-    - apiVersion: apps/v1
-      kind: Deployment
-      name: kyverno-admission-controller
-      namespace: kyverno
+  dependsOn:
+    - name: kyverno-policies
