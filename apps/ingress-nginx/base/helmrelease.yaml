@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: ingress-nginx
-      version: "4.11.3"        # garde ta version actuelle
+      version: "4.11.3"
       sourceRef:
         kind: HelmRepository
         name: ingress-nginx
@@ -15,12 +15,28 @@ spec:
   interval: 10m
   values:
     controller:
-      kind: DaemonSet          # simple et robuste en mono-nœud
-      hostNetwork: true        # ⬅️ clé : écoute directement sur l’hôte
+      kind: DaemonSet
+
+      # ✅ Exposition directe sans DNAT/NodePort
+      hostNetwork: false
       daemonset:
-        useHostPort: true      # lie 80/443 aussi par hostPort (utile si hostNetwork est désactivé un jour)
+        useHostPort: true
+        hostPorts:
+          http: 80
+          https: 443
+
       service:
-        type: ClusterIP        # ⬅️ plus de NodePort
+        type: ClusterIP
+
+      # Tolérer le/les control-plane si besoin
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+
       metrics:
         enabled: true
       config:
@@ -31,4 +47,4 @@ spec:
       admissionWebhooks:
         enabled: true
     defaultBackend:
-      enabled: true            # garde une 404 propre
+      enabled: true
