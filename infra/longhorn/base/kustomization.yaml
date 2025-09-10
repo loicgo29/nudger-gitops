@@ -3,6 +3,6 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - helmrepository.yaml
-  - storageclass-longhorn-db.yaml
-  - storageclass-longhorn.yaml
-  - storageclass-longhorn-delete.yaml
+    #  - storageclass-longhorn-db.yaml
+    # - storageclass-longhorn.yaml
+    #- storageclass-longhorn-delete.yaml

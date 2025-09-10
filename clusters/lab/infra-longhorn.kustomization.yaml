@@ -13,4 +13,5 @@ spec:
     name: gitops
   path: infra/longhorn/overlays/lab
   # si tu veux forcer l'ordre, tu peux dépendre d'ingress (pas nécessaire pour Longhorn)
-  dependsOn: []
+  dependsOn:
+    - name: infra-longhorn-sc
