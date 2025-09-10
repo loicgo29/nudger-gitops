@@ -36,7 +36,7 @@ spec:
       exclude:
         any:
           - resources:
-              namespaces: ["longhorn-system","ingress-nginx","logging"]
+              namespaces: ["longhorn-system","ingress-nginx","logging","kyverno"]
       mutate:
         patchStrategicMerge:
           spec:
@@ -61,7 +61,7 @@ spec:
       exclude:
         any:
           - resources:
-              namespaces: ["longhorn-system","ingress-nginx","logging"]
+              namespaces: ["longhorn-system","ingress-nginx","logging","kyverno"]
       preconditions:
         all:
           - key: "{{ request.object.metadata.labels.\"security.nudger/allow-rw-rootfs\" || 'false' }}"
@@ -89,7 +89,7 @@ spec:
       exclude:
         any:
           - resources:
-              namespaces: ["longhorn-system","ingress-nginx","logging"]
+              namespaces: ["longhorn-system","ingress-nginx","logging","kyverno"]
       mutate:
         patchStrategicMerge:
           spec:
