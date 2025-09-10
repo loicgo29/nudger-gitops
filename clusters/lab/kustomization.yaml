@@ -5,3 +5,9 @@ resources:
   - kyverno.repo.yaml
   - kyverno.hr.yaml
   - kyverno.ks.yaml
+  - infra-longhorn-sc.kustomization.yaml   # ⬅️ SC Longhorn (prune:false)
+  - infra-longhorn.kustomization.yaml      # ⬅️ chart Longhorn etc.
+  - observability.kustomization.yaml
+  - ingress-nginx.kustomization.yaml
+  - ingress-sources.kustomization.yaml
+  - apps.whoami.kustomization.yaml
