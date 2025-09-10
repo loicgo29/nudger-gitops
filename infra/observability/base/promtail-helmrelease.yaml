@@ -85,9 +85,9 @@ spec:
           batchwait: 2s        # plus fréquent, paquets plus petits
           batchsize: 1048576   # 1MiB
           backoff_config:
-          min_period: 500ms
-          max_period: 5s
-          max_retries: 10
+            min_period: 500ms
+            max_period: 5s
+            max_retries: 10
       positions:
         filename: /run/promtail/positions.yaml
       scrape_configs:
