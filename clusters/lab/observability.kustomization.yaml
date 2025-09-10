@@ -7,7 +7,7 @@ spec:
   interval: 10m
   prune: true
   wait: true
-  path: ../../infra/observability/overlays/lab
+  path: ./infra/observability/overlays/lab
   sourceRef:
     kind: GitRepository
     name: gitops

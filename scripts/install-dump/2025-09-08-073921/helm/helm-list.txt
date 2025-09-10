@@ -1,8 +1,0 @@
-NAME                 	NAMESPACE      	REVISION	UPDATED                                	STATUS  	CHART                       	APP VERSION
-cert-manager         	cert-manager   	1       	2025-09-07 05:01:40.57808195 +0000 UTC 	deployed	cert-manager-v1.15.5        	v1.15.5    
-grafana              	observability  	5       	2025-09-08 07:12:03.214657373 +0000 UTC	deployed	grafana-8.15.0              	11.6.1     
-ingress-nginx        	ingress-nginx  	6       	2025-09-07 19:26:04.718060076 +0000 UTC	deployed	ingress-nginx-4.11.3        	1.11.3     
-kube-prometheus-stack	observability  	8       	2025-09-08 04:04:14.978834725 +0000 UTC	deployed	kube-prometheus-stack-61.9.0	v0.75.2    
-loki                 	logging        	3       	2025-09-07 17:29:52.606623905 +0000 UTC	deployed	loki-stack-2.10.2           	v2.9.3     
-longhorn             	longhorn-system	1       	2025-09-07 05:10:41.97470517 +0000 UTC 	deployed	longhorn-1.9.1              	v1.9.1     
-promtail             	logging        	3       	2025-09-08 05:36:56.396267157 +0000 UTC	deployed	promtail-6.17.0             	3.5.1      
