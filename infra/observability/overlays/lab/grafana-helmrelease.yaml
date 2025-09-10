@@ -129,7 +129,7 @@ spec:
     # Persistence
     #####################################
     persistence:
-      enabled: true
+      enabled: false
       type: pvc
       size: 5Gi
       storageClassName: longhorn-delete
