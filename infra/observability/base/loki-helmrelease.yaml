@@ -5,40 +5,63 @@ metadata:
   namespace: logging
 spec:
   interval: 10m
+  timeout: 10m0s
   chart:
     spec:
-      sourceRef: { kind: HelmRepository, name: grafana, namespace: flux-system }
-      chart: loki-stack              # 👈 tu utilises bien loki-stack
-      version: "2.10.2"              # 👈 corrige la version du CHART (pas de l’image)
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: flux-system
+      chart: loki-stack
+      version: "2.10.2"
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+      strategy: rollback
+  test:
+    enable: false
+
   values:
     grafana:
-      enabled: false                 # 👈 laisse à false (tu as Grafana à part)
+      enabled: false
     promtail:
       enabled: false
+
     loki:
       enabled: true
       auth_enabled: false
-      image:
-        repository: grafana/loki
-        tag: "2.9.3"
+
       persistence:
         enabled: true
         size: 10Gi
         storageClassName: longhorn
+
+      # Sécurité/ownership PVC
+      podSecurityContext:
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: false
+        capabilities:
+          drop: ["ALL"]
+
       resources:
         requests:
           cpu: 100m
-          memory: 200Mi
+          memory: 256Mi
         limits:
-          memory: 600Mi
-      config:
-        limits_config:
-          ingestion_rate_mb: 4
-          ingestion_burst_size_mb: 8
-          max_streams_per_user: 10000
-          max_global_streams_per_user: 20000
-        chunk_store_config:
-          max_look_back_period: 24h
-        table_manager:
-          retention_deletes_enabled: true
-          retention_period: 48h
+          memory: 768Mi
+
+      # Une seule source de vérité pour la rétention
+      limits_config:
+        retention_period: 48h
