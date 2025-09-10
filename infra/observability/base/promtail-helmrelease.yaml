@@ -15,28 +15,37 @@ spec:
         name: grafana
         namespace: flux-system
   values:
-    podLabels:
+        podLabels:
       security.nudger/allow-rw-rootfs: "true"
     podAnnotations:
-      security.nudger/justification: "Promtail écrit positions/cache; besoin RW"
-    # sécurité compatible non-root
+      security.nudger/justification: "Promtail a besoin d'un positions file en écriture (/run/promtail)."
+
+    # --- Sécurité (non-root) + FS en écriture uniquement où nécessaire
     podSecurityContext:
-      runAsUser: 65532
-      runAsGroup: 65532
-      fsGroup: 65532
-    securityContext:
       runAsNonRoot: true
-      readOnlyRootFilesystem: false   # ou true si tu montes des emptyDir pour /tmp et /run
+      fsGroup: 10001
+      seccompProfile:
+        type: RuntimeDefault
+
+    securityContext:                # (contexte CONTAINER dans le chart promtail)
+      runAsUser: 10001
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false # <— clé pour le positions.yaml
+      capabilities:
+        drop: ["ALL"]
+
+    # --- Monte un tmp/rundir en écriture
     extraVolumes:
-      - name: run
+      - name: promtail-run
         emptyDir: {}
-      - name: tmp
+      - name: promtail-tmp
         emptyDir: {}
     extraVolumeMounts:
-      - name: run
-        mountPath: /run
-      - name: tmp
+      - name: promtail-run
+        mountPath: /run/promtail
+      - name: promtail-tmp
         mountPath: /tmp
+
     fullnameOverride: promtail
     rbac:
       create: true
