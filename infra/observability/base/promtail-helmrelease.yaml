@@ -45,13 +45,9 @@ spec:
         drop: ["ALL"]
     # --- Monte un tmp/rundir en écriture
     extraVolumes:
-      - name: promtail-run
-        emptyDir: {}
       - name: promtail-tmp
         emptyDir: {}
     extraVolumeMounts:
-      - name: promtail-run
-        mountPath: /run/promtail
       - name: promtail-tmp
         mountPath: /tmp
     fullnameOverride: promtail
