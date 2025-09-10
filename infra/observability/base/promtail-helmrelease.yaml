@@ -15,7 +15,7 @@ spec:
         name: grafana
         namespace: flux-system
   values:
-        podLabels:
+    podLabels:
       security.nudger/allow-rw-rootfs: "true"
     podAnnotations:
       security.nudger/justification: "Promtail a besoin d'un positions file en écriture (/run/promtail)."
