@@ -4,7 +4,7 @@ metadata:
   name: gitops
   namespace: flux-system
 spec:
-  interval: 100m
+  interval: 1h   
   url: https://github.com/loicgo29/nudger-gitops.git
   ref:
     branch: main

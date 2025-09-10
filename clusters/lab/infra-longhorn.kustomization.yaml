@@ -4,7 +4,7 @@ metadata:
   name: infra-longhorn
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 100m
   timeout: 5m
   wait: true
   prune: true

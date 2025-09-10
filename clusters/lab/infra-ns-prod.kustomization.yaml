@@ -5,7 +5,7 @@ metadata:
   name: infra-ns-prod
   namespace: flux-system
 spec:
-  interval: 10m
+  interval: 1h
   path: ./infra/namespaces/base        # <= si ce dossier ne contient QUE prod
   prune: false                         # évite un drop par erreur
   wait: true

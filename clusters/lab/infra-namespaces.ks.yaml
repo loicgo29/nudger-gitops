@@ -5,7 +5,7 @@ metadata:
   name: infra-namespaces
   namespace: flux-system
 spec:
-  interval: 10m
+  interval: 1h 
   path: ./infra/namespaces/base
   prune: true
   sourceRef:

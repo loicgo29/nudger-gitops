@@ -4,7 +4,7 @@ metadata:
   name: infra-namespaces
   namespace: flux-system
 spec:
-  interval: 10m
+  interval: 1h 
   path: ./infra/namespaces/base
   prune: false            # <-- important pour ne pas dropper des NS en cas de refactor
   sourceRef:

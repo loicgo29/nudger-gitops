@@ -5,7 +5,7 @@ metadata:
   name: kyverno-install
   namespace: flux-system
 spec:
-  interval: 10m
+  interval: 1h
   path: ./clusters/lab
   prune: true
   sourceRef:
