@@ -6,8 +6,8 @@ metadata:
     storageclass.kubernetes.io/is-default-class: "false"
 provisioner: driver.longhorn.io
 reclaimPolicy: Delete
-allowVolumeExpansion: true
 volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
 parameters:
   numberOfReplicas: "1"
   dataLocality: "best-effort"

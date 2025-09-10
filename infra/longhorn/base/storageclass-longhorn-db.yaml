@@ -4,8 +4,8 @@ metadata:
   name: longhorn-db
 provisioner: driver.longhorn.io
 reclaimPolicy: Retain
-allowVolumeExpansion: true
 volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
 parameters:
   numberOfReplicas: "1"
   dataLocality: "best-effort"
