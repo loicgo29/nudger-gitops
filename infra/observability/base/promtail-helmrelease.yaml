@@ -45,9 +45,13 @@ spec:
         drop: ["ALL"]
     # --- Monte un tmp/rundir en écriture
     extraVolumes:
+      - name: promtail-run
+        emptyDir: {}
       - name: promtail-tmp
         emptyDir: {}
     extraVolumeMounts:
+      - name: promtail-run
+        mountPath: /run/promtail
       - name: promtail-tmp
         mountPath: /tmp
     fullnameOverride: promtail
@@ -74,17 +78,19 @@ spec:
         http_listen_port: 3101
       clients:
         - url: http://loki.logging.svc.cluster.local:3100/loki/api/v1/push
-          batchwait: 2s
-          batchsize: 1048576
+          batchwait: 2s # plus fréquent, paquets plus petits
+          batchsize: 1048576 # 1MiB
           backoff_config:
             min_period: 500ms
             max_period: 5s
             max_retries: 10
+          min_period: 500ms
+          max_period: 5s
+          max_retries: 10
       positions:
         filename: /run/promtail/positions.yaml
       scrape_configs:
         - job_name: kubernetes-pods
-          start_position: end
           pipeline_stages: [{cri: {}}]
           kubernetes_sd_configs: [{role: pod}]
           relabel_configs:
