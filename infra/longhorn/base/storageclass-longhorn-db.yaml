@@ -1,12 +1,15 @@
+allowVolumeExpansion: true
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
+  labels:
+    kustomize.toolkit.fluxcd.io/name: infra-longhorn
+    kustomize.toolkit.fluxcd.io/namespace: flux-system
   name: longhorn-db
+parameters:
+  dataLocality: best-effort
+  fsType: xfs
+  numberOfReplicas: "1"
 provisioner: driver.longhorn.io
 reclaimPolicy: Retain
 volumeBindingMode: WaitForFirstConsumer
-allowVolumeExpansion: true
-parameters:
-  numberOfReplicas: "1"
-  dataLocality: "best-effort"
-  fsType: xfs

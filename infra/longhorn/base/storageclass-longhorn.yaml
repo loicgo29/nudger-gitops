@@ -1,20 +1,23 @@
+allowVolumeExpansion: true
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: longhorn
   annotations:
     storageclass.kubernetes.io/is-default-class: "false"
+  labels:
+    kustomize.toolkit.fluxcd.io/name: infra-longhorn
+    kustomize.toolkit.fluxcd.io/namespace: flux-system
+  name: longhorn
+parameters:
+  backupTargetName: default
+  dataEngine: v1
+  dataLocality: disabled
+  disableRevisionCounter: "true"
+  fromBackup: ""
+  fsType: ext4
+  numberOfReplicas: "3"
+  staleReplicaTimeout: "30"
+  unmapMarkSnapChainRemoved: ignored
 provisioner: driver.longhorn.io
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
-allowVolumeExpansion: true
-parameters:
-  numberOfReplicas: "3"
-  staleReplicaTimeout: "30"
-  fromBackup: ""
-  fsType: "ext4"
-  dataLocality: "disabled"
-  unmapMarkSnapChainRemoved: "ignored"
-  disableRevisionCounter: "true"
-  dataEngine: "v1"
-  backupTargetName: "default"
