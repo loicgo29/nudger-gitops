@@ -3,12 +3,10 @@ kind: ClusterPolicy
 metadata:
   name: nudger-security-guardrails
 spec:
-  # On veut bloquer à l'admission (pas en background)
   validationFailureAction: Enforce
   background: false
-
   rules:
-    # 1) Si on demande une exception (RW rootfs ou init root), il faut une justification
+    # 1) Exiger une justification dès qu'on utilise une exception
     - name: require-justification-for-exceptions
       match:
         any:
@@ -16,18 +14,20 @@ spec:
               kinds: ["Pod"]
               selector:
                 matchExpressions:
-                  - { key: security.nudger/allow-rw-rootfs, operator: In, values: ["true"] }
-                  - { key: security.nudger/allow-init-root, operator: In, values: ["true"] }
+                  - key: security.nudger/allow-rw-rootfs
+                    operator: In
+                    values: ["true"]
+                  - key: security.nudger/allow-init-root
+                    operator: In
+                    values: ["true"]
       validate:
         message: "Exception sécurité sans justification: ajoutez annotation security.nudger/justification."
         pattern:
           metadata:
             annotations:
               security.nudger/justification: "?*"
-      skipBackgroundRequests: true
 
-    # 2) Auto-durcissement générique (opt-in via label séparé si tu veux,
-    #    mais ici on l'applique par défaut à tous les Pods, avec exclusions)
+    # 2) Auto-harden par défaut (opt-in RW possible via label)
     - name: auto-harden
       match:
         any:
@@ -36,11 +36,7 @@ spec:
       exclude:
         any:
           - resources:
-              # on évite de toucher aux namespaces système/sensibles
-              namespaces:
-                - kube-system
-                - kyverno
-                - longhorn-system
+              namespaces: ["longhorn-system","ingress-nginx","logging"]
       mutate:
         patchStrategicMerge:
           spec:
@@ -55,9 +51,8 @@ spec:
             securityContext:
               runAsNonRoot: true
               seccompProfile: { type: RuntimeDefault }
-      skipBackgroundRequests: true
 
-    # 3) Forcer RO si pas d’opt-out explicite (label allow-rw-rootfs=true)
+    # 3) Forcer RO si pas d’opt-in explicite
     - name: enforce-ro-rootfs
       match:
         any:
@@ -66,10 +61,7 @@ spec:
       exclude:
         any:
           - resources:
-              namespaces:
-                - kube-system
-                - kyverno
-                - longhorn-system
+              namespaces: ["longhorn-system","ingress-nginx","logging"]
       preconditions:
         all:
           - key: "{{ request.object.metadata.labels.\"security.nudger/allow-rw-rootfs\" || 'false' }}"
@@ -84,11 +76,8 @@ spec:
                   - name: "{{ element.name }}"
                     securityContext:
                       readOnlyRootFilesystem: true
-      skipBackgroundRequests: true
 
-    # 4) Injection d’un init root (busybox) pour corriger les perms NGINX (opt-in)
-    #    ⚠️ Ne contourne PAS PSA 'restricted' (le root reste bloqué par PSA).
-    #    À utiliser dans un namespace moins strict (ex: integration) ou avec exemptions PSA.
+    # 4) Injecter un init root standard quand autorisé
     - name: inject-root-init-when-allowed
       match:
         any:
@@ -100,9 +89,7 @@ spec:
       exclude:
         any:
           - resources:
-              namespaces:
-                - kube-system
-                - kyverno
+              namespaces: ["longhorn-system","ingress-nginx","logging"]
       mutate:
         patchStrategicMerge:
           spec:
@@ -119,4 +106,3 @@ spec:
                   runAsUser: 0
                   allowPrivilegeEscalation: false
                   seccompProfile: { type: RuntimeDefault }
-      skipBackgroundRequests: true
