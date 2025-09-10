@@ -64,4 +64,7 @@ spec:
 
       # Une seule source de vérité pour la rétention
       limits_config:
-        retention_period: 48h
+          ingestion_rate_mb: 8               # ↗ pour avaler l’arriéré
+          ingestion_burst_size_mb: 16
+          reject_old_samples: true
+          reject_old_samples_max_age: 24h     
