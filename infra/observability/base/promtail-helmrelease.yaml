@@ -15,6 +15,28 @@ spec:
         name: grafana
         namespace: flux-system
   values:
+    podLabels:
+      security.nudger/allow-rw-rootfs: "true"
+    podAnnotations:
+      security.nudger/justification: "Promtail écrit positions/cache; besoin RW"
+    # sécurité compatible non-root
+    podSecurityContext:
+      runAsUser: 65532
+      runAsGroup: 65532
+      fsGroup: 65532
+    securityContext:
+      runAsNonRoot: true
+      readOnlyRootFilesystem: false   # ou true si tu montes des emptyDir pour /tmp et /run
+    extraVolumes:
+      - name: run
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}
+    extraVolumeMounts:
+      - name: run
+        mountPath: /run
+      - name: tmp
+        mountPath: /tmp
     fullnameOverride: promtail
     rbac:
       create: true
@@ -34,13 +56,6 @@ spec:
         effect: NoSchedule
     # promtail lit les logs hôte -> root + hostPath
     # values override (ex: kustomize patch ou values dans HelmRelease)
-    podSecurityContext:
-      runAsUser: 65532
-      runAsGroup: 65532
-      fsGroup: 65532
-    securityContext:
-      runAsNonRoot: true
-      readOnlyRootFilesystem: false   # promtail écrit son cache; si tu gardes true, ajoute des emptyDir pour /tmp et /run
     config:
       server:
         http_listen_port: 3101

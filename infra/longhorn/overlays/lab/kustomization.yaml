@@ -6,3 +6,5 @@ resources:
   - ingress.yaml
     #  - service.yaml
   - secret.yaml
+patchesStrategicMerge:
+  - patch-longhorn-ui.yaml

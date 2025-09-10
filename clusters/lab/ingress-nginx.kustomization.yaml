@@ -18,4 +18,10 @@ spec:
       kind: Deployment
       name: ingress-nginx-controller
       namespace: ingress-nginx
-
+  spec:
+    values:
+      controller:
+        podLabels:
+          security.nudger/allow-rw-rootfs: "true"
+        podAnnotations:
+          security.nudger/justification: "NGINX controller nécessite écriture (/var/log/nginx, /tmp)"
