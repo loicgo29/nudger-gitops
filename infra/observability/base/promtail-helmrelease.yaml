@@ -92,6 +92,7 @@ spec:
         filename: /run/promtail/positions.yaml
       scrape_configs:
         - job_name: kubernetes-pods
+          start_position: end
           pipeline_stages: [ { cri: {} } ]
           kubernetes_sd_configs: [ { role: pod } ]
           relabel_configs:
