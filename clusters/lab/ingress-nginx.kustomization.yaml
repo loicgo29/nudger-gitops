@@ -17,5 +17,3 @@ spec:
       kind: Deployment
       name: ingress-nginx-controller
       namespace: ingress-nginx
-  patchesStrategicMerge:
-    - ingress-nginx-values-patch.yaml
