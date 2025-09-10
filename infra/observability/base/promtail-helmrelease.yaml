@@ -22,7 +22,7 @@ spec:
 
     # --- Sécurité (non-root) + FS en écriture uniquement où nécessaire
     podSecurityContext:
-      runAsNonRoot: true
+      runAsNonRoot: false
       fsGroup: 0
       seccompProfile:
         type: RuntimeDefault
