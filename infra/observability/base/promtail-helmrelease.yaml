@@ -80,12 +80,6 @@ spec:
         - url: http://loki.logging.svc.cluster.local:3100/loki/api/v1/push
           batchwait: 2s
           batchsize: 1048576
-          backoff_config:
-            min_period: 5s
-            max_period: 500ms
-            max_retries: 10
-            min_backoff: 500ms
-            max_backoff: 5s
       positions:
         filename: /run/promtail/positions.yaml
       scrape_configs:
