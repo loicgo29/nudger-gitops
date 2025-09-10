@@ -85,8 +85,8 @@ spec:
           batchwait: 2s
           batchsize: 1048576
           backoff_config:
-            min_period: "500ms"
-            max_period: "5s"
+            min_period: 5s
+            max_period: 500ms
             max_retries: "10"
       positions:
         filename: /run/promtail/positions.yaml
