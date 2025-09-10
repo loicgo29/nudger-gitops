@@ -1,0 +1,24 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ingress-nginx
+  namespace: ingress-nginx
+spec:
+  values:
+    controller:
+      extraVolumes:
+        - name: nginx-run
+          emptyDir: {}
+        - name: nginx-cache
+          emptyDir: {}
+      extraVolumeMounts:
+        - name: nginx-run
+          mountPath: /var/run
+        - name: nginx-cache
+          mountPath: /var/cache/nginx
+      containerSecurityContext:
+        readOnlyRootFilesystem: true
+      podLabels:
+        security.nudger/allow-rw-rootfs: "true"
+      podAnnotations:
+        security.nudger/justification: "NGINX controller nécessite écriture (/var/log/nginx, /tmp)"
