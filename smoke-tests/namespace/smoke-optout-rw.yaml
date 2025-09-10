@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: smoke-optout-rw
+  namespace: open4goods-prod        # ⇦ PSA=restricted
+  labels:
+    app: smoke
+    env: prod
+    # ⇩ Désactive l’auto RO de la règle "enforce-ro-rootfs"
+    security.nudger/allow-rw-rootfs: "true"
+  annotations:
+    # ⇩ Exigée par "require-justification-for-exceptions"
+    security.nudger/justification: "Besoin ponctuel d’écriture / debug"
+spec:
+  automountServiceAccountToken: false
+
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile: { type: RuntimeDefault }
+
+  containers:
+    - name: web
+      image: nginxinc/nginx-unprivileged:1.27-alpine
+      ports: [{ containerPort: 8080 }]
+      securityContext:
+        runAsNonRoot: true
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: false  # ⇦ Opt-out : on **autorise** RW
+        capabilities: { drop: ["ALL"] }
+      args: ["sh","-lc","exec nginx -g 'daemon off;'"]
+      readinessProbe:
+        httpGet: { path: "/", port: 8080 }
+        initialDelaySeconds: 2
+        periodSeconds: 5
+      livenessProbe:
+        httpGet: { path: "/", port: 8080 }
+        initialDelaySeconds: 10
+        periodSeconds: 10

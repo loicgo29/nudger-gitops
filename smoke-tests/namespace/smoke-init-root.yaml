@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: smoke-init-root
+  namespace: open4goods-integration
+  labels:
+    app: smoke
+    env: integration
+    security.nudger/allow-init-root: "true"   # ➜ init root injecté par Kyverno
+    # security.nudger/allow-rw-rootfs: "true" # (optionnel) si tu veux RW racine
+  annotations:
+    security.nudger/justification: "Préparer les permissions des volumes avant démarrage"
+spec:
+  automountServiceAccountToken: false
+
+  # ⚠️ Laisse vide au niveau Pod, sinon runAsNonRoot=true bloque l’init root
+  # securityContext: {}
+
+  volumes:
+    - { name: cache, emptyDir: {} }
+    - { name: run,   emptyDir: {} }
+    - { name: log,   emptyDir: {} }
+    - { name: tmp,   emptyDir: {} }
+
+  containers:
+    - name: web
+      image: nginxinc/nginx-unprivileged:1.27-alpine
+      ports: [{ containerPort: 8080 }]
+      securityContext:
+        runAsNonRoot: true
+        allowPrivilegeEscalation: false
+        # Si tu veux rester en RO (recommandé), garde true et monte les volumes ci-dessus.
+        readOnlyRootFilesystem: true
+        capabilities: { drop: ["ALL"] }
+      volumeMounts:
+        - { name: cache, mountPath: /var/cache/nginx }
+        - { name: run,   mountPath: /var/run }
+        - { name: log,   mountPath: /var/log/nginx }
+        - { name: tmp,   mountPath: /tmp }
+      args: ["sh","-lc","exec nginx -g 'daemon off;'"]
