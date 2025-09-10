@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # --- Réglages rapides ---------------------------------------------------------
-OUT_ROOT="${OUT_ROOT:-./install-dump}"
+OUT_ROOT="${OUT_ROOT:-$HOME/nudger-gitops/dump}"
 NS_FLUX="${NS_FLUX:-flux-system}"
 NS_ING="${NS_ING:-ingress-nginx}"
 NS_OBS="${NS_OBS:-observability}"
@@ -162,3 +162,5 @@ echo "  - ${OUT}/SUMMARY.txt"
 echo "  - ${OUT}/ingress/nodeport-curl.txt (si NODE_IP défini)"
 echo "  - ${OUT}/flux/*.log, ${OUT}/ingress/controller.log"
 echo "  - ${OUT}/iptables/nodeports.txt, iptables-nat.rules"
+tar -cvf ${OUT}.tar ${OUT}/
+rm -rf ${OUT}/
