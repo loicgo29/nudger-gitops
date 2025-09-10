@@ -12,7 +12,8 @@ spec:
     kind: GitRepository
     name: gitops
   path: apps/ingress-nginx/overlays/lab
-    patches:
+
+  patches:
     - target:
         group: helm.toolkit.fluxcd.io
         version: v2
@@ -28,7 +29,6 @@ spec:
         spec:
           values:
             controller:
-              # RW bits + tmp dirs for nginx
               extraVolumes:
                 - name: nginx-run
                   emptyDir: {}
@@ -39,15 +39,13 @@ spec:
                   mountPath: /var/run
                 - name: nginx-cache
                   mountPath: /var/cache/nginx
-
-              # keep RO off if you need it:
               containerSecurityContext:
                 readOnlyRootFilesystem: false
-
               podLabels:
                 security.nudger/allow-rw-rootfs: "true"
               podAnnotations:
                 security.nudger/justification: "NGINX needs /var/run & cache write access"
+
   healthChecks:
     - apiVersion: apps/v1
       kind: Deployment
