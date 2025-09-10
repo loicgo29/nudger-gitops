@@ -87,7 +87,7 @@ spec:
           backoff_config:
             min_period: 5s
             max_period: 500ms
-            max_retries: "10"
+            max_retries: 10
       positions:
         filename: /run/promtail/positions.yaml
       scrape_configs:
