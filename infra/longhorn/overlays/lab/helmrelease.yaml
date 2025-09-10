@@ -19,6 +19,22 @@ spec:
   upgrade:
     remediation: { retries: 3 }
   values:
+    postRenderers:
+      - kustomize:
+          patchesStrategicMerge:
+            - |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: longhorn-ui
+                namespace: longhorn-system
+              spec:
+                template:
+                  metadata:
+                    labels:
+                      security.nudger/allow-rw-rootfs: "true"
+                      security.nudger/allow-init-root: "true"
+                      security.nudger/justification: "Longhorn UI needs write paths"
     persistence:
       defaultClass: false       # on garde tes SC à toi
       reclaimPolicy: Retain
