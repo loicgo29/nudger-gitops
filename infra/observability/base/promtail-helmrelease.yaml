@@ -30,22 +30,19 @@ spec:
       security.nudger/allow-rw-rootfs: "true"
     podAnnotations:
       security.nudger/justification: "Promtail a besoin d'un positions file en écriture (/run/promtail)."
-
     # --- Sécurité (non-root) + FS en écriture uniquement où nécessaire
     podSecurityContext:
       runAsNonRoot: false
       fsGroup: 0
       seccompProfile:
         type: RuntimeDefault
-
-    securityContext:                # (contexte CONTAINER dans le chart promtail)
+    securityContext: # (contexte CONTAINER dans le chart promtail)
       runAsUser: 0
       runAsGroup: 0
       allowPrivilegeEscalation: false
       readOnlyRootFilesystem: false # <— clé pour le positions.yaml
       capabilities:
         drop: ["ALL"]
-
     # --- Monte un tmp/rundir en écriture
     extraVolumes:
       - name: promtail-run
@@ -57,7 +54,6 @@ spec:
         mountPath: /run/promtail
       - name: promtail-tmp
         mountPath: /tmp
-
     fullnameOverride: promtail
     rbac:
       create: true
@@ -88,13 +84,15 @@ spec:
             min_period: 5s
             max_period: 500ms
             max_retries: 10
+            min_backoff: 500ms
+            max_backoff: 5s
       positions:
         filename: /run/promtail/positions.yaml
       scrape_configs:
         - job_name: kubernetes-pods
           start_position: end
-          pipeline_stages: [ { cri: {} } ]
-          kubernetes_sd_configs: [ { role: pod } ]
+          pipeline_stages: [{cri: {}}]
+          kubernetes_sd_configs: [{role: pod}]
           relabel_configs:
             - source_labels: [__meta_kubernetes_pod_uid, __meta_kubernetes_pod_container_name]
               separator: /
