@@ -33,10 +33,14 @@ spec:
         operator: Exists
         effect: NoSchedule
     # promtail lit les logs hôte -> root + hostPath
+    # values override (ex: kustomize patch ou values dans HelmRelease)
+    podSecurityContext:
+      runAsUser: 65532
+      runAsGroup: 65532
+      fsGroup: 65532
     securityContext:
-      runAsUser: 0
-      runAsGroup: 0
-      fsGroup: 0
+      runAsNonRoot: true
+      readOnlyRootFilesystem: false   # promtail écrit son cache; si tu gardes true, ajoute des emptyDir pour /tmp et /run
     config:
       server:
         http_listen_port: 3101
