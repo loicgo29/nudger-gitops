@@ -1,0 +1,7 @@
+- name: kube-components-rbac
+  namespace: kube-system
+  path: ./clusters/lab/observability/kube-components-rbac
+  dependsOn:
+    - name: kube-prometheus-stack
+  prune: true
+  interval: 10m
