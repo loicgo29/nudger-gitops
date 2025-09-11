@@ -9,3 +9,5 @@ resources:
   - loki-helmrelease.yaml         # ← AJOUT
   - policy-reporter-helmrelease.yaml
   - policy-reporter-servicemonitor.yaml
+  - kube-components-services              # ← ajoute cette ligne
+  - kube-components-rbac  
