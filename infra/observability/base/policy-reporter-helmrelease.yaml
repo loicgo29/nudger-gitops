@@ -6,7 +6,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1h
-  url: https://policy-reporter.github.io/helm-charts
+  url: https://kyverno.github.io/policy-reporter
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -45,8 +45,6 @@ spec:
 
     prometheus:
       enabled: true
-      servicemonitor:
-        enabled: true
       service:
         labels:
           app.kubernetes.io/name: policy-reporter
