@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kube-scheduler
+  name: kube-scheduler-custom
   namespace: kube-system
   labels:
-    app: kube-scheduler
+    app: kube-scheduler-custom
 spec:
   selector:
     component: kube-scheduler
