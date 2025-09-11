@@ -4,9 +4,8 @@ metadata:
   name: kube-scheduler
   namespace: kube-system
   labels:
-    k8s-app: kube-scheduler          # ← ce label doit matcher
-    app: kube-scheduler                # ← ajouté pour le ServiceMonitor
     component: kube-scheduler
+    tier: control-plane
 spec:
   selector:
     component: kube-scheduler
