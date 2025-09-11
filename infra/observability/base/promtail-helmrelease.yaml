@@ -75,9 +75,6 @@ spec:
             min_period: 500ms
             max_period: 5s
             max_retries: 10
-          min_period: 500ms
-          max_period: 5s
-          max_retries: 10
       positions:
         filename: /run/promtail/positions.yaml
       scrape_configs:
