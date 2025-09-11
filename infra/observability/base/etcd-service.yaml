@@ -1,0 +1,15 @@
+# ./infra/observability/base/etcd-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: etcd
+  namespace: kube-system
+  labels:
+    k8s-app: etcd
+spec:
+  selector:
+    component: etcd
+  ports:
+    - name: metrics
+      port: 2381
+      targetPort: 2381

@@ -1,122 +1,129 @@
 #!/usr/bin/env bash
+# diff-live.sh <ROOT> [--reconcile] [--only-kind=KIND] [--only-ns=NS]
 set -euo pipefail
 
-# --- usage ---
-if [[ $# -lt 1 ]]; then
-  echo "Usage: $0 <racine_manifests> [--reconcile] [--ns <namespace>] [--kinds <K1,K2,...>] [--debug]"
-  exit 2
-fi
+ROOT="${1:-.}"; shift || true
+RECONCILE=0
+ONLY_KIND=""
+ONLY_NS=""
 
-ROOT="$1"; shift || true
-RECONCILE=0; ONLY_NS=""; ONLY_KINDS=""; DEBUG=0
-
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    --reconcile) RECONCILE=1;;
-    --ns)        shift; ONLY_NS="${1:-}";;
-    --kinds)     shift; ONLY_KINDS="${1:-}";;
-    --debug)     DEBUG=1;;
-    *) echo "arg inconnu: $1" >&2;;
+for arg in "$@"; do
+  case "$arg" in
+    --reconcile) RECONCILE=1 ;;
+    --only-kind=*) ONLY_KIND="${arg#*=}" ;;
+    --only-ns=*)   ONLY_NS="${arg#*=}" ;;
+    *) ;;
   esac
-  shift || true
 done
 
-dbg(){ [[ $DEBUG -eq 1 ]] && echo -e "🔎 DEBUG: $*"; }
+RED=$'\e[31m'; GRN=$'\e[32m'; YEL=$'\e[33m'; BLU=$'\e[34m'; RST=$'\e[0m'
+say()  { echo -e "$@"; }
+pass() { echo -e "✅ ${GRN}$*${RST}"; }
+warn() { echo -e "⚠️  ${YEL}$*${RST}"; }
+fail() { echo -e "❌ ${RED}$*${RST}"; }
 
-strip_common(){
-  # on normalise pour éviter les faux positifs de diff
-  yq -P '
-    del(
-      .metadata.managedFields,
-      .metadata.creationTimestamp,
-      .metadata.resourceVersion,
-      .metadata.uid,
-      .metadata.generation,
-      .metadata.annotations."kubectl.kubernetes.io/last-applied-configuration",
-      .status
-    )
-  '
-}
+need() { command -v "$1" >/dev/null 2>&1 || { fail "binaire requis manquant: $1"; exit 3; }; }
+need kubectl
+need yq
+command -v flux >/dev/null 2>&1 || true
 
-echo "── Scan des manifests dans: $ROOT ─────────────────────────────"
-
-# (facultatif) reconcile flux
-if [[ $RECONCILE -eq 1 ]] && command -v flux >/dev/null 2>&1; then
-  echo "── Flux reconcile (toutes les Kustomizations) ─────────────────────────────"
-  flux -n flux-system get ks -o name | awk '{print $1}' | while read -r KS; do
-    ns="${KS%%/*}"; name="${KS##*/}"
-    flux -n "$ns" reconcile kustomization "$name" --with-source || true
-  done
+if (( RECONCILE == 1 )) && command -v flux >/dev/null 2>&1; then
+  say "${BLU}── Flux reconcile (toutes les Kustomizations) ─────────────────────────────${RST}"
+  flux -n flux-system get ks -o name | xargs -r -n1 flux -n flux-system reconcile ks || true
 fi
+
+say "${BLU}── Scan des manifests dans: ${ROOT} ─────────────────────────────${RST}"
 
 TOTAL=0
 DIFFS=0
 MISSING=0
 
-# boucle fichiers YAML/YML
-# Pas de -L, compat posix
-while IFS= read -r -d '' f; do
+# Liste “raisonnable” de kinds cluster-scoped (pas d’option -n)
+is_cluster_scoped () {
+  case "$1" in
+    Namespace|Node|ClusterRole|ClusterRoleBinding|CustomResourceDefinition|StorageClass|PriorityClass|ClusterIssuer|MutatingWebhookConfiguration|ValidatingWebhookConfiguration)
+      return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+# Boucle fichiers YAML/YML
+while IFS= read -r f; do
   echo "📂 Fichier: $f"
-  # on parcourt les documents avec documentIndex
-  mapfile -t DOCS < <(yq -r -d'*' '
-    [ (.kind // ""),
-      (.metadata.name // ""),
-      (.metadata.namespace // ""),
-      (documentIndex)
-    ] | @tsv
-  ' "$f" 2>/dev/null || true)
+  # Pour chaque document du fichier, yq imprime UNE ligne: KIND<TAB>NAME<TAB>NAMESPACE
+  # yq v4 imprime une ligne par doc, même multi-doc, sans -d.
+  mapfile -t lines < <(yq -r -N '.kind // "" + "\t" + (.metadata.name // "") + "\t" + (.metadata.namespace // "")' "$f" || true)
 
-  if [[ ${#DOCS[@]} -eq 0 ]]; then
-    dbg "$f ne contient aucun doc YAML (ou non parsable)"; continue
-  fi
+  for line in "${lines[@]}"; do
+    # Ignore lignes vides (ex: commentaires ou doc vide)
+    [[ -z "$line" ]] && continue
+    kind="$(cut -f1 <<<"$line")"
+    name="$(cut -f2 <<<"$line")"
+    ns="$(cut -f3 <<<"$line")"
 
-  for line in "${DOCS[@]}"; do
-    IFS=$'\t' read -r KIND NAME NS IDX <<<"$line"
+    # Si pas un “vrai” manifeste k8s
+    [[ -z "$kind" || -z "$name" ]] && continue
 
-    # skip si pas un manifeste K8s valide
-    [[ -z "$KIND" || -z "$NAME" ]] && continue
-
-    # filtres optionnels
-    if [[ -n "$ONLY_KINDS" ]]; then
-      IFS=',' read -r -a KARR <<<"$ONLY_KINDS"
-      KEEP=0
-      for k in "${KARR[@]}"; do [[ "$KIND" == "$k" ]] && KEEP=1; done
-      [[ $KEEP -eq 0 ]] && continue
+    # Filtres optionnels
+    if [[ -n "$ONLY_KIND" && "$kind" != "$ONLY_KIND" ]]; then
+      continue
     fi
-    if [[ -n "$ONLY_NS" ]]; then
-      # ressources cluster-scoped => NS vide → on exclut si un NS est demandé
-      [[ "$NS" != "$ONLY_NS" ]] && continue
-    fi
-
-    ((TOTAL++))
-    # extrait le doc désiré (IDX) et normalise
-    WANT="$(yq -d"$IDX" '.' "$f" | strip_common || true)"
-    # détermine scope
-    NSARG=()
-    if [[ -n "$NS" ]]; then NSARG=(-n "$NS"); fi
-
-    # vérifie existence live
-    if ! kubectl "${NSARG[@]}" get "$KIND" "$NAME" >/dev/null 2>&1; then
-      echo "⭕ Manquant (live): $KIND/$NAME ${NS:+-n $NS}"
-      ((MISSING++))
+    if [[ -n "$ONLY_NS" && -n "$ns" && "$ns" != "$ONLY_NS" ]]; then
       continue
     fi
 
-    # récupère live normalisé
-    LIVE="$(kubectl "${NSARG[@]}" get "$KIND" "$NAME" -o yaml | strip_common || true)"
-
-    # diff: si différent, affiche un patch lisible
-    if ! diff -u <(echo "$WANT") <(echo "$LIVE") >/dev/null 2>&1; then
-      echo "⚠️  Diff détecté pour $KIND/$NAME ${NS:+-n $NS}"
-      diff -u <(echo "$WANT") <(echo "$LIVE") || true
-      ((DIFFS++))
+    ((TOTAL++))
+    if is_cluster_scoped "$kind"; then
+      scope_args=()
+      ns_label=""
     else
-      dbg "OK: $KIND/$NAME ${NS:+-n $NS} — aucun diff"
+      # namespace par défaut si non renseigné
+      ns="${ns:-default}"
+      scope_args=(-n "$ns")
+      ns_label="-n $ns"
+    fi
+
+    echo "🔎 ${kind}/${name} ${ns_label}"
+
+    # 1) Objet live existe ?
+    if ! kubectl get "${scope_args[@]}" "$kind/$name" >/dev/null 2>&1; then
+      warn "Manquant (live): ${kind}/${name} ${ns_label}"
+      ((MISSING++))
+    fi
+
+    # 2) Diff live vs fichier (kubectl gère multi-doc si on lui passe tout le fichier,
+    #    mais ici on re-sélectionne le doc avec yq via un filtre sur name/kind/namespace)
+    #    → on extrait **uniquement** ce doc et on le passe à kubectl diff -f -
+    doc_yaml="$(yq -N '
+      select(.kind == "'"$kind"'")
+      | select(.metadata.name == "'"$name"'")
+      | select((.metadata.namespace // "") == "'"${ns:-}"'")
+    ' "$f" 2>/dev/null || true)"
+
+    if [[ -z "$doc_yaml" ]]; then
+      # Si pas de namespace dans le doc (cluster-scoped), on relâche le filtre ns
+      doc_yaml="$(yq -N '
+        select(.kind == "'"$kind"'")
+        | select(.metadata.name == "'"$name"'")
+      ' "$f" 2>/dev/null || true)"
+    fi
+
+    if [[ -z "$doc_yaml" ]]; then
+      warn "Impossible d’extraire le doc correspondant depuis $f (skip diff)"
+      continue
+    fi
+
+    if kubectl diff "${scope_args[@]}" -f - >/dev/null 2>&1 <<<"$doc_yaml"; then
+      pass "Pas de diff pour ${kind}/${name} ${ns_label}"
+    else
+      # kubectl diff retourne code 1 s’il y a des diffs
+      ((DIFFS++))
+      echo "${YEL}--- DIFF ${kind}/${name} ${ns_label} ---${RST}"
+      kubectl diff "${scope_args[@]}" -f - <<<"$doc_yaml" || true
+      echo "${YEL}--- END DIFF ---${RST}"
     fi
   done
-done < <(find "$ROOT" -type f \( -name '*.yaml' -o -name '*.yml' \) -print0)
+done < <(find "$ROOT" -type f \( -name '*.yaml' -o -name '*.yml' \) ! -path '*/.git/*' -print | sort)
 
-echo
-echo "── Résumé ─────────────────────────────"
+say "${BLU}── Résumé ─────────────────────────────${RST}"
 echo "📄 Docs comparés: $TOTAL   🔍 Diffs: $DIFFS   ⭕ Manquants (live): $MISSING"
-exit 0
