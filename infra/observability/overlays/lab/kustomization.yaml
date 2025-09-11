@@ -6,4 +6,3 @@ resources:
   - grafana-helmrelease.yaml   
   - ../../dashboard
   - grafana-ingress.yaml
-  - ../../base/kube-components-services
