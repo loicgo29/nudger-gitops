@@ -7,3 +7,4 @@ resources:
   - logging-namespace.yaml              # ← AJOUT
   - promtail-helmrelease.yaml  
   - loki-helmrelease.yaml         # ← AJOUT
+  - policy-reporter-helmrelease.yaml
