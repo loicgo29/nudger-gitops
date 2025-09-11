@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+# diff-live.sh — Compare repo manifests vs live cluster (portable: GNU/BSD/BusyBox)
+set -euo pipefail
+
+ROOT="${1:-.}"; shift || true
+ONLY_KIND=""; ONLY_NS=""; DO_RECONCILE=0
+for arg in "${@:-}"; do
+  case "$arg" in
+    --only-kind=*) ONLY_KIND="${arg#*=}";;
+    --only-ns=*)   ONLY_NS="${arg#*=}";;
+    --reconcile)   DO_RECONCILE=1;;
+  esac
+done
+
+need(){ command -v "$1" >/dev/null 2>&1 || { echo "❌ besoin de $1" >&2; exit 2; }; }
+need kubectl; need yq
+
+# Detect options for find to follow symlinks (portable)
+FIND_FOLLOW=()
+if find -L . -maxdepth 0 >/dev/null 2>&1; then
+  FIND_FOLLOW=(-L)
+elif find -follow . -maxdepth 0 >/dev/null 2>&1; then
+  FIND_FOLLOW=(-follow)
+else
+  FIND_FOLLOW=()  # neither supported; proceed without following symlinks
+fi
+
+# Optional Flux reconcile
+if [[ $DO_RECONCILE -eq 1 ]] && command -v flux >/dev/null 2>&1; then
+  for ks in $(flux -n flux-system get kustomizations -o name 2>/dev/null | sed 's#.*/##'); do
+    flux -n flux-system reconcile kustomization "$ks" --with-source >/dev/null || true
+  done
+fi
+
+# Cache cluster-scoped kinds
+CLUSTER_KINDS="$(kubectl api-resources --namespaced=false 2>/dev/null | awk 'NR>1{print $1}' | tr '\n' ' ')"
+is_cluster_kind(){ [[ " $CLUSTER_KINDS " == *" $1 "* ]]; }
+
+group_of(){ case "$1" in */*) echo "${1%/*}";; *) echo "";; esac; }
+resolve_resource_name(){
+  local ap="$1" kind="$2" grp
+  grp="$(group_of "$ap")"
+  kubectl api-resources --api-group="$grp" --kind="$kind" -o name 2>/dev/null | head -n1
+}
+
+canon(){
+  yq e '
+    del(
+      .metadata.creationTimestamp,
+      .metadata.resourceVersion,
+      .metadata.uid,
+      .metadata.generation,
+      .metadata.annotations."kubectl.kubernetes.io/last-applied-configuration",
+      .metadata.managedFields,
+      .status
+    ) | sort_keys(..)
+  ' -P
+}
+
+DIFF_CMD="${DIFF_CMD:-diff -u}"
+TOTAL=0; DIFFS=0; MISSING=0
+
+diff_doc(){
+  local f="$1" d="$2"
+  # Only treat real K8s objects
+  if ! yq e -d"$d" 'has("apiVersion") and has("kind") and has("metadata") and .metadata.name' "$f" >/dev/null 2>&1; then
+    return 0
+  fi
+  local ap kind name ns
+  ap="$(yq e -d"$d" -r '.apiVersion' "$f")" || return 0
+  kind="$(yq e -d"$d" -r '.kind' "$f")" || return 0
+  name="$(yq e -d"$d" -r '.metadata.name' "$f")" || return 0
+  ns="$(yq e -d"$d" -r '.metadata.namespace // "default"' "$f")" || ns="default"
+
+  [[ -n "$ONLY_KIND" && "$ONLY_KIND" != "$kind" ]] && return 0
+  [[ -n "$ONLY_NS"   && "$ONLY_NS"   != "$ns"   ]] && return 0
+
+  local res; res="$(resolve_resource_name "$ap" "$kind")"
+  [[ -z "$res" ]] && return 0
+
+  local desired live; desired="$(mktemp)"; live="$(mktemp)"
+  trap 'rm -f "$desired" "$live"' RETURN
+
+  yq e -d"$d" '.' "$f" | canon > "$desired"
+
+  if is_cluster_kind "$kind"; then
+    if ! kubectl get "$res" "$name" -o yaml >/dev/null 2>&1; then
+      MISSING=$((MISSING+1)); TOTAL=$((TOTAL+1)); return 0
+    fi
+    kubectl get "$res" "$name" -o yaml | canon > "$live"
+  else
+    if ! kubectl get "$res" -n "$ns" "$name" -o yaml >/dev/null 2>&1; then
+      MISSING=$((MISSING+1)); TOTAL=$((TOTAL+1)); return 0
+    fi
+    kubectl get "$res" -n "$ns" "$name" -o yaml | canon > "$live"
+  fi
+
+  if $DIFF_CMD "$desired" "$live" >/dev/null; then
+    : # identical → no output
+  else
+    DIFFS=$((DIFFS+1))
+    local scope="(ns=$ns)"; is_cluster_kind "$kind" && scope=""
+    echo "🟡 $kind/$name $scope — diff:"
+    $DIFF_CMD "$desired" "$live" | sed 's/^/    /'
+  fi
+  TOTAL=$((TOTAL+1))
+}
+
+# Walk files (portable)
+while IFS= read -r -d '' f; do
+  # cheap pre-filter: must contain an apiVersion key
+  grep -qE '^[[:space:]]*apiVersion:' "$f" || continue
+
+  # count valid docs
+  DOCS=$(yq e -d'*' 'has("apiVersion") and has("kind") and has("metadata") and .metadata.name' "$f" 2>/dev/null | wc -l | tr -d ' ' || echo 0)
+  [[ "$DOCS" =~ ^[0-9]+$ ]] || DOCS=0
+
+  for ((i=0; i<DOCS; i++)); do
+    diff_doc "$f" "$i" || true
+  done
+done < <(find "${FIND_FOLLOW[@]}" "$ROOT" -type f \( -name '*.yaml' -o -name '*.yml' -o -name '*.json' \) \
+          ! -path '*/.git/*' ! -path '*/charts/*' ! -path '*/node_modules/*' -print0 2>/dev/null)
+
+echo
+echo "── Résumé ─────────────────────────────"
+echo "📄 Docs comparés: $TOTAL   🔍 Diffs: $DIFFS   ⭕ Manquants (live): $MISSING"
