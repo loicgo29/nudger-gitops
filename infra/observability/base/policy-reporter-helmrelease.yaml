@@ -46,7 +46,8 @@ spec:
     prometheus:
       enabled: true
       service:
-        lebels: policy-reporter
+        labels:
+          app.kubernetes.io/name: policy-reporter
         enabled: true
         port: 8080
         annotations:

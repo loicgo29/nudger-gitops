@@ -10,71 +10,84 @@ TOTAL=0
 DIFFS=0
 MISSING=0
 
-# find all yaml/json files
-while IFS= read -r f; do
+# Trouve tous les .yaml/.yml/.json (sans -L pour compat POSIX)
+# On ignore .git
+while IFS= read -r -d '' f; do
   echo "📂 Fichier: $f"
 
-  # Count how many YAML docs are in this file
-  DOCS=$(yq e '... comments="" | length' "$f" >/dev/null 2>&1 || true)
-  # yq -d '*' walks each doc; we’ll probe them one by one
-  i=0
-  echo "DOCS $DOCS"
-  while true; do
-    # Extract basic fields of the i-th document
-    apiVersion=$(yq -r -e "select(documentIndex == $i) | .apiVersion // empty" "$f" 2>/dev/null || true)
-    [[ -z "${apiVersion}" ]] && break  # no more docs
+  # Compte les documents avec yq (1 ligne par doc grâce à documentIndex)
+  # Si yq n'imprime rien, DOCS=0
+  DOCS=$(yq eval -d'*' 'documentIndex' "$f" 2>/dev/null | wc -l | tr -d '[:space:]')
+  echo "🔎 DEBUG: $f contient $DOCS document(s)"
 
-    kind=$(yq -r "select(documentIndex == $i) | .kind // empty" "$f")
-    name=$(yq -r "select(documentIndex == $i) | .metadata.name // empty" "$f")
-    ns=$(yq -r "select(documentIndex == $i) | .metadata.namespace // empty" "$f")
-echo "kind $kind name $name "
-    # Skip docs without kind/name (values, params, dashboards, etc.)
-    if [[ -z "$kind" || -z "$name" ]]; then
-      echo "❌ Doc#$i ignoré (pas de kind/name)"
-      i=$((i+1)); continue
-    fi
+  if [[ "$DOCS" -eq 0 ]]; then
+    # Pas un manifeste (kustomization params, values helm, etc.)
+    echo "❌ Pas de document K8s détecté dans ce fichier"
+    continue
+  fi
 
-    # Skip Kustomize config files (not live K8s objects)
-    if [[ "$apiVersion" == kustomize.config.k8s.io/* ]]; then
-      echo "⤵️  Doc#$i $kind/$name ignoré (Kustomize config)"
-      i=$((i+1)); continue
+  # Boucle sur chaque document via son index
+  for i in $(yq eval -d'*' 'documentIndex' "$f" 2>/dev/null); do
+    apiVersion=$(yq eval -d"$i" '.apiVersion // ""' "$f" 2>/dev/null || echo "")
+    kind=$(yq eval -d"$i" '.kind // ""' "$f" 2>/dev/null || echo "")
+    name=$(yq eval -d"$i" '.metadata.name // ""' "$f" 2>/dev/null || echo "")
+    ns=$(yq eval -d"$i" '.metadata.namespace // ""' "$f" 2>/dev/null || echo "")
+
+    # Filtre: on ne traite que les vrais objets K8s
+    if [[ -z "$apiVersion" || -z "$kind" || -z "$name" ]]; then
+      echo "   ↪︎ Doc #$i ignoré (apiVersion/kind/name manquants)"
+      continue
     fi
 
     TOTAL=$((TOTAL+1))
-    NS_ARG=()
-    echo "$ns "
-    [[ -n "$ns" ]] && NS_ARG=(-n "$ns")
+    header="$kind/$name"
+    [[ -n "$ns" ]] && header="$header -n $ns"
+    echo "🔎 $header"
 
-    echo "🔎 Doc#$i $kind/$name ${ns:+-n $ns}"
-
-    # Fetch live object
-    set +e
-    LIVE_YAML=$(kubectl get "$kind" "$name" "${NS_ARG[@]}" -o yaml 2>/dev/null)
-    echo "------- $LIVE_YAML"
-    rc=$?
-    set -e
-
-    if [[ $rc -ne 0 || -z "$LIVE_YAML" ]]; then
-      echo "⭕ Manquant dans le cluster"
-      MISSING=$((MISSING+1))
-      i=$((i+1)); continue
-    fi
-
-    # Normalize both sides (sort keys deeply) then diff
-    WANT_SORTED=$(yq eval 'sort_keys(..)' -d "$i" "$f" 2>/dev/null || true)
-    LIVE_SORTED=$(echo "$LIVE_YAML" | yq eval 'sort_keys(..)')
-
-    if diff -u <(echo "$WANT_SORTED") <(echo "$LIVE_SORTED") >/dev/null; then
-      echo "✅ Identique au live"
+    # Vérifie si l'objet existe côté live (pour éviter les messages 'No resources found')
+    if [[ -n "$ns" ]]; then
+      if ! kubectl get "$kind" "$name" -n "$ns" >/dev/null 2>&1; then
+        echo "⭕ Live manquant: $header"
+        MISSING=$((MISSING+1))
+        # On peut quand même faire diff -f -, kubectl marquera un create
+      fi
+      # Diff: on pipe uniquement ce document
+      if ! yq eval -d"$i" '.' "$f" | kubectl diff -f - -n "$ns" >/dev/null 2>&1; then
+        # kubectl diff renvoie 1 s'il y a des diff, 0 sinon, >1 si erreur
+        status=$?
+        if [[ "$status" -eq 1 ]]; then
+          echo "⚠️  Diff détecté pour $header"
+          DIFFS=$((DIFFS+1))
+          # Affiche le diff lisible
+          yq eval -d"$i" '.' "$f" | kubectl diff -f - -n "$ns" || true
+        else
+          echo "❌ Erreur kubectl diff pour $header (code $status)"
+        fi
+      else
+        echo "✅ Pas de diff pour $header"
+      fi
     else
-      echo "⚠️  Diff détecté pour $kind/$name"
-      diff -u <(echo "$WANT_SORTED") <(echo "$LIVE_SORTED") | sed 's/^/    /' || true
-      DIFFS=$((DIFFS+1))
+      # cluster-scoped
+      if ! kubectl get "$kind" "$name" >/dev/null 2>&1; then
+        echo "⭕ Live manquant: $header"
+        MISSING=$((MISSING+1))
+      fi
+      if ! yq eval -d"$i" '.' "$f" | kubectl diff -f - >/dev/null 2>&1; then
+        status=$?
+        if [[ "$status" -eq 1 ]]; then
+          echo "⚠️  Diff détecté pour $header"
+          DIFFS=$((DIFFS+1))
+          yq eval -d"$i" '.' "$f" | kubectl diff -f - || true
+        else
+          echo "❌ Erreur kubectl diff pour $header (code $status)"
+        fi
+      else
+        echo "✅ Pas de diff pour $header"
+      fi
     fi
-
-    i=$((i+1))
   done
-done < <(find "$ROOT" -type f \( -name '*.yaml' -o -name '*.yml' -o -name '*.json' \) ! -path '*/.git/*' -print)
+
+done < <(find "$ROOT" -type f \( -name '*.yaml' -o -name '*.yml' -o -name '*.json' \) ! -path '*/.git/*' -print0)
 
 echo
 echo "── Résumé ─────────────────────────────"
