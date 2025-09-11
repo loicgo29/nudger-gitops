@@ -8,3 +8,4 @@ resources:
   - promtail-helmrelease.yaml  
   - loki-helmrelease.yaml         # ← AJOUT
   - policy-reporter-helmrelease.yaml
+  - policy-reporter-servicemonitor.yaml

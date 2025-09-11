@@ -4,7 +4,7 @@ metadata:
   name: policy-reporter
   namespace: observability
   labels:
-    release: prometheus                # ⚠️ Doit matcher avec le label `release` utilisé par ton PrometheusOperator
+    release: prometheus
 spec:
   selector:
     matchLabels:
@@ -13,7 +13,5 @@ spec:
     matchNames:
       - observability
   endpoints:
-    - port: http                       # ⚠️ doit correspondre au nom de port du Service
-      path: /metrics
+    - port: http
       interval: 30s
-      scrapeTimeout: 10s
