@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: kubelet-servicemonitor  
-  namespace: monitoring
+  namespace: observability
   labels:
     release: prometheus  # ou kube-prometheus-stack selon ton chart
 spec:

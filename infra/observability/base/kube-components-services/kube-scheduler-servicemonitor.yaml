@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: kube-scheduler-servicemonitor
-  namespace: monitoring
+  namespace: observability
 spec:
   selector:
     matchLabels:
