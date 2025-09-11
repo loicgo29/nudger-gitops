@@ -8,6 +8,7 @@ metadata:
 spec:
   selector:
     component: kube-scheduler
+    k8s-app: kube-scheduler
   ports:
     - name: https-metrics
       port: 10259
