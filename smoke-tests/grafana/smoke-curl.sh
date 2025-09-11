@@ -4,7 +4,7 @@ set -euo pipefail
 # --- Params (override via env) ---
 HOST="${HOST:-grafana.nudger.logo-solutions.fr}"            # FQDN de l'Ingress
 PATH_CHECK="${PATH_CHECK:-/}"                  # Chemin à tester (ex: /login)
-SCHEME="${SCHEME:-https}"                      # http|https
+SCHEME="${SCHEME:-http}"                      # http|https
 PORT="${PORT:-80}"                               # vide => par défaut (80/443). Exemple pour NodePort: 30443 avec SCHEME=https
 EXPECT_CODES="${EXPECT_CODES:-200,302}"        # Liste de codes autorisés séparés par des virgules
 EXPECT_BODY_REGEX="${EXPECT_BODY_REGEX:-}"     # Optionnel: regex à trouver dans la réponse

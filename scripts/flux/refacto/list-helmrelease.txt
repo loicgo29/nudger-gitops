@@ -1,0 +1,3 @@
+find ./infra -name '*helmrelease.yaml' | while read file; do
+  echo -n "$file: "; yq '.metadata.name' "$file"
+done> helmrelease-list.txt
