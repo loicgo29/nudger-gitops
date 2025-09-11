@@ -19,6 +19,11 @@ spec:
   upgrade:
     remediation: { retries: 3 }
   values:
+    kubeScheduler:
+      service:
+        enabled: false
+      serviceMonitor:
+        enabled: false
     alertmanager:
       enabled: false
     grafana:
