@@ -8,3 +8,4 @@ resources:
   - kube-controller-manager-service.yaml
   - kubelet-service.yaml                             # ← ajout
   - kube-scheduler-servicemonitor.yaml
+  - kubelet-servicemonitor.yaml 
