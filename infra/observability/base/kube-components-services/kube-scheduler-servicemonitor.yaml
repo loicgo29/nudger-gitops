@@ -4,18 +4,24 @@ metadata:
   name: kube-scheduler-servicemonitor
   namespace: observability
   labels:
-    release: kube-prometheus-stack   # ← indispensable
+    release: kube-prometheus-stack  # ← indispensable si Prometheus l'attend
+    kustomize.toolkit.fluxcd.io/name: observability
+    kustomize.toolkit.fluxcd.io/namespace: flux-system
 spec:
-  jobLabel: k8s-app                  # ← explicite : on lit ce label pour nommer le job
-  selector:
-    matchLabels:
-      k8s-app: kube-scheduler        # ← ton Service doit porter ce label
+  endpoints:
+    - port: https-metrics              # ← correspond à `kube-scheduler-service.yaml`
+      scheme: https
+      interval: 30s
+      tlsConfig:
+        insecureSkipVerify: true
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_pod_node_name]
+          targetLabel: instance
+        - targetLabel: job
+          replacement: kube-scheduler
   namespaceSelector:
     matchNames:
       - kube-system
-  endpoints:
-    - port: https-metrics
-      scheme: https
-      tlsConfig:
-        insecureSkipVerify: true
-      interval: 30s
+  selector:
+    matchLabels:
+      app: kube-scheduler-custom       # ← correspond au Service exposant 10259
