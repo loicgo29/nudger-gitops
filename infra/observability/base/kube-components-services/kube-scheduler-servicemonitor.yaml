@@ -1,0 +1,15 @@
+metadata:
+  name: kube-scheduler-servicemonitor
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: kube-scheduler-custom     # ← match ton nouveau service
+  endpoints:
+    - port: http-metrics
+      scheme: https
+      tlsConfig:
+        insecureSkipVerify: true
+  namespaceSelector:
+    matchNames:
+      - kube-system

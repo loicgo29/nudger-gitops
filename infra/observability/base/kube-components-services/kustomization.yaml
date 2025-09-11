@@ -7,3 +7,4 @@ resources:
   - kube-proxy-servicemonitor.yaml
   - kube-controller-manager-service.yaml
   - kubelet-service.yaml                             # ← ajout
+  - kube-scheduler-servicemonitor.yaml
