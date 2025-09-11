@@ -24,4 +24,4 @@ spec:
       - kube-system
   selector:
     matchLabels:
-      app: kube-scheduler-custom       # ← correspond au Service exposant 10259
+      app: kube-scheduler       # ← correspond au Service exposant 10259
