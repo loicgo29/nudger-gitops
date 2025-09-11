@@ -15,9 +15,9 @@ spec:
       tlsConfig:
         insecureSkipVerify: true
       relabelings:
-        - sourceLabels: [__meta_kubernetes_pod_node_name]
-          targetLabel: instance
-        - targetLabel: job
+        - action: replace
+          sourceLabels: [__meta_kubernetes_service_name]
+          targetLabel: job
           replacement: kube-scheduler
   namespaceSelector:
     matchNames:
