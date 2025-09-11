@@ -1,6 +1,6 @@
 - name: kube-components-rbac
   namespace: kube-system
-  path: ./clusters/lab/observability/kube-components-rbac
+  path: ./clusters/lab/kube-components-rbac
   dependsOn:
     - name: kube-prometheus-stack
   prune: true
