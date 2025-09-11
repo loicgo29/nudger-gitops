@@ -1,161 +1,110 @@
-#!/usr/bin/env bash
-# diff-live.sh — Compare le contenu de manifests du repo avec l'état "live" du cluster
-# Usage:
-#   ./smoke-tests/diff-live.sh [PATH=.] [--only-kind KIND] [--only-ns NS] [--reconcile]
-#
-# Dépendances: kubectl, yq (v4+), diff (ou DIFF_CMD="git --no-pager diff --no-index")
-set -euo pipefail
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: nudger-security-guardrails
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+    # 1) Exiger une justification dès qu'on utilise une exception
+    - name: require-justification-for-exceptions
+      match:
+        any:
+          - resources:
+              kinds: ["Pod"]
+              selector:
+                matchExpressions:
+                  - key: security.nudger/allow-rw-rootfs
+                    operator: In
+                    values: ["true"]
+                  - key: security.nudger/allow-init-root
+                    operator: In
+                    values: ["true"]
+      validate:
+        message: "Exception sécurité sans justification: ajoutez annotation security.nudger/justification."
+        pattern:
+          metadata:
+            annotations:
+              security.nudger/justification: "?*"
 
-ROOT="${1:-.}"
-ONLY_KIND=""
-ONLY_NS=""
-DO_RECONCILE=0
-DIFF_CMD="${DIFF_CMD:-diff -u}"
+    # 2) Auto-harden par défaut (opt-in RW possible via label)
+    - name: auto-harden
+      match:
+        any:
+          - resources:
+              kinds: ["Pod"]
+      exclude:
+        any:
+          - resources:
+              namespaces: ["longhorn-system","ingress-nginx","logging","kyverno"]
+      mutate:
+        patchStrategicMerge:
+          spec:
+            automountServiceAccountToken: false
+            containers:
+              - (name): "*"
+                securityContext:
+                  allowPrivilegeEscalation: false
+                  capabilities: { drop: ["ALL"] }
+                  readOnlyRootFilesystem: true
+                  runAsNonRoot: true
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 10001
+              runAsGroup: 10001
+              seccompProfile: { type: RuntimeDefault }
 
-# parse flags après le 1er arg éventuel
-shift $(( $# > 0 ? 1 : 0 )) || true
-for arg in "$@"; do
-  case "$arg" in
-    --only-kind=*) ONLY_KIND="${arg#*=}";;
-    --only-ns=*)   ONLY_NS="${arg#*=}";;
-    --reconcile)   DO_RECONCILE=1;;
-    *) ;;
-  esac
-done
+    # 3) Forcer RO si pas d’opt-in explicite
+    - name: enforce-ro-rootfs
+      match:
+        any:
+          - resources:
+              kinds: ["Pod"]
+      exclude:
+        any:
+          - resources:
+              namespaces: ["longhorn-system","ingress-nginx","logging","kyverno"]
+      preconditions:
+        all:
+          - key: "{{ request.object.metadata.labels.\"security.nudger/allow-rw-rootfs\" || 'false' }}"
+            operator: Equals
+            value: "false"
+      mutate:
+        foreach:
+          - list: "request.object.spec.containers"
+            patchStrategicMerge:
+              spec:
+                containers:
+                  - name: "{{ element.name }}"
+                    securityContext:
+                      readOnlyRootFilesystem: true
 
-need(){ command -v "$1" >/dev/null 2>&1 || { echo "❌ besoin de $1" >&2; exit 2; }; }
-need kubectl
-need yq
-
-bold(){ printf '\033[1m%s\033[0m' "$*"; }
-hr(){ printf '\n\033[34m── %s ─────────────────────────────\033[0m\n' "$*"; }
-
-# optionnel: reconcile Flux (tous les KS) avant de diff
-if (( DO_RECONCILE == 1 )); then
-  if command -v flux >/dev/null 2>&1; then
-    hr "Flux reconcile (toutes les Kustomizations)"
-    # liste tous les KS et les reconcilie l’un après l’autre
-    mapfile -t KS < <(flux -n flux-system get kustomizations -o name 2>/dev/null | awk -F/ '{print $2}')
-    if ((${#KS[@]})); then
-      for k in "${KS[@]}"; do
-        echo "→ flux -n flux-system reconcile kustomization $k"
-        flux -n flux-system reconcile kustomization "$k" --with-source >/dev/null || true
-      done
-    else
-      echo "ℹ️  aucun KS trouvé dans flux-system (skip)"
-    fi
-  else
-    echo "ℹ️  flux CLI absent — skip reconcile"
-  fi
-fi
-
-TMPROOT="$(mktemp -d)"; trap 'rm -rf "$TMPROOT"' EXIT
-
-# cache des kinds cluster-scoped (colonne KIND)
-mapfile -t CLUSTER_KINDS < <(kubectl api-resources --namespaced=false 2>/dev/null | awk 'NR>1 {print $1}')
-is_cluster_kind(){ local k="$1"; for x in "${CLUSTER_KINDS[@]:-}"; do [[ "$x" == "$k" ]] && return 0; done; return 1; }
-
-# apiVersion -> group ("" si core)
-group_of(){
-  local ap="$1"
-  [[ "$ap" == */* ]] && echo "${ap%/*}" || echo ""
-}
-
-# trouve le plural (resource name) pour ce group/kind (marche aussi pour CRDs)
-resolve_resource_name(){
-  local ap="$1" kind="$2"
-  local grp; grp="$(group_of "$ap")"
-  kubectl api-resources --api-group="$grp" --kind="$kind" -o name 2>/dev/null | head -n1
-}
-
-# normalisation: retrait champs volatils et tri des clés
-canon(){
-  yq e '
-    del(
-      .metadata.creationTimestamp,
-      .metadata.resourceVersion,
-      .metadata.uid,
-      .metadata.generation,
-      .metadata.annotations."kubectl.kubernetes.io/last-applied-configuration",
-      .metadata.managedFields,
-      .status
-    ) | sort_keys(..)
-  ' -P
-}
-
-# diff d’UN document (index d) du fichier f
-diff_one(){
-  local f="$1" d="$2"
-  # extrait meta
-  local meta
-  if ! meta="$(yq e -d"$d" -o=tsv '[.apiVersion, .kind, .metadata.name, (.metadata.namespace // "default")] | @tsv' "$f" 2>/dev/null)"; then
-    echo "⚠️  skip: parse KO doc#$d $(bold "$f")" >&2; return 0
-  fi
-  IFS=$'\t' read -r ap kind name ns <<<"$meta"
-  # skip si pas un objet K8s “complet”
-  [[ -z "${ap:-}" || -z "${kind:-}" || -z "${name:-}" ]] && return 0
-  [[ -n "$ONLY_KIND" && "$ONLY_KIND" != "$kind" ]] && return 0
-  [[ -n "$ONLY_NS"   && "$ONLY_NS"   != "$ns"   ]] && return 0
-
-  local res; res="$(resolve_resource_name "$ap" "$kind")"
-  if [[ -z "$res" ]]; then
-    echo "❌ $(bold "$kind/$name"): impossible de déterminer le resource name (apiVersion=$ap)" >&2
-    return 0
-  fi
-
-  local desired="$TMPROOT/desired.$RANDOM.yaml"
-  yq e -d"$d" '.' "$f" | canon > "$desired"
-
-  local live="$TMPROOT/live.$RANDOM.yaml"
-  local nsopt=()
-  if is_cluster_kind "$kind"; then nsopt=(); else nsopt=(-n "$ns"); fi
-
-  if ! kubectl get "$res" "${nsopt[@]}" "$name" -o yaml >/dev/null 2>&1; then
-    # essai sans -n (certains CRDs sont piégeux)
-    if ! kubectl get "$res" "$name" -o yaml >/dev/null 2>&1; then
-      echo "❌ $(bold "$kind/$name") — live introuvable ($res ${nsopt[*]}) — fichier: $f (doc #$d)"
-      return 0
-    else
-      kubectl get "$res" "$name" -o yaml | canon > "$live"
-    fi
-  else
-    kubectl get "$res" "${nsopt[@]}" "$name" -o yaml | canon > "$live"
-  fi
-
-  if $DIFF_CMD "$desired" "$live" >/dev/null; then
-    echo "✅ $(bold "$kind/$name") — pas de diff"
-  else
-    echo "🟡 $(bold "$kind/$name") — differences:"
-    $DIFF_CMD "$desired" "$live" | sed 's/^/    /'
-  fi
-}
-
-hr "Scan des manifests dans: $ROOT"
-
-# liste des fichiers
-mapfile -t FILES < <(find "$ROOT" -type f \( -name '*.yaml' -o -name '*.yml' -o -name '*.json' \) \
-  ! -path '*/.git/*' ! -path '*/charts/*' ! -path '*/node_modules/*' | sort)
-
-if ((${#FILES[@]}==0)); then
-  echo "⚠️  aucun manifest trouvé sous $ROOT"; exit 0
-fi
-
-TOTAL=0
-for f in "${FILES[@]}"; do
-  # nombre de documents dans le fichier (yq v4)
-  if ! COUNT="$(yq e -d'*' 'true' "$f" 2>/dev/null | wc -l | tr -d ' ')"; then
-    echo "⚠️  skip fichier non-yaml: $f" >&2
-    continue
-  fi
-  [[ "$COUNT" == "0" ]] && continue
-  for ((i=0; i<COUNT; i++)); do
-    diff_one "$f" "$i"
-    TOTAL=$((TOTAL+1))
-  done
-done
-
-hr "Résumé"
-echo "📄 Documents traités: $TOTAL"
-echo "ℹ️  Exemples:"
-echo "   $(basename "$0") ./infra --reconcile"
-echo "   $(basename "$0") ./infra --only-kind=DaemonSet --only-ns=logging"
+    # 4) Injecter un init root standard quand autorisé
+    - name: inject-root-init-when-allowed
+      match:
+        any:
+          - resources:
+              kinds: ["Pod"]
+              selector:
+                matchLabels:
+                  security.nudger/allow-init-root: "true"
+      exclude:
+        any:
+          - resources:
+              namespaces: ["longhorn-system","ingress-nginx","logging","kyverno"]
+      mutate:
+        patchStrategicMerge:
+          spec:
+            initContainers:
+              - name: nudger-perms
+                image: busybox:1.36
+                command:
+                  - sh
+                  - -lc
+                  - >
+                    for d in /var/cache/nginx /var/run /var/log/nginx;
+                    do mkdir -p $d; chown -R 101:101 $d; chmod -R 0775 $d; done
+                securityContext:
+                  runAsUser: 0
+                  allowPrivilegeEscalation: false
+                  seccompProfile: { type: RuntimeDefault }
