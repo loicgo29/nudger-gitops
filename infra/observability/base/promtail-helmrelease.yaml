@@ -42,7 +42,7 @@ spec:
       runAsUser: 0
       runAsGroup: 0
       allowPrivilegeEscalation: false
-      readOnlyRootFilesystem: false # <— clé pour le positions.yaml
+      readOnlyRootFilesystem: true
       capabilities:
         drop: ["ALL"]
     fullnameOverride: promtail
