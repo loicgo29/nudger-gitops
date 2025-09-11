@@ -2,4 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - kube-scheduler-service.yaml
-  # (ajoute d'autres services ici plus tard)
+  - kube-controller-manager-service.yaml
+  - kube-proxy-service.yaml
+  - kube-scheduler-servicemonitor.yaml
+  - kube-controller-manager-servicemonitor.yaml
+  - kube-proxy-servicemonitor.yaml

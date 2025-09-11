@@ -6,7 +6,4 @@ resources:
   - grafana-helmrelease.yaml   
   - ../../dashboard
   - grafana-ingress.yaml
-  - ../../base/kube-components-services/kube-scheduler-service.yaml
-  - ../../base/kube-components-services/kube-controller-manager-service.yaml
-  - ../../base/kube-components-services/kube-proxy-service.yaml
-  - ../../base/kube-components-services/kube-scheduler-servicemonitor.yaml
+  - ../../base/kube-components-services
