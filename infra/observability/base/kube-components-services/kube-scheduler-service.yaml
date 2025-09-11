@@ -4,14 +4,18 @@ metadata:
   name: kube-scheduler
   namespace: kube-system
   labels:
+    k8s-app: kube-scheduler
+    app: kube-scheduler
     component: kube-scheduler
     tier: control-plane
+    release: kube-prometheus-stack
 spec:
-  selector:
-    component: kube-scheduler
-    k8s-app: kube-scheduler
+  clusterIP: None
   ports:
     - name: https-metrics
       port: 10259
-      targetPort: 10259
       protocol: TCP
+      targetPort: 10259
+  selector:
+    component: kube-scheduler
+    tier: control-plane
