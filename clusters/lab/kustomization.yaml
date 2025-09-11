@@ -11,3 +11,4 @@ resources:
   - ingress-nginx.kustomization.yaml
   - ingress-sources.kustomization.yaml
   - apps.whoami.kustomization.yaml
+  - observability.alertmanager.kustomization.yaml  # ⬅️ ajoute cette ligne
