@@ -1,0 +1,21 @@
+109 …❯  ./scripts/flux/refacto//4patch-kustomizations.sh
+🛠️ Mise à jour des kustomization.yaml avec les nouveaux noms de fichiers…
+📄 ./apps/ingress-nginx/base/kustomization.yaml → helmrelease.yaml ⟶ helmrelease-kube-prometheus-stack.yaml
+✅ Modifié : ./apps/ingress-nginx/base/kustomization.yaml
+📄 ./flux-system/sources/kustomization.yaml → helmrepository.yaml ⟶ helmrepository-prometheus-community.yaml
+✅ Modifié : ./flux-system/sources/kustomization.yaml
+📄 ./infra/observability/base/kustomization.yaml → helmrepository.yaml ⟶ helmrepository-prometheus-community.yaml
+📄 ./infra/observability/base/kustomization.yaml → helmrelease.yaml ⟶ helmrelease-kube-prometheus-stack.yaml
+📄 ./infra/observability/base/kustomization.yaml → helmrepository-grafana.yaml ⟶ helmrepository-grafana.yaml
+✅ Modifié : ./infra/observability/base/kustomization.yaml
+📄 ./infra/observability/overlays/lab/kustomization.yaml → helmrelease.yaml ⟶ helmrelease-kube-prometheus-stack.yaml
+✅ Modifié : ./infra/observability/overlays/lab/kustomization.yaml
+📄 ./infra/longhorn/base/kustomization.yaml → helmrepository.yaml ⟶ helmrepository-prometheus-community.yaml
+✅ Modifié : ./infra/longhorn/base/kustomization.yaml
+📄 ./infra/longhorn/overlays/lab/kustomization.yaml → helmrelease.yaml ⟶ helmrelease-kube-prometheus-stack.yaml
+✅ Modifié : ./infra/longhorn/overlays/lab/kustomization.yaml
+📄 ./infra/cert-manager/base/kustomization.yaml → helmrepository.yaml ⟶ helmrepository-prometheus-community.yaml
+✅ Modifié : ./infra/cert-manager/base/kustomization.yaml
+📄 ./infra/cert-manager/overlays/lab/kustomization.yaml → helmrelease.yaml ⟶ helmrelease-kube-prometheus-stack.yaml
+✅ Modifié : ./infra/cert-manager/overlays/lab/kustomization.yaml
+🏁 Tous les kustomizations ont été patchés (si besoin).
