@@ -1,0 +1,25 @@
+./apps/ingress-nginx/base/kustomization.yaml:  - helmrelease-kube-prometheus-stack.yaml
+./scripts/flux/refacto/4patch-kustomizations.sh.log:📄 ./apps/ingress-nginx/base/kustomization.yaml → helmrelease.yaml ⟶ helmrelease-kube-prometheus-stack.yaml
+./scripts/flux/refacto/4patch-kustomizations.sh.log:📄 ./infra/observability/base/kustomization.yaml → helmrelease.yaml ⟶ helmrelease-kube-prometheus-stack.yaml
+./scripts/flux/refacto/4patch-kustomizations.sh.log:📄 ./infra/observability/overlays/lab/kustomization.yaml → helmrelease.yaml ⟶ helmrelease-kube-prometheus-stack.yaml
+./scripts/flux/refacto/4patch-kustomizations.sh.log:📄 ./infra/longhorn/overlays/lab/kustomization.yaml → helmrelease.yaml ⟶ helmrelease-kube-prometheus-stack.yaml
+./scripts/flux/refacto/4patch-kustomizations.sh.log:📄 ./infra/cert-manager/overlays/lab/kustomization.yaml → helmrelease.yaml ⟶ helmrelease-kube-prometheus-stack.yaml
+./scripts/flux/refacto/3rennomefiles.sh:mv_if_exists infra/observability/overlays/lab/helmrelease.yaml               infra/observability/overlays/lab/helmrelease-kube-prometheus-stack.yaml
+./scripts/flux/refacto/4patch-kustomizations.sh:  ["helmrelease.yaml"]="helmrelease-kube-prometheus-stack.yaml"
+./infra/observability/base/kustomization.yaml:  - promtail-helmrelease-kube-prometheus-stack.yaml  
+./infra/observability/base/kustomization.yaml:  - loki-helmrelease-kube-prometheus-stack.yaml         # ← AJOUT
+./infra/observability/base/kustomization.yaml:  - policy-reporter-helmrelease-kube-prometheus-stack.yaml
+./infra/observability/overlays/lab/kustomization.yaml:  - helmrelease-kube-prometheus-stack.yaml
+./infra/observability/overlays/lab/kustomization.yaml:  - grafana-helmrelease-kube-prometheus-stack.yaml   
+./infra/longhorn/overlays/lab/kustomization.yaml:  - helmrelease-kube-prometheus-stack.yaml
+./infra/cert-manager/overlays/lab/kustomization.yaml:  - helmrelease-kube-prometheus-stack.yaml
+./scripts/flux/refacto/4patch-kustomizations.sh.log:📄 ./flux-system/sources/kustomization.yaml → helmrepository.yaml ⟶ helmrepository-prometheus-community.yaml
+./scripts/flux/refacto/4patch-kustomizations.sh.log:📄 ./infra/observability/base/kustomization.yaml → helmrepository.yaml ⟶ helmrepository-prometheus-community.yaml
+./scripts/flux/refacto/4patch-kustomizations.sh.log:📄 ./infra/longhorn/base/kustomization.yaml → helmrepository.yaml ⟶ helmrepository-prometheus-community.yaml
+./scripts/flux/refacto/4patch-kustomizations.sh.log:📄 ./infra/cert-manager/base/kustomization.yaml → helmrepository.yaml ⟶ helmrepository-prometheus-community.yaml
+./scripts/flux/refacto/3rennomefiles.sh:mv_if_exists infra/observability/base/helmrepository.yaml                    infra/observability/base/helmrepository-prometheus-community.yaml
+./scripts/flux/refacto/4patch-kustomizations.sh:  ["helmrepository.yaml"]="helmrepository-prometheus-community.yaml"
+./flux-system/sources/kustomization.yaml:  - ingress-nginx-helmrepository-prometheus-community.yaml
+./infra/observability/base/kustomization.yaml:  - helmrepository-prometheus-community.yaml
+./infra/longhorn/base/kustomization.yaml:  - helmrepository-prometheus-community.yaml
+./infra/cert-manager/base/kustomization.yaml:  - helmrepository-prometheus-community.yaml

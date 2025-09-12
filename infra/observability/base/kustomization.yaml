@@ -5,9 +5,7 @@ resources:
   - helmrepository-grafana.yaml         # ← AJOUT
   - loki-datasource.yaml                # ← AJOUT
   - logging-namespace.yaml              # ← AJOUT
-  - promtail-helmrelease-kube-prometheus-stack.yaml  
-  - loki-helmrelease-kube-prometheus-stack.yaml         # ← AJOUT
-  - policy-reporter-helmrelease-kube-prometheus-stack.yaml
+  - ../releases/kube-prometheus-stack  
   - policy-reporter-servicemonitor.yaml
   - kube-components-services              # ← ajoute cette ligne
   - kube-components-rbac  

@@ -4,6 +4,7 @@ metadata:
   name: lab-root
   namespace: flux-system
 spec:
+  path: ./clusters/lab/lab-root
   interval: 1h
   prune: true
   wait: true
