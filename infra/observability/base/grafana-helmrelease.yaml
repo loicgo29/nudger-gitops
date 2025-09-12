@@ -1,0 +1,25 @@
+# infra/observability/base/grafana-helmrelease.yaml
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana
+  namespace: observability
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: grafana
+      version: "6.59.4"
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: flux-system
+  values:
+    adminPassword: "changeme"
+    service:
+      type: ClusterIP
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hosts:
+        - grafana.nudger.logo-solutions.fr

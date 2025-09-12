@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - ../../../flux-system/sources/helmrepository-prometheus-community.yaml
   - helmrepository-grafana.yaml         # ← AJOUT
+  - grafana-helmrelease.yaml
   - loki-datasource.yaml                # ← AJOUT
   - logging-namespace.yaml              # ← AJOUT
   - ../releases/kube-prometheus-stack  
