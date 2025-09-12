@@ -7,14 +7,21 @@ spec:
   interval: 10m
   chart:
     spec:
-      sourceRef: { kind: HelmRepository, name: grafana, namespace: flux-system }
-      chart: loki-stack              # 👈 tu utilises bien loki-stack
-      version: "2.10.2"              # 👈 corrige la version du CHART (pas de l’image)
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: flux-system
+      chart: loki-stack
+      version: "2.10.2"
   values:
     grafana:
-      enabled: false                 # 👈 laisse à false (tu as Grafana à part)
+      enabled: false
+      podSecurityPolicy:
+        enabled: false
     promtail:
       enabled: false
+      podSecurityPolicy:
+        enabled: false
     loki:
       enabled: true
       podSecurityPolicy:
@@ -33,16 +40,3 @@ spec:
           memory: 200Mi
         limits:
           memory: 600Mi
-      config:
-        limits_config:
-          ingestion_rate_mb: 8
-          ingestion_burst_size_mb: 16
-          reject_old_samples: true
-          reject_old_samples_max_age: 24h
-          max_streams_per_user: 10000
-          max_global_streams_per_user: 20000
-        chunk_store_config:
-          max_look_back_period: 24h
-        table_manager:
-          retention_deletes_enabled: true
-          retention_period: 48h
