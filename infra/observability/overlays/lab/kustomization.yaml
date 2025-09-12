@@ -4,5 +4,5 @@ resources:
   - ../../base
   - ../../dashboard
   - grafana-ingress.yaml
-  - ../../../../cert-manager-issuers/base
+  - ../../../cert-manager-issuers/base
 
