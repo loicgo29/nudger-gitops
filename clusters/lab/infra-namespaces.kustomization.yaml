@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1h 
-  path: ./infra/namespaces/base
+  path: infra/namespaces/base
   prune: false            # <-- important pour ne pas dropper des NS en cas de refactor
   sourceRef:
     kind: GitRepository
