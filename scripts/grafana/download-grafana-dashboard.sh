@@ -2,31 +2,34 @@
 set -euo pipefail
 
 # 🔧 Paramètres
-DASHBOARD_URL="${1:-https://grafana.com/api/dashboards/14858/revisions/1/download}"
-DASHBOARD_NAME="${2:-policy-reporter}"
-NAMESPACE="${3:-observability}"
-FOLDER="infra/observability/dashboard"
-OUT_FILE="$FOLDER/${DASHBOARD_NAME//_/-}-dashboard.yaml"
+NAMESPACE="observability"
+CONFIGMAP_NAME="dashboard-policy-reporter"
+DASHBOARD_UID="14858"
+DASHBOARD_URL="https://grafana.com/api/dashboards/${DASHBOARD_UID}/revisions/latest/download"
+OUTPUT_FILE="infra/observability/dashboard/policy-reporter-dashboard.yaml"
 
-# 📥 Télécharger le JSON
-echo "📥 Téléchargement du dashboard depuis : $DASHBOARD_URL"
-JSON=$(curl -fsSL "$DASHBOARD_URL")
+# 🔽 Téléchargement du dashboard brut
+echo "📥 Téléchargement du dashboard Grafana ID ${DASHBOARD_UID}..."
+RAW_JSON=$(curl -fsSL "$DASHBOARD_URL")
 
-# 📦 Construction du ConfigMap
-echo "📦 Génération du fichier YAML : $OUT_FILE"
-cat > "$OUT_FILE" <<EOF
+# 🔁 Remplacement de la variable non résolue
+echo "🔧 Remplacement de la variable \${mydatasource} → \"Prometheus\""
+CLEANED_JSON=$(echo "$RAW_JSON" | sed 's/\${mydatasource}/Prometheus/g')
+
+# 📦 Génération de la ConfigMap Kubernetes
+echo "🛠 Génération du fichier YAML : $OUTPUT_FILE"
+mkdir -p "$(dirname "$OUTPUT_FILE")"
+cat <<EOF > "$OUTPUT_FILE"
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: dashboard-${DASHBOARD_NAME//_/-}
-  namespace: $NAMESPACE
+  name: ${CONFIGMAP_NAME}
+  namespace: ${NAMESPACE}
   labels:
     grafana_dashboard: "1"
 data:
-  ${DASHBOARD_NAME}.json: |
-$(echo "$JSON" | jq -c '.' | sed 's/^/    /')
+  policy-reporter.json: |
+$(echo "$CLEANED_JSON" | jq -c '.' | sed 's/^/    /')
 EOF
 
-# 📂 Vérification
-echo "✅ Dashboard ajouté à: $OUT_FILE"
-echo "👉 N'oublie pas d'ajouter ce fichier à la section 'resources:' de ta Kustomization si ce n'est pas déjà fait."
+echo "✅ Dashboard prêt à être appliqué avec Kustomize ou kubectl."
