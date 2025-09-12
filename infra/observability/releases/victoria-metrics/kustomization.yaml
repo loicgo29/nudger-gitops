@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m
-  path: ./releases/victoria
+  path: .
   prune: true
   dependsOn:
     - name: victoria-metrics
