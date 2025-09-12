@@ -6,4 +6,3 @@ resources:
   - ns-recette.yaml
   - ns-logging.yaml
   - ns-observability.yaml
-  - ns-monitoring.yaml
