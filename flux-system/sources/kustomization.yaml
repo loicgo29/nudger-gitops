@@ -1,4 +1,4 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - helmrepository-prometheus-community.yaml
+  - ../../flux-system/sources/helmrepository-prometheus-community.yaml
