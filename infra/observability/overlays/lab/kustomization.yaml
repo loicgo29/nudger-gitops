@@ -4,4 +4,4 @@ resources:
   - ../../base
   - ../../dashboard
   - grafana-ingress.yaml
-  - ../../../loki/loki.kustomization.yaml  # ← ajouter cette ligne
+  - ../../../loki/loki.kustomization.yaml
