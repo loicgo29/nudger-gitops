@@ -24,6 +24,8 @@ spec:
         enabled: false
     loki:
       enabled: true
+      memberlist:
+        enabled: false
       podSecurityPolicy:
         enabled: false
       auth_enabled: false
