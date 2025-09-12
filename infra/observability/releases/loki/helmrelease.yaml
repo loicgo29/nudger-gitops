@@ -7,27 +7,33 @@ spec:
   interval: 10m
   chart:
     spec:
+      chart: loki-stack
+      version: "2.10.2"
       sourceRef:
         kind: HelmRepository
         name: grafana
         namespace: flux-system
-      chart: loki-stack
-      version: "2.16.0"   # <-- version >= 2.11
   values:
     grafana:
       enabled: false
+      podSecurityPolicy:
+        enabled: false
     promtail:
       enabled: false
+      podSecurityPolicy:
+        enabled: false
     loki:
       enabled: true
       memberlist:
         enabled: false
-      auth_enabled: false
-      persistence:
+      podSecurityPolicy:
         enabled: false
+      auth_enabled: false
       image:
         repository: grafana/loki
         tag: "2.9.3"
+      persistence:
+        enabled: false
       resources:
         requests:
           cpu: 100m
