@@ -4,4 +4,4 @@ resources:
   - ../../base
   - ../../dashboard
   - grafana-ingress.yaml
-  - ../../../victoria/victoria.kustomization.yaml
+  - ../../../victoria-metrics/victoria-metrics.kustomization.yaml
