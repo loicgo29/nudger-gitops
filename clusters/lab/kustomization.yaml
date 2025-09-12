@@ -11,3 +11,4 @@ resources:
   - ingress-nginx.kustomization.yaml
   - ingress-sources.kustomization.yaml
   - apps.whoami.kustomization.yaml
+  - infra-sources.kustomization.yaml

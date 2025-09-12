@@ -1,0 +1,15 @@
+# clusters/lab/infra-sources.kustomization.yaml
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infra-sources
+  namespace: flux-system
+spec:
+  interval: 1h
+  path: ./infra/sources
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: gitops
+  wait: true
+  timeout: 2m
