@@ -6,7 +6,7 @@ metadata:
   labels:
     environment: observability
     app.kubernetes.io/part-of: open4goods
-    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/enforce: privileged
     pod-security.kubernetes.io/warn:  baseline
     pod-security.kubernetes.io/audit: baseline
     # (enlève la clé 'enforce' si tu l'avais)
