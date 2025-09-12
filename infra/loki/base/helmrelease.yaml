@@ -16,6 +16,5 @@ spec:
   values:
     service:
       type: ClusterIP
-      values:
     podSecurityPolicy:
       enabled: false
