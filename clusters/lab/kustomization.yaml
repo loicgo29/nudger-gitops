@@ -1,14 +1,8 @@
-apiVersion: kustomize.toolkit.fluxcd.io/v1
+apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-metadata:
-  name: lab-root
-  namespace: flux-system
-spec:
-  interval: 1h
-  prune: true
-  wait: true
-  sourceRef:
-    kind: GitRepository
-    name: gitops
-  path: ./clusters/lab
-
+resources:
+  - infra-namespaces.kustomization.yaml
+  - infra.kustomization.yaml
+  - ingress-nginx.kustomization.yaml
+  - observability.kustomization.yaml
+  # etc.
