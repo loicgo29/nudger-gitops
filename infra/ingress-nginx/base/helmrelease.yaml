@@ -17,4 +17,5 @@ spec:
     controller:
       service:
         type: NodePort # ou LoadBalancer selon ton setup
+        nodePort: 30080
       hostNetwork: false

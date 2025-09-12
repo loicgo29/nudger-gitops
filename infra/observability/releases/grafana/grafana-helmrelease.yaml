@@ -26,7 +26,8 @@ spec:
     # Service + Ingress (DNS-01 recommandé)
     #####################################
     service:
-      type: ClusterIP
+      type: NodePort
+      nodePort: 30080
 
     ingress:
       enabled: true
