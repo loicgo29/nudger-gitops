@@ -3,7 +3,6 @@ kind: Kustomization
 spec:
   path: .
 resources:
-  - infra-namespaces.kustomization.yaml
   - infra.kustomization.yaml
   - ingress-nginx.kustomization.yaml
   - observability.kustomization.yaml
