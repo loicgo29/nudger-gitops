@@ -1,0 +1,207 @@
+# infra/observability/overlays/lab/grafana-helmrelease.yaml
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana
+  namespace: observability
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: grafana
+      version: "8.x.x"                  # suit les mineures/patches v8
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation: { retries: 3 }
+    timeout: 10m
+  upgrade:
+    remediation: { retries: 3 }
+
+  values:
+    #####################################
+    # Service + Ingress (DNS-01 recommandé)
+    #####################################
+    service:
+      type: ClusterIP
+
+    ingress:
+      enabled: false
+      # ⚠️ décommente si tu utilises l'annotation plutôt que spec.ingressClassName
+      # annotations:
+      #   kubernetes.io/ingress.class: nginx
+      # Pour cert-manager (DNS-01 Cloudflare) : laisse cert-manager gérer la résolution DNS
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod-dns
+      ingressClassName: nginx
+      path: /
+      pathType: Prefix
+      hosts:
+        - grafana.nudger.logo-solutions.fr
+      tls:
+        - secretName: grafana-tls         # cert-manager va le remplir
+          hosts:
+            - grafana.nudger.logo-solutions.fr
+
+    #####################################
+    # Paramètres Grafana
+    #####################################
+    env:
+      TZ: Europe/Paris
+      GF_INSTALL_PLUGINS: ""
+      # Important pour générer des URLs correctes
+      GF_SERVER_ROOT_URL: https://grafana.nudger.logo-solutions.fr
+      GF_SECURITY_COOKIE_SAMESITE: lax
+
+    # ⚠️ En prod, remplace par un Secret existant (grafana-admin) ou SOPS :
+    # admin:
+    #   existingSecret: grafana-admin
+    #   userKey: admin-user
+    #   passwordKey: admin-password
+    adminUser: admin
+    adminPassword: "changeme"
+
+    #####################################
+    # Datasources (Loki + Prometheus)
+    #####################################
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+          - name: Prometheus
+            type: prometheus
+            access: proxy
+            url: http://kube-prometheus-stack-prometheus.observability.svc:9090
+            isDefault: true
+            uid: PBFA97CFB590B2093
+            jsonData:
+              timeInterval: 15s
+          - name: Loki
+            type: loki
+            access: proxy
+            url: http://loki.logging.svc.cluster.local:3100
+            isDefault: false
+            uid: loki
+
+    #####################################
+    # Dashboards (sidecar qui surveille des ConfigMaps/Secrets)
+    #####################################
+    sidecar:
+      dashboards:
+        enabled: true
+        SCProvider: true
+        # Par défaut, surveille les ConfigMaps avec label grafana_dashboard="1"
+        label: grafana_dashboard
+        labelValue: "1"
+        searchNamespace: ALL
+        folder: /var/lib/grafana/dashboards/Kubernetes
+        # Tu peux aussi charger depuis des Secrets :
+        # foldersFromFilesStructure: true
+        provider:
+          # Le chart crée déjà ce provider, on force ses options
+          foldersFromFilesStructure: false
+          # Dossier LOGIQUE dans l’UI Grafana
+          folder: "Kubernetes"
+          # Et surtout, chemin ABSOLU lu par Grafana
+        options:
+          path: /var/lib/grafana/dashboards/Kubernetes
+      datasources:
+        enabled: false
+        label: grafana_datasource
+        labelValue: "1"
+        searchNamespace: ALL
+
+    # Exemple de dashboard géré par le chart lui-même (optionnel)
+    # Place ton JSON dans un ConfigMap labelisé grafana_dashboard=1 pour itérer sans toucher ce fichier.
+    dashboards:
+      default:
+        # Un bon point de départ : NGINX Ingress (officiel)
+        nginx-ingress:
+          # Remplace par l’UID ou l’URL de ton choix si besoin
+          gnetId: 9614
+          revision: 1
+          datasource: Prometheus
+
+    #####################################
+    # Persistence
+    #####################################
+    persistence:
+      enabled: false
+      type: pvc
+      size: 5Gi
+      storageClassName: longhorn-delete
+      accessModes: ["ReadWriteOnce"]
+
+    #####################################
+    # grafana.ini — réglages utiles
+    #####################################
+    grafana.ini:
+      server:
+        root_url: https://grafana.nudger.logo-solutions.fr
+        domain: grafana.nudger.logo-solutions.fr
+        enable_gzip: true
+      security:
+        cookie_samesite: lax
+      analytics:
+        reporting_enabled: false
+        check_for_updates: true
+      users:
+        default_theme: light
+        viewers_can_edit: false
+      explore:
+        logsPanel:
+          defaultLogVolumeEnabled: false
+
+    #####################################
+    # Plugins (facultatif)
+    #####################################
+    plugins: []
+
+    #####################################
+    # Resources & PodSecurity
+    #####################################
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+    podSecurityPolicy:
+      enabled: false
+
+    #####################################
+    # ServiceMonitor (scrape Grafana par Prometheus Operator)
+    #####################################
+    serviceMonitor:
+      enabled: true
+      namespace: observability
+      interval: 30s
+      labels: {}
+      scheme: http
+      scrapeTimeout: 10s
+
+    #####################################
+    # Tolerations / NodeSelector (optionnel)
+    #####################################
+    # tolerations:
+    #   - key: "node-role.kubernetes.io/master"
+    #     operator: "Exists"
+    #     effect: "NoSchedule"
+    # nodeSelector:
+    #   kubernetes.io/os: linux
+
+    #####################################
+    # SMTP / Alerting (placeholders)
+    #####################################
+    # smtp:
+    #   enabled: true
+    #   host: smtp.example.com:587
+    #   user: grafana@example.com
+    #   password: "****"
+    #   from_address: grafana@example.com
+    #   startTLS_policy: opportunistic
