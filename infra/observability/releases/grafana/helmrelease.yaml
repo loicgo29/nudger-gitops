@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: grafana
-      version: "8.x.x"                  # suit les mineures/patches v8
+      version: "8.4.0"                  # suit les mineures/patches v8
       sourceRef:
         kind: HelmRepository
         name: grafana
