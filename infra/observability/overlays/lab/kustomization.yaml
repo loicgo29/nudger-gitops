@@ -4,4 +4,4 @@ resources:
   - ../../base
   - ../../dashboard
   - grafana-ingress.yaml
-  - ../../releases/grafana/helmrelease.yaml
+  - ../../releases/grafana
