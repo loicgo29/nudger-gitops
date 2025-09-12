@@ -17,6 +17,8 @@ spec:
       enabled: false
     loki:
       enabled: true
+      podSecurityPolicy:
+        enabled: false
       auth_enabled: false
       image:
         repository: grafana/loki
