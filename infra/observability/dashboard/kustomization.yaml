@@ -4,3 +4,4 @@ resources:
   - flux_errors.yaml
   - App_exceptions.yaml
   - Ingress_5xx.yaml
+  - policy-reporter-dashboard.yaml
