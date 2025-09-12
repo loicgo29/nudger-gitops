@@ -12,7 +12,7 @@ spec:
         name: grafana
         namespace: flux-system
       chart:  ./charts/loki-stack
-      version: "2.9.3" # version >= 2.11 compatible K8s 1.27+
+      version: "2.10.2" # version >= 2.11 compatible K8s 1.27+
   values:
     grafana:
       enabled: false
