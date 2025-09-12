@@ -12,7 +12,7 @@ spec:
         name: grafana
         namespace: flux-system
       chart: loki-stack
-      version: "2.10.2"
+      version: "2.16.0"   # <-- version >= 2.11
   values:
     grafana:
       enabled: false
@@ -20,11 +20,9 @@ spec:
       enabled: false
     loki:
       enabled: true
-      auth_enabled: false
       memberlist:
         enabled: false
-      podSecurityPolicy:
-        enabled: false
+      auth_enabled: false
       persistence:
         enabled: false
       image:
