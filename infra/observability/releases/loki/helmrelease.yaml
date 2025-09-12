@@ -16,26 +16,20 @@ spec:
   values:
     grafana:
       enabled: false
-      podSecurityPolicy:
-        enabled: false
     promtail:
       enabled: false
-      podSecurityPolicy:
-        enabled: false
     loki:
       enabled: true
+      auth_enabled: false
       memberlist:
         enabled: false
       podSecurityPolicy:
         enabled: false
-      auth_enabled: false
-      image:
-        repository: grafana/loki
-        tag: "2.9.3"
       persistence:
         enabled: false
-        size: 10Gi
-        storageClassName: longhorn
+      image:
+        repository: grafana/loki
+        tag: "2.10.2"
       resources:
         requests:
           cpu: 100m
