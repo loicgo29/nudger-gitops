@@ -12,7 +12,7 @@ spec:
         name: victoria-metrics
         namespace: flux-system
       chart: victoria-metrics-single
-      version: "0.24.5"  # dernière version disponible
+      version: "2.5.0"  # dernière version disponible
   values:
     fullnameOverride: victoriametrics
     service:
