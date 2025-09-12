@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - ../../sources/helmrepository-prometheus-community.yaml
   - ../releases/grafana/grafana-helmrelease.yaml
+  - helmrepository-grafana.yaml
   - loki-datasource.yaml
   - logging-namespace.yaml
   - ../releases/kube-prometheus-stack
