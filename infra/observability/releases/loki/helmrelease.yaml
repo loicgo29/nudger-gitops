@@ -11,8 +11,8 @@ spec:
         kind: HelmRepository
         name: grafana
         namespace: flux-system
-      chart: loki-stack
-      version: "2.16.0" # version >= 2.11 compatible K8s 1.27+
+      chart:  ./charts/loki-stack
+      version: "2.10.2" # version >= 2.11 compatible K8s 1.27+
   values:
     grafana:
       enabled: false
