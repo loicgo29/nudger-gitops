@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: open4goods-integration
+  name: longhorn-system
   labels:
-    environment: integration
-    app.kubernetes.io/part-of: open4goods
-    pod-security.kubernetes.io/enforce: baseline
+    environment: storage
+    # PSA / PSS: Longhorn a besoin de privilèges
+    pod-security.kubernetes.io/enforce: privileged
     pod-security.kubernetes.io/warn: baseline
     pod-security.kubernetes.io/audit: baseline
   annotations:
     nudger.logo-solutions.fr/managed-by: gitops
+    nudger.logo-solutions.fr/protect: "true"
