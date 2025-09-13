@@ -4,4 +4,3 @@ resources:
   - infra.kustomization.yaml
   - ingress-nginx.kustomization.yaml
   - observability.kustomization.yaml
-  - victoria-metrics.kustomization.yaml
