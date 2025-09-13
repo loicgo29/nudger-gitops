@@ -2,31 +2,25 @@
 set -euo pipefail
 
 OUT="sources.json"
-echo ">> Collecting Flux objects into $OUT…"
-: >"$OUT"   # vide le fichier
+> "$OUT"
 
-# Dump en JSON tous les objets Flux connus
-kubectl get gitrepositories.source.toolkit.fluxcd.io -A -o yaml | yq -o=json >>"$OUT"
-kubectl get helmrepositories.source.toolkit.fluxcd.io -A -o yaml | yq -o=json >>"$OUT"
-kubectl get helmcharts.source.toolkit.fluxcd.io -A -o yaml | yq -o=json >>"$OUT"
-kubectl get helmreleases.helm.toolkit.fluxcd.io -A -o yaml | yq -o=json >>"$OUT"
-kubectl get kustomizations.kustomize.toolkit.fluxcd.io -A -o yaml | yq -o=json >>"$OUT"
+echo ">> Dump en JSON tous les objets Flux connus…"
 
-echo ">> Building Mermaid graph…"
-cat <<'EOF'
-```mermaid
-graph TD
-  subgraph Sources
-    GitRepos[GitRepositories]
-    HelmRepos[HelmRepositories]
-  end
+kubectl get gitrepositories.source.toolkit.fluxcd.io -A -o yaml \
+  | yq -o=json >>"$OUT"
 
-  subgraph Releases
-    HelmCharts[HelmCharts]
-    HelmReleases[HelmReleases]
-    Kustomizations[Kustomizations]
-  end
+kubectl get helmrepositories.source.toolkit.fluxcd.io -A -o yaml \
+  | yq -o=json >>"$OUT"
 
-  GitRepos --> Kustomizations
-  HelmRepos --> HelmCharts --> HelmReleases
-  HelmReleases --> Kustomizations
+kubectl get helmcharts.source.toolkit.fluxcd.io -A -o yaml \
+  | yq -o=json >>"$OUT"
+
+kubectl get helmreleases.helm.toolkit.fluxcd.io -A -o yaml \
+  | yq -o=json >>"$OUT"
+
+kubectl get kustomizations.kustomize.toolkit.fluxcd.io -A -o yaml \
+  | yq -o=json >>"$OUT"
+
+echo ">> Données brutes collectées dans $OUT"
+echo ">> Aperçu (jq . | head -50) :"
+jq . "$OUT" | head -50

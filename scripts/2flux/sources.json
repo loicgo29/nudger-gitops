@@ -640,7 +640,7 @@
         },
         "name": "loki",
         "namespace": "logging",
-        "resourceVersion": "4340963",
+        "resourceVersion": "4347111",
         "uid": "e5f59724-3506-4901-bbea-67d3080e6e31"
       },
       "spec": {
@@ -669,7 +669,7 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2025-09-13T16:10:38Z",
+            "lastTransitionTime": "2025-09-13T16:40:40Z",
             "message": "Running 'install' action with timeout of 5m0s",
             "observedGeneration": 1,
             "reason": "Progressing",
@@ -677,7 +677,7 @@
             "type": "Reconciling"
           },
           {
-            "lastTransitionTime": "2025-09-13T16:10:38Z",
+            "lastTransitionTime": "2025-09-13T16:40:41Z",
             "message": "Helm install failed for release logging/loki with chart loki@2.10.0: unable to build kubernetes objects from release manifest: resource mapping not found for name: \"loki\" namespace: \"\" from \"\": no matches for kind \"PodSecurityPolicy\" in version \"policy/v1beta1\"\nensure CRDs are installed first",
             "observedGeneration": 1,
             "reason": "InstallFailed",
@@ -693,7 +693,7 @@
             "type": "Released"
           }
         ],
-        "failures": 103,
+        "failures": 105,
         "helmChart": "flux-system/logging-loki",
         "lastAttemptedConfigDigest": "sha256:af4cf17db3447131c8875f5e085c15a942e4912e79bdbee6229923bf6e161b5f",
         "lastAttemptedGeneration": 1,
@@ -714,7 +714,7 @@
         "generation": 1,
         "name": "victorialogs",
         "namespace": "logging",
-        "resourceVersion": "4342346",
+        "resourceVersion": "4347461",
         "uid": "a35bd5d9-3f4a-43f3-8a99-7a00ca4f6888"
       },
       "spec": {
@@ -798,7 +798,7 @@
         "generation": 1,
         "name": "victoriametrics",
         "namespace": "logging",
-        "resourceVersion": "4342230",
+        "resourceVersion": "4346318",
         "uid": "a6f5437c-12f1-4fb1-b80b-cbf44ae3a1fa"
       },
       "spec": {
@@ -898,7 +898,7 @@
         },
         "name": "grafana",
         "namespace": "observability",
-        "resourceVersion": "4341741",
+        "resourceVersion": "4347798",
         "uid": "3b9a15b5-c74e-49d3-9854-aa07aa7ddd32"
       },
       "spec": {
@@ -1146,7 +1146,7 @@
         },
         "name": "kube-prometheus-stack",
         "namespace": "observability",
-        "resourceVersion": "4342428",
+        "resourceVersion": "4346615",
         "uid": "20bca7f6-a0db-4e70-8ab2-d196114ff399"
       },
       "spec": {
@@ -1365,7 +1365,7 @@
         },
         "name": "ingress-nginx",
         "namespace": "flux-system",
-        "resourceVersion": "4335600",
+        "resourceVersion": "4347862",
         "uid": "f27cddef-31ce-4f00-9904-4fa20317ebb6"
       },
       "spec": {
@@ -1403,7 +1403,7 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2025-09-13T15:44:29Z",
+            "lastTransitionTime": "2025-09-13T16:44:19Z",
             "message": "Applied revision: main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
             "observedGeneration": 4,
             "reason": "ReconciliationSucceeded",
@@ -1411,8 +1411,8 @@
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2025-09-13T15:44:29Z",
-            "message": "Health check passed in 23.140376ms",
+            "lastTransitionTime": "2025-09-13T16:44:19Z",
+            "message": "Health check passed in 13.508198ms",
             "observedGeneration": 4,
             "reason": "Succeeded",
             "status": "True",
@@ -1519,7 +1519,7 @@
         "generation": 3,
         "name": "lab-root",
         "namespace": "flux-system",
-        "resourceVersion": "4342861",
+        "resourceVersion": "4348191",
         "uid": "b3ecd5e0-e807-4081-8a20-f11c71527fbb"
       },
       "spec": {
@@ -1537,7 +1537,7 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2025-09-13T16:19:53Z",
+            "lastTransitionTime": "2025-09-13T16:45:54Z",
             "message": "Applied revision: main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
             "observedGeneration": 3,
             "reason": "ReconciliationSucceeded",
@@ -1585,7 +1585,7 @@
         },
         "name": "loki",
         "namespace": "flux-system",
-        "resourceVersion": "4341184",
+        "resourceVersion": "4347579",
         "uid": "21134c9f-c982-4bc2-90c3-33133e401848"
       },
       "spec": {
@@ -1601,7 +1601,7 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2025-09-13T16:11:43Z",
+            "lastTransitionTime": "2025-09-13T16:42:57Z",
             "message": "Applied revision: main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
             "observedGeneration": 1,
             "reason": "ReconciliationSucceeded",
