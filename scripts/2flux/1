@@ -1,0 +1,23 @@
+#[derive(Debug, Deserialize)]
+struct Meta {
+--
+#[derive(Debug, Deserialize, Clone)]
+struct Condition {
+--
+#[derive(Debug, Deserialize, Clone)]
+struct Meta {
+--
+#[derive(Debug, Deserialize, Clone)]
+struct Status {
+--
+#[derive(Debug, Deserialize, Clone)]
+struct Inventory {
+--
+#[derive(Debug, Deserialize, Clone)]
+struct InventoryEntry {
+--
+#[derive(Debug, Deserialize, Clone)]
+struct Common {
+--
+#[derive(Default)]
+struct Edge {

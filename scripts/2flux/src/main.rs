@@ -4,11 +4,6 @@ use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 use std::process::Command;
 
-#[derive(Debug, Deserialize)]
-struct Meta {
-    name: String,
-    namespace: Option<String>,
-}
 #[derive(Debug, Deserialize, Clone)]
 struct Condition {
     #[serde(rename = "type")]
@@ -48,38 +43,6 @@ struct Common {
     spec: Option<serde_json::Value>,
 }
 
-#[derive(Debug, Deserialize)]
-struct Condition {
-    #[serde(rename = "type")]
-    cond_type: String,
-    status: Option<String>,
-    reason: Option<String>,
-    message: Option<String>,
-}
-
-#[derive(Debug, Deserialize)]
-struct Common {
-    metadata: Meta,
-    status: Option<Status>,
-    spec: Option<Value>,
-}
-
-#[derive(Debug, Deserialize)]
-struct Status {
-    conditions: Option<Vec<Condition>>,
-    #[serde(default)]
-    inventory: Option<Inventory>,
-}
-
-#[derive(Debug, Deserialize)]
-struct Inventory {
-    entries: Option<Vec<InventoryEntry>>,
-}
-
-#[derive(Debug, Deserialize)]
-struct InventoryEntry {
-    id: String,
-}
 
 /// Run a `flux get ... -o json` and parse items
 fn flux_get(kind: &str, args: &[&str]) -> Result<Vec<Common>> {
