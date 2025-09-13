@@ -1,0 +1,35 @@
+---
+- name: Ensure VictoriaLogs namespace exists
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ victorialogs_namespace | default('logging') }}"
+
+- name: Deploy VictoriaLogs HelmRelease via Flux
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      metadata:
+        name: victorialogs
+        namespace: "{{ victorialogs_namespace | default('logging') }}"
+      spec:
+        interval: 5m
+        chart:
+          spec:
+            chart: victoria-logs-single
+            version: "0.9.1"    # ⚠️ ajuste selon ton repo helm
+            sourceRef:
+              kind: HelmRepository
+              name: victoria-metrics
+              namespace: flux-system
+        values:
+          replicaCount: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi

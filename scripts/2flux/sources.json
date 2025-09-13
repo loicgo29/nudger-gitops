@@ -1,0 +1,1880 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "source.toolkit.fluxcd.io/v1",
+      "kind": "GitRepository",
+      "metadata": {
+        "annotations": {
+          "reconcile.fluxcd.io/requestedAt": "2025-09-13T09:45:28.078359019Z"
+        },
+        "creationTimestamp": "2025-09-01T11:17:23Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 4,
+        "name": "gitops",
+        "namespace": "flux-system",
+        "resourceVersion": "4261643",
+        "uid": "cdef13ed-c1eb-49f9-8030-c938a8bbf14f"
+      },
+      "spec": {
+        "interval": "100m",
+        "ref": {
+          "branch": "main"
+        },
+        "secretRef": {
+          "name": "gitops-credentials"
+        },
+        "timeout": "60s",
+        "url": "https://github.com/loicgo29/nudger-gitops.git"
+      },
+      "status": {
+        "artifact": {
+          "digest": "sha256:c9bda1b342330e76ec501aadf27fbb699ef5e23052a2e1402f240e825953b67b",
+          "lastUpdateTime": "2025-09-12T16:58:06Z",
+          "path": "gitrepository/flux-system/gitops/e51d41b092cb48b5b51e67b3223243132e032d81.tar.gz",
+          "revision": "main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
+          "size": 735979,
+          "url": "http://source-controller.flux-system.svc.cluster.local./gitrepository/flux-system/gitops/e51d41b092cb48b5b51e67b3223243132e032d81.tar.gz"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-12T16:58:06Z",
+            "message": "stored artifact for revision 'main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81'",
+            "observedGeneration": 4,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T16:58:06Z",
+            "message": "stored artifact for revision 'main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81'",
+            "observedGeneration": 4,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "ArtifactInStorage"
+          }
+        ],
+        "lastHandledReconcileAt": "2025-09-13T09:45:28.078359019Z",
+        "observedGeneration": 4
+      }
+    }
+  ],
+  "kind": "List",
+  "metadata": {
+    "resourceVersion": ""
+  }
+}
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "source.toolkit.fluxcd.io/v1",
+      "kind": "HelmRepository",
+      "metadata": {
+        "annotations": {
+          "reconcile.fluxcd.io/requestedAt": "2025-09-13T09:45:30.787440532Z"
+        },
+        "creationTimestamp": "2025-09-12T16:55:25Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "kustomize.toolkit.fluxcd.io/name": "loki",
+          "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+        },
+        "name": "grafana",
+        "namespace": "flux-system",
+        "resourceVersion": "4261663",
+        "uid": "f9e983ff-ee3b-42aa-9e1b-bf17348770ca"
+      },
+      "spec": {
+        "interval": "10m",
+        "provider": "generic",
+        "url": "https://grafana.github.io/helm-charts"
+      },
+      "status": {
+        "artifact": {
+          "digest": "sha256:17a9dfdeb6ba48bce188a6295216c154977e24e54e33a09d18992d76fcd1ea50",
+          "lastUpdateTime": "2025-09-12T16:55:27Z",
+          "path": "helmrepository/flux-system/grafana/index-1f06d5a5f81564bcf81ec42a90ed5c41b2b241f3241050b4482059f4edc6e94f.yaml",
+          "revision": "sha256:1f06d5a5f81564bcf81ec42a90ed5c41b2b241f3241050b4482059f4edc6e94f",
+          "size": 4900009,
+          "url": "http://source-controller.flux-system.svc.cluster.local./helmrepository/flux-system/grafana/index-1f06d5a5f81564bcf81ec42a90ed5c41b2b241f3241050b4482059f4edc6e94f.yaml"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-12T16:55:27Z",
+            "message": "stored artifact: revision 'sha256:1f06d5a5f81564bcf81ec42a90ed5c41b2b241f3241050b4482059f4edc6e94f'",
+            "observedGeneration": 1,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T16:55:27Z",
+            "message": "stored artifact: revision 'sha256:1f06d5a5f81564bcf81ec42a90ed5c41b2b241f3241050b4482059f4edc6e94f'",
+            "observedGeneration": 1,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "ArtifactInStorage"
+          }
+        ],
+        "lastHandledReconcileAt": "2025-09-13T09:45:30.787440532Z",
+        "observedGeneration": 1,
+        "url": "http://source-controller.flux-system.svc.cluster.local./helmrepository/flux-system/grafana/index.yaml"
+      }
+    },
+    {
+      "apiVersion": "source.toolkit.fluxcd.io/v1",
+      "kind": "HelmRepository",
+      "metadata": {
+        "annotations": {
+          "reconcile.fluxcd.io/requestedAt": "2025-09-13T09:45:32.994834008Z"
+        },
+        "creationTimestamp": "2025-09-10T08:30:52Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "kustomize.toolkit.fluxcd.io/name": "infra-longhorn-sc",
+          "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+        },
+        "name": "longhorn",
+        "namespace": "flux-system",
+        "resourceVersion": "4261670",
+        "uid": "b79c898c-8df6-4c48-90b6-29db0d5de08e"
+      },
+      "spec": {
+        "interval": "1h",
+        "provider": "generic",
+        "url": "https://charts.longhorn.io"
+      },
+      "status": {
+        "artifact": {
+          "digest": "sha256:e78f2c11a72d45a424b4c78d6225e7ec3fd7e45ca46b0bf57dd90f869fc69696",
+          "lastUpdateTime": "2025-09-10T08:30:53Z",
+          "path": "helmrepository/flux-system/longhorn/index-014710713907a192c85702d9b3c36b3ee4fc874d156290e37d599e4c0031d6c6.yaml",
+          "revision": "sha256:014710713907a192c85702d9b3c36b3ee4fc874d156290e37d599e4c0031d6c6",
+          "size": 66327,
+          "url": "http://source-controller.flux-system.svc.cluster.local./helmrepository/flux-system/longhorn/index-014710713907a192c85702d9b3c36b3ee4fc874d156290e37d599e4c0031d6c6.yaml"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-11T09:14:58Z",
+            "message": "stored artifact: revision 'sha256:014710713907a192c85702d9b3c36b3ee4fc874d156290e37d599e4c0031d6c6'",
+            "observedGeneration": 1,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-10T08:30:53Z",
+            "message": "stored artifact: revision 'sha256:014710713907a192c85702d9b3c36b3ee4fc874d156290e37d599e4c0031d6c6'",
+            "observedGeneration": 1,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "ArtifactInStorage"
+          }
+        ],
+        "lastHandledReconcileAt": "2025-09-13T09:45:32.994834008Z",
+        "observedGeneration": 1,
+        "url": "http://source-controller.flux-system.svc.cluster.local./helmrepository/flux-system/longhorn/index.yaml"
+      }
+    },
+    {
+      "apiVersion": "source.toolkit.fluxcd.io/v1",
+      "kind": "HelmRepository",
+      "metadata": {
+        "annotations": {
+          "reconcile.fluxcd.io/requestedAt": "2025-09-13T09:45:35.188863131Z"
+        },
+        "creationTimestamp": "2025-09-12T11:27:12Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "kustomize.toolkit.fluxcd.io/name": "observability",
+          "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+        },
+        "name": "prometheus-community",
+        "namespace": "flux-system",
+        "resourceVersion": "4261686",
+        "uid": "1dbe270d-8dd0-45e6-8478-ff01c8d451a8"
+      },
+      "spec": {
+        "interval": "1h",
+        "provider": "generic",
+        "url": "https://prometheus-community.github.io/helm-charts"
+      },
+      "status": {
+        "artifact": {
+          "digest": "sha256:23ed41939208df424fba3f6a442fe1a1777676892c9e30906274d457bedf7a08",
+          "lastUpdateTime": "2025-09-12T19:29:25Z",
+          "path": "helmrepository/flux-system/prometheus-community/index-7d7be8973cfbc84fc12d861032932116e25f6c48b9f6f85127cb07c8efb464e9.yaml",
+          "revision": "sha256:7d7be8973cfbc84fc12d861032932116e25f6c48b9f6f85127cb07c8efb464e9",
+          "size": 6575971,
+          "url": "http://source-controller.flux-system.svc.cluster.local./helmrepository/flux-system/prometheus-community/index-7d7be8973cfbc84fc12d861032932116e25f6c48b9f6f85127cb07c8efb464e9.yaml"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-12T19:29:25Z",
+            "message": "stored artifact: revision 'sha256:7d7be8973cfbc84fc12d861032932116e25f6c48b9f6f85127cb07c8efb464e9'",
+            "observedGeneration": 1,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T19:29:25Z",
+            "message": "stored artifact: revision 'sha256:7d7be8973cfbc84fc12d861032932116e25f6c48b9f6f85127cb07c8efb464e9'",
+            "observedGeneration": 1,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "ArtifactInStorage"
+          }
+        ],
+        "lastHandledReconcileAt": "2025-09-13T09:45:35.188863131Z",
+        "observedGeneration": 1,
+        "url": "http://source-controller.flux-system.svc.cluster.local./helmrepository/flux-system/prometheus-community/index.yaml"
+      }
+    },
+    {
+      "apiVersion": "source.toolkit.fluxcd.io/v1",
+      "kind": "HelmRepository",
+      "metadata": {
+        "annotations": {
+          "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"source.toolkit.fluxcd.io/v1\",\"kind\":\"HelmRepository\",\"metadata\":{\"annotations\":{},\"name\":\"victoria-metrics\",\"namespace\":\"flux-system\"},\"spec\":{\"interval\":\"10m\",\"url\":\"https://victoriametrics.github.io/helm-charts/\"}}\n",
+          "reconcile.fluxcd.io/requestedAt": "2025-09-13T09:45:37.427221756Z"
+        },
+        "creationTimestamp": "2025-09-12T17:14:04Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 1,
+        "name": "victoria-metrics",
+        "namespace": "flux-system",
+        "resourceVersion": "4261694",
+        "uid": "110d22b2-520f-41cd-9df6-d82c3d2c29f2"
+      },
+      "spec": {
+        "interval": "10m",
+        "provider": "generic",
+        "url": "https://victoriametrics.github.io/helm-charts/"
+      },
+      "status": {
+        "artifact": {
+          "digest": "sha256:1dcfdbcf1bf5d2386dc96ed69931fa58a119d85df033f3a55fcf1fb02f0b8726",
+          "lastUpdateTime": "2025-09-12T17:34:16Z",
+          "path": "helmrepository/flux-system/victoria-metrics/index-4c0f8d94768a814775e793d4d426945ce8f1e9978436445aa886c0b02eaaf7fb.yaml",
+          "revision": "sha256:4c0f8d94768a814775e793d4d426945ce8f1e9978436445aa886c0b02eaaf7fb",
+          "size": 2621623,
+          "url": "http://source-controller.flux-system.svc.cluster.local./helmrepository/flux-system/victoria-metrics/index-4c0f8d94768a814775e793d4d426945ce8f1e9978436445aa886c0b02eaaf7fb.yaml"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-12T17:34:17Z",
+            "message": "stored artifact: revision 'sha256:4c0f8d94768a814775e793d4d426945ce8f1e9978436445aa886c0b02eaaf7fb'",
+            "observedGeneration": 1,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T17:34:17Z",
+            "message": "stored artifact: revision 'sha256:4c0f8d94768a814775e793d4d426945ce8f1e9978436445aa886c0b02eaaf7fb'",
+            "observedGeneration": 1,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "ArtifactInStorage"
+          }
+        ],
+        "lastHandledReconcileAt": "2025-09-13T09:45:37.427221756Z",
+        "observedGeneration": 1,
+        "url": "http://source-controller.flux-system.svc.cluster.local./helmrepository/flux-system/victoria-metrics/index.yaml"
+      }
+    }
+  ],
+  "kind": "List",
+  "metadata": {
+    "resourceVersion": ""
+  }
+}
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "source.toolkit.fluxcd.io/v1",
+      "kind": "HelmChart",
+      "metadata": {
+        "creationTimestamp": "2025-09-12T16:58:07Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "helm.toolkit.fluxcd.io/name": "loki",
+          "helm.toolkit.fluxcd.io/namespace": "logging"
+        },
+        "name": "logging-loki",
+        "namespace": "flux-system",
+        "resourceVersion": "4054083",
+        "uid": "8718a3fd-f242-426e-9e29-56b7b7fe945f"
+      },
+      "spec": {
+        "chart": "loki",
+        "interval": "10m0s",
+        "reconcileStrategy": "ChartVersion",
+        "sourceRef": {
+          "kind": "HelmRepository",
+          "name": "grafana"
+        },
+        "version": "2.10.0"
+      },
+      "status": {
+        "artifact": {
+          "digest": "sha256:acce59648e5105da3ec9bda9b8209b3991f08f8d4b94ca39e4cc84f12e678f87",
+          "lastUpdateTime": "2025-09-12T16:58:08Z",
+          "path": "helmchart/flux-system/logging-loki/loki-2.10.0.tgz",
+          "revision": "2.10.0",
+          "size": 7717,
+          "url": "http://source-controller.flux-system.svc.cluster.local./helmchart/flux-system/logging-loki/loki-2.10.0.tgz"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-12T16:58:08Z",
+            "message": "pulled 'loki' chart with version '2.10.0'",
+            "observedGeneration": 1,
+            "reason": "ChartPullSucceeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T16:58:08Z",
+            "message": "pulled 'loki' chart with version '2.10.0'",
+            "observedGeneration": 1,
+            "reason": "ChartPullSucceeded",
+            "status": "True",
+            "type": "ArtifactInStorage"
+          }
+        ],
+        "observedChartName": "loki",
+        "observedGeneration": 1,
+        "observedSourceArtifactRevision": "sha256:1f06d5a5f81564bcf81ec42a90ed5c41b2b241f3241050b4482059f4edc6e94f",
+        "url": "http://source-controller.flux-system.svc.cluster.local./helmchart/flux-system/logging-loki/latest.tar.gz"
+      }
+    },
+    {
+      "apiVersion": "source.toolkit.fluxcd.io/v1",
+      "kind": "HelmChart",
+      "metadata": {
+        "creationTimestamp": "2025-09-13T09:53:40Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "helm.toolkit.fluxcd.io/name": "victorialogs",
+          "helm.toolkit.fluxcd.io/namespace": "logging"
+        },
+        "name": "logging-victorialogs",
+        "namespace": "flux-system",
+        "resourceVersion": "4263371",
+        "uid": "417326f1-622c-4773-a444-736454e0db07"
+      },
+      "spec": {
+        "chart": "victoria-logs-single",
+        "interval": "5m0s",
+        "reconcileStrategy": "ChartVersion",
+        "sourceRef": {
+          "kind": "HelmRepository",
+          "name": "victoria-metrics"
+        },
+        "version": "0.9.1"
+      },
+      "status": {
+        "artifact": {
+          "digest": "sha256:6b62f54e9dcda6d68fc480cea772960b793771fe07a1dc6579dc272d429f17c6",
+          "lastUpdateTime": "2025-09-13T09:53:42Z",
+          "path": "helmchart/flux-system/logging-victorialogs/victoria-logs-single-0.9.1.tgz",
+          "revision": "0.9.1",
+          "size": 53889,
+          "url": "http://source-controller.flux-system.svc.cluster.local./helmchart/flux-system/logging-victorialogs/victoria-logs-single-0.9.1.tgz"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-13T09:53:42Z",
+            "message": "pulled 'victoria-logs-single' chart with version '0.9.1'",
+            "observedGeneration": 1,
+            "reason": "ChartPullSucceeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-13T09:53:42Z",
+            "message": "pulled 'victoria-logs-single' chart with version '0.9.1'",
+            "observedGeneration": 1,
+            "reason": "ChartPullSucceeded",
+            "status": "True",
+            "type": "ArtifactInStorage"
+          }
+        ],
+        "observedChartName": "victoria-logs-single",
+        "observedGeneration": 1,
+        "observedSourceArtifactRevision": "sha256:4c0f8d94768a814775e793d4d426945ce8f1e9978436445aa886c0b02eaaf7fb",
+        "url": "http://source-controller.flux-system.svc.cluster.local./helmchart/flux-system/logging-victorialogs/latest.tar.gz"
+      }
+    },
+    {
+      "apiVersion": "source.toolkit.fluxcd.io/v1",
+      "kind": "HelmChart",
+      "metadata": {
+        "creationTimestamp": "2025-09-12T17:14:05Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "helm.toolkit.fluxcd.io/name": "victoriametrics",
+          "helm.toolkit.fluxcd.io/namespace": "logging"
+        },
+        "name": "logging-victoriametrics",
+        "namespace": "flux-system",
+        "resourceVersion": "4061707",
+        "uid": "1cc3e44e-0e50-4382-bb90-93a9c2e35043"
+      },
+      "spec": {
+        "chart": "victoria-metrics-single",
+        "interval": "10m0s",
+        "reconcileStrategy": "ChartVersion",
+        "sourceRef": {
+          "kind": "HelmRepository",
+          "name": "victoria-metrics"
+        },
+        "version": "0.24.5"
+      },
+      "status": {
+        "artifact": {
+          "digest": "sha256:467c34529026fa5db86e28322f13db2d34e4d21016bd565204ecb3ac40164547",
+          "lastUpdateTime": "2025-09-12T17:14:06Z",
+          "path": "helmchart/flux-system/logging-victoriametrics/victoria-metrics-single-0.24.5.tgz",
+          "revision": "0.24.5",
+          "size": 18265,
+          "url": "http://source-controller.flux-system.svc.cluster.local./helmchart/flux-system/logging-victoriametrics/victoria-metrics-single-0.24.5.tgz"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-12T17:14:06Z",
+            "message": "pulled 'victoria-metrics-single' chart with version '0.24.5'",
+            "observedGeneration": 1,
+            "reason": "ChartPullSucceeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T17:14:06Z",
+            "message": "pulled 'victoria-metrics-single' chart with version '0.24.5'",
+            "observedGeneration": 1,
+            "reason": "ChartPullSucceeded",
+            "status": "True",
+            "type": "ArtifactInStorage"
+          }
+        ],
+        "observedChartName": "victoria-metrics-single",
+        "observedGeneration": 1,
+        "observedSourceArtifactRevision": "sha256:4c0f8d94768a814775e793d4d426945ce8f1e9978436445aa886c0b02eaaf7fb",
+        "url": "http://source-controller.flux-system.svc.cluster.local./helmchart/flux-system/logging-victoriametrics/latest.tar.gz"
+      }
+    },
+    {
+      "apiVersion": "source.toolkit.fluxcd.io/v1",
+      "kind": "HelmChart",
+      "metadata": {
+        "annotations": {
+          "reconcile.fluxcd.io/requestedAt": "2025-09-12T09:11:28.243561469Z"
+        },
+        "creationTimestamp": "2025-09-12T08:34:15Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 2,
+        "labels": {
+          "helm.toolkit.fluxcd.io/name": "grafana",
+          "helm.toolkit.fluxcd.io/namespace": "observability"
+        },
+        "name": "observability-grafana",
+        "namespace": "flux-system",
+        "resourceVersion": "4053411",
+        "uid": "a29a5be2-c0f3-4eee-b235-7ea92ab37715"
+      },
+      "spec": {
+        "chart": "grafana",
+        "interval": "10m0s",
+        "reconcileStrategy": "ChartVersion",
+        "sourceRef": {
+          "kind": "HelmRepository",
+          "name": "grafana"
+        },
+        "version": "9.4.5"
+      },
+      "status": {
+        "artifact": {
+          "digest": "sha256:42a7d27fbba06c9d5e6f9f9006f6f60cda212ff399e811731a0037105e58a2e0",
+          "lastUpdateTime": "2025-09-12T09:25:35Z",
+          "path": "helmchart/flux-system/observability-grafana/grafana-9.4.5.tgz",
+          "revision": "9.4.5",
+          "size": 48154,
+          "url": "http://source-controller.flux-system.svc.cluster.local./helmchart/flux-system/observability-grafana/grafana-9.4.5.tgz"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-12T16:55:27Z",
+            "message": "pulled 'grafana' chart with version '9.4.5'",
+            "observedGeneration": 2,
+            "reason": "ChartPullSucceeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T09:25:35Z",
+            "message": "pulled 'grafana' chart with version '9.4.5'",
+            "observedGeneration": 2,
+            "reason": "ChartPullSucceeded",
+            "status": "True",
+            "type": "ArtifactInStorage"
+          }
+        ],
+        "lastHandledReconcileAt": "2025-09-12T09:11:28.243561469Z",
+        "observedChartName": "grafana",
+        "observedGeneration": 2,
+        "observedSourceArtifactRevision": "sha256:1f06d5a5f81564bcf81ec42a90ed5c41b2b241f3241050b4482059f4edc6e94f",
+        "url": "http://source-controller.flux-system.svc.cluster.local./helmchart/flux-system/observability-grafana/latest.tar.gz"
+      }
+    },
+    {
+      "apiVersion": "source.toolkit.fluxcd.io/v1",
+      "kind": "HelmChart",
+      "metadata": {
+        "creationTimestamp": "2025-09-12T10:08:23Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "helm.toolkit.fluxcd.io/name": "kube-prometheus-stack",
+          "helm.toolkit.fluxcd.io/namespace": "observability"
+        },
+        "name": "observability-kube-prometheus-stack",
+        "namespace": "flux-system",
+        "resourceVersion": "4085322",
+        "uid": "c2aa8148-97ff-488e-b4dc-5a4bb391f50b"
+      },
+      "spec": {
+        "chart": "kube-prometheus-stack",
+        "interval": "10m0s",
+        "reconcileStrategy": "ChartVersion",
+        "sourceRef": {
+          "kind": "HelmRepository",
+          "name": "prometheus-community"
+        },
+        "version": "56.0.3"
+      },
+      "status": {
+        "artifact": {
+          "digest": "sha256:12da1ef242a987aaaf3399fe49b199720f5be4bcea527866941673a476564182",
+          "lastUpdateTime": "2025-09-12T10:08:24Z",
+          "path": "helmchart/flux-system/observability-kube-prometheus-stack/kube-prometheus-stack-56.0.3.tgz",
+          "revision": "56.0.3",
+          "size": 513928,
+          "url": "http://source-controller.flux-system.svc.cluster.local./helmchart/flux-system/observability-kube-prometheus-stack/kube-prometheus-stack-56.0.3.tgz"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-12T11:39:22Z",
+            "message": "pulled 'kube-prometheus-stack' chart with version '56.0.3'",
+            "observedGeneration": 1,
+            "reason": "ChartPullSucceeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T10:08:24Z",
+            "message": "pulled 'kube-prometheus-stack' chart with version '56.0.3'",
+            "observedGeneration": 1,
+            "reason": "ChartPullSucceeded",
+            "status": "True",
+            "type": "ArtifactInStorage"
+          }
+        ],
+        "observedChartName": "kube-prometheus-stack",
+        "observedGeneration": 1,
+        "observedSourceArtifactRevision": "sha256:7d7be8973cfbc84fc12d861032932116e25f6c48b9f6f85127cb07c8efb464e9",
+        "url": "http://source-controller.flux-system.svc.cluster.local./helmchart/flux-system/observability-kube-prometheus-stack/latest.tar.gz"
+      }
+    }
+  ],
+  "kind": "List",
+  "metadata": {
+    "resourceVersion": ""
+  }
+}
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "helm.toolkit.fluxcd.io/v2",
+      "kind": "HelmRelease",
+      "metadata": {
+        "creationTimestamp": "2025-09-12T16:58:06Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "kustomize.toolkit.fluxcd.io/name": "loki",
+          "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+        },
+        "name": "loki",
+        "namespace": "logging",
+        "resourceVersion": "4347111",
+        "uid": "e5f59724-3506-4901-bbea-67d3080e6e31"
+      },
+      "spec": {
+        "chart": {
+          "spec": {
+            "chart": "loki",
+            "reconcileStrategy": "ChartVersion",
+            "sourceRef": {
+              "kind": "HelmRepository",
+              "name": "grafana",
+              "namespace": "flux-system"
+            },
+            "version": "2.10.0"
+          }
+        },
+        "interval": "10m",
+        "values": {
+          "podSecurityPolicy": {
+            "enabled": false
+          },
+          "service": {
+            "type": "ClusterIP"
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-13T16:40:40Z",
+            "message": "Running 'install' action with timeout of 5m0s",
+            "observedGeneration": 1,
+            "reason": "Progressing",
+            "status": "True",
+            "type": "Reconciling"
+          },
+          {
+            "lastTransitionTime": "2025-09-13T16:40:41Z",
+            "message": "Helm install failed for release logging/loki with chart loki@2.10.0: unable to build kubernetes objects from release manifest: resource mapping not found for name: \"loki\" namespace: \"\" from \"\": no matches for kind \"PodSecurityPolicy\" in version \"policy/v1beta1\"\nensure CRDs are installed first",
+            "observedGeneration": 1,
+            "reason": "InstallFailed",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T16:58:09Z",
+            "message": "Helm install failed for release logging/loki with chart loki@2.10.0: unable to build kubernetes objects from release manifest: resource mapping not found for name: \"loki\" namespace: \"\" from \"\": no matches for kind \"PodSecurityPolicy\" in version \"policy/v1beta1\"\nensure CRDs are installed first",
+            "observedGeneration": 1,
+            "reason": "InstallFailed",
+            "status": "False",
+            "type": "Released"
+          }
+        ],
+        "failures": 105,
+        "helmChart": "flux-system/logging-loki",
+        "lastAttemptedConfigDigest": "sha256:af4cf17db3447131c8875f5e085c15a942e4912e79bdbee6229923bf6e161b5f",
+        "lastAttemptedGeneration": 1,
+        "lastAttemptedReleaseAction": "install",
+        "lastAttemptedRevision": "2.10.0",
+        "observedGeneration": -1,
+        "storageNamespace": "logging"
+      }
+    },
+    {
+      "apiVersion": "helm.toolkit.fluxcd.io/v2",
+      "kind": "HelmRelease",
+      "metadata": {
+        "creationTimestamp": "2025-09-13T09:53:39Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 1,
+        "name": "victorialogs",
+        "namespace": "logging",
+        "resourceVersion": "4347461",
+        "uid": "a35bd5d9-3f4a-43f3-8a99-7a00ca4f6888"
+      },
+      "spec": {
+        "chart": {
+          "spec": {
+            "chart": "victoria-logs-single",
+            "reconcileStrategy": "ChartVersion",
+            "sourceRef": {
+              "kind": "HelmRepository",
+              "name": "victoria-metrics",
+              "namespace": "flux-system"
+            },
+            "version": "0.9.1"
+          }
+        },
+        "interval": "5m",
+        "values": {
+          "replicaCount": 1,
+          "resources": {
+            "requests": {
+              "cpu": "100m",
+              "memory": "256Mi"
+            }
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-13T09:53:58Z",
+            "message": "Helm install succeeded for release logging/victorialogs.v1 with chart victoria-logs-single@0.9.1",
+            "observedGeneration": 1,
+            "reason": "InstallSucceeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-13T09:53:58Z",
+            "message": "Helm install succeeded for release logging/victorialogs.v1 with chart victoria-logs-single@0.9.1",
+            "observedGeneration": 1,
+            "reason": "InstallSucceeded",
+            "status": "True",
+            "type": "Released"
+          }
+        ],
+        "helmChart": "flux-system/logging-victorialogs",
+        "history": [
+          {
+            "appVersion": "v1.14.0",
+            "chartName": "victoria-logs-single",
+            "chartVersion": "0.9.1",
+            "configDigest": "sha256:072d5b8e5022dbcc480a91d11e9684a57308b6194940b41d9110ac2bc82366db",
+            "digest": "sha256:00a45d86f0298300fc2cabfd732b1df8ba5817f1dcba92c26b174599d8437ecd",
+            "firstDeployed": "2025-09-13T09:53:42Z",
+            "lastDeployed": "2025-09-13T09:53:42Z",
+            "name": "victorialogs",
+            "namespace": "logging",
+            "status": "deployed",
+            "version": 1
+          }
+        ],
+        "lastAttemptedConfigDigest": "sha256:072d5b8e5022dbcc480a91d11e9684a57308b6194940b41d9110ac2bc82366db",
+        "lastAttemptedGeneration": 1,
+        "lastAttemptedReleaseAction": "install",
+        "lastAttemptedRevision": "0.9.1",
+        "observedGeneration": 1,
+        "storageNamespace": "logging"
+      }
+    },
+    {
+      "apiVersion": "helm.toolkit.fluxcd.io/v2",
+      "kind": "HelmRelease",
+      "metadata": {
+        "annotations": {
+          "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"helm.toolkit.fluxcd.io/v2\",\"kind\":\"HelmRelease\",\"metadata\":{\"annotations\":{},\"name\":\"victoriametrics\",\"namespace\":\"logging\"},\"spec\":{\"chart\":{\"spec\":{\"chart\":\"victoria-metrics-single\",\"sourceRef\":{\"kind\":\"HelmRepository\",\"name\":\"victoria-metrics\",\"namespace\":\"flux-system\"},\"version\":\"0.24.5\"}},\"install\":{\"createNamespace\":false},\"interval\":\"10m\",\"values\":{\"fullnameOverride\":\"victoriametrics\",\"persistence\":{\"enabled\":false},\"resources\":{\"limits\":{\"memory\":\"600Mi\"},\"requests\":{\"cpu\":\"100m\",\"memory\":\"200Mi\"}},\"service\":{\"type\":\"ClusterIP\"}}}}\n"
+        },
+        "creationTimestamp": "2025-09-12T17:14:04Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 1,
+        "name": "victoriametrics",
+        "namespace": "logging",
+        "resourceVersion": "4346318",
+        "uid": "a6f5437c-12f1-4fb1-b80b-cbf44ae3a1fa"
+      },
+      "spec": {
+        "chart": {
+          "spec": {
+            "chart": "victoria-metrics-single",
+            "reconcileStrategy": "ChartVersion",
+            "sourceRef": {
+              "kind": "HelmRepository",
+              "name": "victoria-metrics",
+              "namespace": "flux-system"
+            },
+            "version": "0.24.5"
+          }
+        },
+        "install": {
+          "createNamespace": false
+        },
+        "interval": "10m",
+        "values": {
+          "fullnameOverride": "victoriametrics",
+          "persistence": {
+            "enabled": false
+          },
+          "resources": {
+            "limits": {
+              "memory": "600Mi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "memory": "200Mi"
+            }
+          },
+          "service": {
+            "type": "ClusterIP"
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-12T17:14:38Z",
+            "message": "Helm install succeeded for release logging/victoriametrics.v1 with chart victoria-metrics-single@0.24.5",
+            "observedGeneration": 1,
+            "reason": "InstallSucceeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T17:14:38Z",
+            "message": "Helm install succeeded for release logging/victoriametrics.v1 with chart victoria-metrics-single@0.24.5",
+            "observedGeneration": 1,
+            "reason": "InstallSucceeded",
+            "status": "True",
+            "type": "Released"
+          }
+        ],
+        "helmChart": "flux-system/logging-victoriametrics",
+        "history": [
+          {
+            "appVersion": "v1.125.1",
+            "chartName": "victoria-metrics-single",
+            "chartVersion": "0.24.5",
+            "configDigest": "sha256:091fd8d81ffed887e72b935a0651407a9a95f6d2017be530bce2dcad9cd5feff",
+            "digest": "sha256:efd2874fe19aaa91571d18686d38345fea0fb99c25cfbca94f47cc9bef0d5ea1",
+            "firstDeployed": "2025-09-12T17:14:06Z",
+            "lastDeployed": "2025-09-12T17:14:06Z",
+            "name": "victoriametrics",
+            "namespace": "logging",
+            "status": "deployed",
+            "version": 1
+          }
+        ],
+        "lastAttemptedConfigDigest": "sha256:091fd8d81ffed887e72b935a0651407a9a95f6d2017be530bce2dcad9cd5feff",
+        "lastAttemptedGeneration": 1,
+        "lastAttemptedReleaseAction": "install",
+        "lastAttemptedRevision": "0.24.5",
+        "observedGeneration": 1,
+        "storageNamespace": "logging"
+      }
+    },
+    {
+      "apiVersion": "helm.toolkit.fluxcd.io/v2",
+      "kind": "HelmRelease",
+      "metadata": {
+        "annotations": {
+          "reconcile.fluxcd.io/requestedAt": "2025-09-12T08:54:25.104536824Z"
+        },
+        "creationTimestamp": "2025-09-12T06:53:47Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 5,
+        "labels": {
+          "kustomize.toolkit.fluxcd.io/name": "observability",
+          "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+        },
+        "name": "grafana",
+        "namespace": "observability",
+        "resourceVersion": "4347798",
+        "uid": "3b9a15b5-c74e-49d3-9854-aa07aa7ddd32"
+      },
+      "spec": {
+        "chart": {
+          "spec": {
+            "chart": "grafana",
+            "reconcileStrategy": "ChartVersion",
+            "sourceRef": {
+              "kind": "HelmRepository",
+              "name": "grafana",
+              "namespace": "flux-system"
+            },
+            "version": "9.4.5"
+          }
+        },
+        "install": {
+          "createNamespace": true,
+          "remediation": {
+            "retries": 3
+          },
+          "timeout": "10m"
+        },
+        "interval": "10m",
+        "upgrade": {
+          "remediation": {
+            "retries": 3
+          }
+        },
+        "values": {
+          "adminPassword": "changeme",
+          "adminUser": "admin",
+          "dashboards": {
+            "default": {
+              "nginx-ingress": {
+                "datasource": "Prometheus",
+                "gnetId": 9614,
+                "revision": 1
+              }
+            }
+          },
+          "datasources": {
+            "datasources.yaml": {
+              "apiVersion": 1,
+              "datasources": [
+                {
+                  "access": "proxy",
+                  "isDefault": true,
+                  "jsonData": {
+                    "timeInterval": "15s"
+                  },
+                  "name": "Prometheus",
+                  "type": "prometheus",
+                  "uid": "PBFA97CFB590B2093",
+                  "url": "http://kube-prometheus-stack-prometheus.observability.svc:9090"
+                },
+                {
+                  "access": "proxy",
+                  "isDefault": false,
+                  "name": "Loki",
+                  "type": "loki",
+                  "uid": "loki",
+                  "url": "http://loki.logging.svc.cluster.local:3100"
+                }
+              ]
+            }
+          },
+          "env": {
+            "GF_INSTALL_PLUGINS": "",
+            "GF_SECURITY_COOKIE_SAMESITE": "lax",
+            "GF_SERVER_ROOT_URL": "https://grafana.nudger.logo-solutions.fr",
+            "TZ": "Europe/Paris"
+          },
+          "grafana.ini": {
+            "analytics": {
+              "check_for_updates": true,
+              "reporting_enabled": false
+            },
+            "explore": {
+              "logsPanel": {
+                "defaultLogVolumeEnabled": false
+              }
+            },
+            "security": {
+              "cookie_samesite": "lax"
+            },
+            "server": {
+              "domain": "grafana.nudger.logo-solutions.fr",
+              "enable_gzip": true,
+              "root_url": "https://grafana.nudger.logo-solutions.fr"
+            },
+            "users": {
+              "default_theme": "light",
+              "viewers_can_edit": false
+            }
+          },
+          "ingress": {
+            "annotations": {
+              "cert-manager.io/cluster-issuer": "letsencrypt-prod-dns"
+            },
+            "enabled": true,
+            "hosts": [
+              "grafana.nudger.logo-solutions.fr"
+            ],
+            "ingressClassName": "nginx",
+            "path": "/",
+            "pathType": "Prefix",
+            "tls": [
+              {
+                "hosts": [
+                  "grafana.nudger.logo-solutions.fr"
+                ],
+                "secretName": "grafana-tls"
+              }
+            ]
+          },
+          "persistence": {
+            "accessModes": [
+              "ReadWriteOnce"
+            ],
+            "enabled": false,
+            "size": "5Gi",
+            "storageClassName": "longhorn-delete",
+            "type": "pvc"
+          },
+          "plugins": [],
+          "podSecurityPolicy": {
+            "enabled": false
+          },
+          "resources": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "512Mi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "memory": "256Mi"
+            }
+          },
+          "service": {
+            "nodePort": 30080,
+            "type": "NodePort"
+          },
+          "serviceMonitor": {
+            "enabled": true,
+            "interval": "30s",
+            "labels": {},
+            "namespace": "observability",
+            "scheme": "http",
+            "scrapeTimeout": "10s"
+          },
+          "sidecar": {
+            "dashboards": {
+              "SCProvider": true,
+              "enabled": true,
+              "folder": "/var/lib/grafana/dashboards/Kubernetes",
+              "label": "grafana_dashboard",
+              "labelValue": "1",
+              "options": {
+                "path": "/var/lib/grafana/dashboards/Kubernetes"
+              },
+              "provider": {
+                "folder": "Kubernetes",
+                "foldersFromFilesStructure": false
+              },
+              "searchNamespace": "ALL"
+            },
+            "datasources": {
+              "enabled": false,
+              "label": "grafana_datasource",
+              "labelValue": "1",
+              "searchNamespace": "ALL"
+            }
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-12T11:46:58Z",
+            "message": "Helm upgrade succeeded for release observability/grafana.v3 with chart grafana@9.4.5",
+            "observedGeneration": 5,
+            "reason": "UpgradeSucceeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T11:46:58Z",
+            "message": "Helm upgrade succeeded for release observability/grafana.v3 with chart grafana@9.4.5",
+            "observedGeneration": 5,
+            "reason": "UpgradeSucceeded",
+            "status": "True",
+            "type": "Released"
+          }
+        ],
+        "helmChart": "flux-system/observability-grafana",
+        "history": [
+          {
+            "appVersion": "12.1.1",
+            "chartName": "grafana",
+            "chartVersion": "9.4.5",
+            "configDigest": "sha256:8e47c3a138091455194f26c1732d81b64523092194c1743b3a07be02963ebe78",
+            "digest": "sha256:f2d29c5aae7743e23e6d386fa697ad9f141b7afc305d186727bfaac9598bc057",
+            "firstDeployed": "2025-09-12T09:25:35Z",
+            "lastDeployed": "2025-09-12T11:46:58Z",
+            "name": "grafana",
+            "namespace": "observability",
+            "status": "deployed",
+            "version": 3
+          },
+          {
+            "appVersion": "12.1.1",
+            "chartName": "grafana",
+            "chartVersion": "9.4.5",
+            "configDigest": "sha256:218e2c0907b9fb6204c48d325d8e5a4107cd89fce4103f50eb643b875795e2cd",
+            "digest": "sha256:d7459374f4eb08505d835aa46ad60a9a451b080c59579e28a36d4bd3183b0ed2",
+            "firstDeployed": "2025-09-12T09:25:35Z",
+            "lastDeployed": "2025-09-12T10:17:59Z",
+            "name": "grafana",
+            "namespace": "observability",
+            "status": "superseded",
+            "version": 2
+          }
+        ],
+        "lastAttemptedConfigDigest": "sha256:8e47c3a138091455194f26c1732d81b64523092194c1743b3a07be02963ebe78",
+        "lastAttemptedGeneration": 5,
+        "lastAttemptedReleaseAction": "upgrade",
+        "lastAttemptedRevision": "9.4.5",
+        "lastHandledReconcileAt": "2025-09-12T08:54:25.104536824Z",
+        "observedGeneration": 5,
+        "storageNamespace": "observability"
+      }
+    },
+    {
+      "apiVersion": "helm.toolkit.fluxcd.io/v2",
+      "kind": "HelmRelease",
+      "metadata": {
+        "creationTimestamp": "2025-09-12T10:08:22Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "kustomize.toolkit.fluxcd.io/name": "ingress-nginx",
+          "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+        },
+        "name": "kube-prometheus-stack",
+        "namespace": "observability",
+        "resourceVersion": "4346615",
+        "uid": "20bca7f6-a0db-4e70-8ab2-d196114ff399"
+      },
+      "spec": {
+        "chart": {
+          "spec": {
+            "chart": "kube-prometheus-stack",
+            "reconcileStrategy": "ChartVersion",
+            "sourceRef": {
+              "kind": "HelmRepository",
+              "name": "prometheus-community",
+              "namespace": "flux-system"
+            },
+            "version": "56.0.3"
+          }
+        },
+        "install": {
+          "createNamespace": true,
+          "remediation": {
+            "retries": 3
+          },
+          "timeout": "10m"
+        },
+        "interval": "10m",
+        "upgrade": {
+          "remediation": {
+            "retries": 3
+          }
+        },
+        "values": {
+          "alertmanager": {
+            "enabled": true
+          },
+          "coreDns": {
+            "enabled": true
+          },
+          "grafana": {
+            "enabled": false
+          },
+          "kubeApiServer": {
+            "enabled": true
+          },
+          "kubeControllerManager": {
+            "enabled": true
+          },
+          "kubeProxy": {
+            "enabled": true
+          },
+          "kubeScheduler": {
+            "enabled": true
+          },
+          "kubelet": {
+            "enabled": true
+          },
+          "prometheus": {
+            "enabled": true,
+            "prometheusSpec": {
+              "podMonitorSelectorNilUsesHelmValues": false,
+              "ruleSelectorNilUsesHelmValues": false,
+              "serviceMonitorSelector": {},
+              "serviceMonitorSelectorNilUsesHelmValues": false
+            }
+          },
+          "prometheusOperator": {
+            "enabled": true
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-12T10:14:07Z",
+            "message": "Helm install succeeded for release observability/kube-prometheus-stack.v1 with chart kube-prometheus-stack@56.0.3",
+            "observedGeneration": 1,
+            "reason": "InstallSucceeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T10:14:07Z",
+            "message": "Helm install succeeded for release observability/kube-prometheus-stack.v1 with chart kube-prometheus-stack@56.0.3",
+            "observedGeneration": 1,
+            "reason": "InstallSucceeded",
+            "status": "True",
+            "type": "Released"
+          }
+        ],
+        "helmChart": "flux-system/observability-kube-prometheus-stack",
+        "history": [
+          {
+            "appVersion": "v0.71.0",
+            "chartName": "kube-prometheus-stack",
+            "chartVersion": "56.0.3",
+            "configDigest": "sha256:c5805a15177a1e4df7a275ac0a6e65b593a52f853e3fc0b18526a70934ae9097",
+            "digest": "sha256:a1dbdfcceab15a599fc8f2d06d6f0eaba0648c750aa5e130253e2c30471df69c",
+            "firstDeployed": "2025-09-12T10:08:24Z",
+            "lastDeployed": "2025-09-12T10:08:24Z",
+            "name": "kube-prometheus-stack",
+            "namespace": "observability",
+            "status": "deployed",
+            "version": 1
+          }
+        ],
+        "lastAttemptedConfigDigest": "sha256:c5805a15177a1e4df7a275ac0a6e65b593a52f853e3fc0b18526a70934ae9097",
+        "lastAttemptedGeneration": 1,
+        "lastAttemptedReleaseAction": "install",
+        "lastAttemptedRevision": "56.0.3",
+        "observedGeneration": 1,
+        "storageNamespace": "observability"
+      }
+    }
+  ],
+  "kind": "List",
+  "metadata": {
+    "resourceVersion": ""
+  }
+}
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "kustomize.toolkit.fluxcd.io/v1",
+      "kind": "Kustomization",
+      "metadata": {
+        "annotations": {
+          "reconcile.fluxcd.io/requestedAt": "2025-09-12T10:13:01.350120223Z"
+        },
+        "creationTimestamp": "2025-09-09T18:47:37Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 7,
+        "labels": {
+          "kustomize.toolkit.fluxcd.io/name": "lab-root",
+          "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+        },
+        "name": "infra-namespaces",
+        "namespace": "flux-system",
+        "resourceVersion": "4337400",
+        "uid": "bd9c6465-c268-4f95-a552-b548ae072de8"
+      },
+      "spec": {
+        "force": false,
+        "interval": "1h",
+        "path": "./infra/namespaces",
+        "prune": false,
+        "sourceRef": {
+          "kind": "GitRepository",
+          "name": "gitops"
+        },
+        "wait": true
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-13T15:53:16Z",
+            "message": "Applied revision: main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
+            "observedGeneration": 7,
+            "reason": "ReconciliationSucceeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-13T15:53:16Z",
+            "message": "Health check passed in 14.744941ms",
+            "observedGeneration": 7,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "Healthy"
+          }
+        ],
+        "inventory": {
+          "entries": [
+            {
+              "id": "_logging__Namespace",
+              "v": "v1"
+            },
+            {
+              "id": "_observability__Namespace",
+              "v": "v1"
+            },
+            {
+              "id": "_open4goods-integration__Namespace",
+              "v": "v1"
+            },
+            {
+              "id": "_open4goods-prod__Namespace",
+              "v": "v1"
+            },
+            {
+              "id": "_open4goods-recette__Namespace",
+              "v": "v1"
+            }
+          ]
+        },
+        "lastAppliedRevision": "main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
+        "lastAttemptedRevision": "main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
+        "lastHandledReconcileAt": "2025-09-12T10:13:01.350120223Z",
+        "observedGeneration": 7
+      }
+    },
+    {
+      "apiVersion": "kustomize.toolkit.fluxcd.io/v1",
+      "kind": "Kustomization",
+      "metadata": {
+        "annotations": {
+          "reconcile.fluxcd.io/requestedAt": "2025-09-12T11:46:58.706046361Z"
+        },
+        "creationTimestamp": "2025-09-10T09:50:19Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 4,
+        "labels": {
+          "kustomize.toolkit.fluxcd.io/name": "lab-root",
+          "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+        },
+        "name": "ingress-nginx",
+        "namespace": "flux-system",
+        "resourceVersion": "4347862",
+        "uid": "f27cddef-31ce-4f00-9904-4fa20317ebb6"
+      },
+      "spec": {
+        "force": false,
+        "healthChecks": [
+          {
+            "apiVersion": "apps/v1",
+            "kind": "Deployment",
+            "name": "ingress-nginx-controller",
+            "namespace": "ingress-nginx"
+          }
+        ],
+        "interval": "1h",
+        "patches": [
+          {
+            "patch": "apiVersion: helm.toolkit.fluxcd.io/v2\nkind: HelmRelease\nmetadata:\n  name: ingress-nginx\n  namespace: ingress-nginx\nspec:\n  values:\n    controller:\n      extraVolumes:\n        - name: nginx-run\n          emptyDir: {}\n        - name: nginx-cache\n          emptyDir: {}\n      extraVolumeMounts:\n        - name: nginx-run\n          mountPath: /var/run\n        - name: nginx-cache\n          mountPath: /var/cache/nginx\n      containerSecurityContext:\n        readOnlyRootFilesystem: false\n      podLabels:\n        security.nudger/allow-rw-rootfs: \"true\"\n      podAnnotations:\n        security.nudger/justification: \"NGINX needs /var/run & cache write access\"\n",
+            "target": {
+              "group": "helm.toolkit.fluxcd.io",
+              "kind": "HelmRelease",
+              "name": "ingress-nginx",
+              "namespace": "ingress-nginx",
+              "version": "v2"
+            }
+          }
+        ],
+        "path": "apps/ingress-nginx/overlays/lab",
+        "prune": true,
+        "sourceRef": {
+          "kind": "GitRepository",
+          "name": "gitops"
+        },
+        "timeout": "5m",
+        "wait": true
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-13T16:44:19Z",
+            "message": "Applied revision: main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
+            "observedGeneration": 4,
+            "reason": "ReconciliationSucceeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-13T16:44:19Z",
+            "message": "Health check passed in 13.508198ms",
+            "observedGeneration": 4,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "Healthy"
+          }
+        ],
+        "inventory": {
+          "entries": [
+            {
+              "id": "_ingress-nginx__Namespace",
+              "v": "v1"
+            },
+            {
+              "id": "observability_kube-prometheus-stack_helm.toolkit.fluxcd.io_HelmRelease",
+              "v": "v2"
+            }
+          ]
+        },
+        "lastAppliedRevision": "main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
+        "lastAttemptedRevision": "main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
+        "lastHandledReconcileAt": "2025-09-12T11:46:58.706046361Z",
+        "observedGeneration": 4
+      }
+    },
+    {
+      "apiVersion": "kustomize.toolkit.fluxcd.io/v1",
+      "kind": "Kustomization",
+      "metadata": {
+        "annotations": {
+          "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"kustomize.toolkit.fluxcd.io/v1\",\"kind\":\"Kustomization\",\"metadata\":{\"annotations\":{},\"name\":\"kyverno-policies\",\"namespace\":\"flux-system\"},\"spec\":{\"interval\":\"10m0s\",\"path\":\"./infra/namespaces/policies/kyverno\",\"prune\":true,\"sourceRef\":{\"kind\":\"GitRepository\",\"name\":\"gitops\"},\"timeout\":\"2m0s\",\"wait\":true}}\n",
+          "reconcile.fluxcd.io/requestedAt": "2025-09-10T13:11:49.041441289Z"
+        },
+        "creationTimestamp": "2025-09-09T18:32:57Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 4,
+        "name": "kyverno-policies",
+        "namespace": "flux-system",
+        "resourceVersion": "3920542",
+        "uid": "c0b500e4-be55-459b-a0cb-4c858a2d0547"
+      },
+      "spec": {
+        "force": false,
+        "interval": "10m0s",
+        "path": "./infra/namespaces/policies/kyverno",
+        "prune": true,
+        "sourceRef": {
+          "kind": "GitRepository",
+          "name": "gitops"
+        },
+        "suspend": true,
+        "timeout": "2m0s",
+        "wait": true
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-12T08:11:13Z",
+            "message": "Applied revision: main@sha1:a61872edd90daa9c2d33d932c0535a5457079b1f",
+            "observedGeneration": 3,
+            "reason": "ReconciliationSucceeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T08:11:13Z",
+            "message": "Health check passed in 16.908621ms",
+            "observedGeneration": 3,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "Healthy"
+          }
+        ],
+        "inventory": {
+          "entries": [
+            {
+              "id": "_nudger-security-guardrails_kyverno.io_ClusterPolicy",
+              "v": "v1"
+            },
+            {
+              "id": "_protect-protected-namespaces_kyverno.io_ClusterPolicy",
+              "v": "v1"
+            }
+          ]
+        },
+        "lastAppliedRevision": "main@sha1:a61872edd90daa9c2d33d932c0535a5457079b1f",
+        "lastAttemptedRevision": "main@sha1:a61872edd90daa9c2d33d932c0535a5457079b1f",
+        "lastHandledReconcileAt": "2025-09-10T13:11:49.041441289Z",
+        "observedGeneration": 4
+      }
+    },
+    {
+      "apiVersion": "kustomize.toolkit.fluxcd.io/v1",
+      "kind": "Kustomization",
+      "metadata": {
+        "annotations": {
+          "reconcile.fluxcd.io/requestedAt": "2025-09-12T16:58:56.598278521Z"
+        },
+        "creationTimestamp": "2025-09-01T11:17:27Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 3,
+        "name": "lab-root",
+        "namespace": "flux-system",
+        "resourceVersion": "4348191",
+        "uid": "b3ecd5e0-e807-4081-8a20-f11c71527fbb"
+      },
+      "spec": {
+        "force": false,
+        "interval": "1m",
+        "path": "./clusters/lab",
+        "prune": true,
+        "sourceRef": {
+          "kind": "GitRepository",
+          "name": "gitops"
+        },
+        "timeout": "5m",
+        "wait": false
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-13T16:45:54Z",
+            "message": "Applied revision: main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
+            "observedGeneration": 3,
+            "reason": "ReconciliationSucceeded",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "inventory": {
+          "entries": [
+            {
+              "id": "flux-system_infra-namespaces_kustomize.toolkit.fluxcd.io_Kustomization",
+              "v": "v1"
+            },
+            {
+              "id": "flux-system_ingress-nginx_kustomize.toolkit.fluxcd.io_Kustomization",
+              "v": "v1"
+            },
+            {
+              "id": "flux-system_observability_kustomize.toolkit.fluxcd.io_Kustomization",
+              "v": "v1"
+            }
+          ]
+        },
+        "lastAppliedRevision": "main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
+        "lastAttemptedRevision": "main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
+        "lastHandledReconcileAt": "2025-09-12T16:58:56.598278521Z",
+        "observedGeneration": 3
+      }
+    },
+    {
+      "apiVersion": "kustomize.toolkit.fluxcd.io/v1",
+      "kind": "Kustomization",
+      "metadata": {
+        "annotations": {
+          "reconcile.fluxcd.io/requestedAt": "2025-09-12T12:38:36.218824892Z"
+        },
+        "creationTimestamp": "2025-09-12T12:02:32Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 1,
+        "labels": {
+          "kustomize.toolkit.fluxcd.io/name": "observability",
+          "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+        },
+        "name": "loki",
+        "namespace": "flux-system",
+        "resourceVersion": "4347579",
+        "uid": "21134c9f-c982-4bc2-90c3-33133e401848"
+      },
+      "spec": {
+        "force": false,
+        "interval": "10m",
+        "path": "./infra/loki/base",
+        "prune": true,
+        "sourceRef": {
+          "kind": "GitRepository",
+          "name": "gitops"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-13T16:42:57Z",
+            "message": "Applied revision: main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
+            "observedGeneration": 1,
+            "reason": "ReconciliationSucceeded",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "inventory": {
+          "entries": [
+            {
+              "id": "logging_loki_helm.toolkit.fluxcd.io_HelmRelease",
+              "v": "v2"
+            },
+            {
+              "id": "flux-system_grafana_source.toolkit.fluxcd.io_HelmRepository",
+              "v": "v1beta2"
+            }
+          ]
+        },
+        "lastAppliedRevision": "main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
+        "lastAttemptedRevision": "main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
+        "lastHandledReconcileAt": "2025-09-12T12:38:36.218824892Z",
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "kustomize.toolkit.fluxcd.io/v1",
+      "kind": "Kustomization",
+      "metadata": {
+        "annotations": {
+          "reconcile.fluxcd.io/requestedAt": "2025-09-12T16:10:14.382056868Z"
+        },
+        "creationTimestamp": "2025-09-10T09:50:19Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 8,
+        "labels": {
+          "kustomize.toolkit.fluxcd.io/name": "lab-root",
+          "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+        },
+        "name": "observability",
+        "namespace": "flux-system",
+        "resourceVersion": "4342508",
+        "uid": "26b70c08-0b04-43b0-be58-bdcae4d652b9"
+      },
+      "spec": {
+        "force": false,
+        "interval": "1h",
+        "path": "./infra/observability/overlays/lab",
+        "prune": true,
+        "sourceRef": {
+          "kind": "GitRepository",
+          "name": "gitops"
+        },
+        "wait": true
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-13T16:18:09Z",
+            "message": "Building manifests for revision main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81 with a timeout of 59m30s",
+            "observedGeneration": 8,
+            "reason": "ProgressingWithRetry",
+            "status": "True",
+            "type": "Reconciling"
+          },
+          {
+            "lastTransitionTime": "2025-09-13T16:18:09Z",
+            "message": "kustomize build failed: accumulating resources: accumulation err='accumulating resources from '../../../victoria-metrics/victoria-metrics.kustomization.yaml': open /tmp/kustomization-3784592713/infra/victoria-metrics/victoria-metrics.kustomization.yaml: no such file or directory': must build at directory: not a valid directory: evalsymlink failure on '/tmp/kustomization-3784592713/infra/victoria-metrics/victoria-metrics.kustomization.yaml' : lstat /tmp/kustomization-3784592713/infra/victoria-metrics/victoria-metrics.kustomization.yaml: no such file or directory",
+            "observedGeneration": 8,
+            "reason": "BuildFailed",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T13:19:52Z",
+            "message": "Health check passed in 5.105843088s",
+            "observedGeneration": 8,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "Healthy"
+          }
+        ],
+        "inventory": {
+          "entries": [
+            {
+              "id": "_logging__Namespace",
+              "v": "v1"
+            },
+            {
+              "id": "_kube-scheduler-metrics-reader_rbac.authorization.k8s.io_ClusterRole",
+              "v": "v1"
+            },
+            {
+              "id": "_prometheus_rbac.authorization.k8s.io_ClusterRole",
+              "v": "v1"
+            },
+            {
+              "id": "_kube-scheduler-metrics-reader-binding_rbac.authorization.k8s.io_ClusterRoleBinding",
+              "v": "v1"
+            },
+            {
+              "id": "_prometheus_rbac.authorization.k8s.io_ClusterRoleBinding",
+              "v": "v1"
+            },
+            {
+              "id": "observability_dashboard-policy-reporter__ConfigMap",
+              "v": "v1"
+            },
+            {
+              "id": "observability_grafana-dashboard-app-exceptions__ConfigMap",
+              "v": "v1"
+            },
+            {
+              "id": "observability_grafana-dashboard-flux-errors__ConfigMap",
+              "v": "v1"
+            },
+            {
+              "id": "observability_grafana-dashboard-ingress-5xx__ConfigMap",
+              "v": "v1"
+            },
+            {
+              "id": "observability_grafana-datasource-loki__ConfigMap",
+              "v": "v1"
+            },
+            {
+              "id": "kube-system_etcd__Service",
+              "v": "v1"
+            },
+            {
+              "id": "kube-system_kube-controller-manager__Service",
+              "v": "v1"
+            },
+            {
+              "id": "kube-system_kube-scheduler__Service",
+              "v": "v1"
+            },
+            {
+              "id": "observability_grafana_helm.toolkit.fluxcd.io_HelmRelease",
+              "v": "v2"
+            },
+            {
+              "id": "observability_kube-prometheus-stack_helm.toolkit.fluxcd.io_HelmRelease",
+              "v": "v2"
+            },
+            {
+              "id": "flux-system_loki_kustomize.toolkit.fluxcd.io_Kustomization",
+              "v": "v1"
+            },
+            {
+              "id": "observability_etcd_monitoring.coreos.com_ServiceMonitor",
+              "v": "v1"
+            },
+            {
+              "id": "observability_kube-controller-manager_monitoring.coreos.com_ServiceMonitor",
+              "v": "v1"
+            },
+            {
+              "id": "observability_kube-scheduler-servicemonitor_monitoring.coreos.com_ServiceMonitor",
+              "v": "v1"
+            },
+            {
+              "id": "observability_kubelet_monitoring.coreos.com_ServiceMonitor",
+              "v": "v1"
+            },
+            {
+              "id": "observability_kubelet-servicemonitor_monitoring.coreos.com_ServiceMonitor",
+              "v": "v1"
+            },
+            {
+              "id": "observability_policy-reporter_monitoring.coreos.com_ServiceMonitor",
+              "v": "v1"
+            },
+            {
+              "id": "observability_grafana-ingress_networking.k8s.io_Ingress",
+              "v": "v1"
+            },
+            {
+              "id": "flux-system_grafana_source.toolkit.fluxcd.io_HelmRepository",
+              "v": "v1"
+            },
+            {
+              "id": "flux-system_prometheus-community_source.toolkit.fluxcd.io_HelmRepository",
+              "v": "v1"
+            }
+          ]
+        },
+        "lastAppliedRevision": "main@sha1:7a26d769ddd0b19ae35d249d4d4f9324a5749c22",
+        "lastAttemptedRevision": "main@sha1:e51d41b092cb48b5b51e67b3223243132e032d81",
+        "lastHandledReconcileAt": "2025-09-12T16:10:14.382056868Z",
+        "observedGeneration": 8
+      }
+    },
+    {
+      "apiVersion": "kustomize.toolkit.fluxcd.io/v1",
+      "kind": "Kustomization",
+      "metadata": {
+        "annotations": {
+          "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"kustomize.toolkit.fluxcd.io/v1\",\"kind\":\"Kustomization\",\"metadata\":{\"annotations\":{},\"name\":\"whoami\",\"namespace\":\"flux-system\"},\"spec\":{\"dependsOn\":[{\"name\":\"ingress-nginx\"}],\"interval\":\"1m\",\"path\":\"./apps/whoami\",\"prune\":true,\"sourceRef\":{\"kind\":\"GitRepository\",\"name\":\"gitops\"},\"timeout\":\"5m\",\"wait\":true}}\n",
+          "reconcile.fluxcd.io/requestedAt": "2025-09-10T19:13:10.582338708Z"
+        },
+        "creationTimestamp": "2025-09-06T19:39:39Z",
+        "finalizers": [
+          "finalizers.fluxcd.io"
+        ],
+        "generation": 5,
+        "name": "whoami",
+        "namespace": "flux-system",
+        "resourceVersion": "3920549",
+        "uid": "56e5ef6e-e309-4c0a-bf78-5cfa0f009424"
+      },
+      "spec": {
+        "force": false,
+        "interval": "1m",
+        "path": "./apps/whoami",
+        "prune": true,
+        "sourceRef": {
+          "kind": "GitRepository",
+          "name": "gitops"
+        },
+        "suspend": true,
+        "timeout": "5m",
+        "wait": true
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2025-09-12T08:10:53Z",
+            "message": "Applied revision: main@sha1:a61872edd90daa9c2d33d932c0535a5457079b1f",
+            "observedGeneration": 4,
+            "reason": "ReconciliationSucceeded",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2025-09-12T08:10:53Z",
+            "message": "Health check passed in 42.159878ms",
+            "observedGeneration": 4,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "Healthy"
+          }
+        ],
+        "inventory": {
+          "entries": [
+            {
+              "id": "_whoami__Namespace",
+              "v": "v1"
+            },
+            {
+              "id": "whoami_whoami__Service",
+              "v": "v1"
+            },
+            {
+              "id": "whoami_whoami_apps_Deployment",
+              "v": "v1"
+            },
+            {
+              "id": "whoami_whoami_networking.k8s.io_Ingress",
+              "v": "v1"
+            }
+          ]
+        },
+        "lastAppliedRevision": "main@sha1:a61872edd90daa9c2d33d932c0535a5457079b1f",
+        "lastAttemptedRevision": "main@sha1:a61872edd90daa9c2d33d932c0535a5457079b1f",
+        "lastHandledReconcileAt": "2025-09-10T19:13:10.582338708Z",
+        "observedGeneration": 5
+      }
+    }
+  ],
+  "kind": "List",
+  "metadata": {
+    "resourceVersion": ""
+  }
+}

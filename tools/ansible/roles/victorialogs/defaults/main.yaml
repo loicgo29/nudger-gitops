@@ -1,0 +1,5 @@
+victorialogs_namespace: logging
+victorialogs_image: victoriametrics/victoria-logs:v0.42.0
+victorialogs_replicas: 1
+victorialogs_retention: "30d"
+victorialogs_storage: ""  # vide = emptyDir, sinon PVC
