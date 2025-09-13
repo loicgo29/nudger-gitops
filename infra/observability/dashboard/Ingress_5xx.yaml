@@ -12,14 +12,14 @@ data:
       "timezone": "browser",
       "schemaVersion": 39,
       "version": 1,
-      "tags": ["ingress-nginx","loki"],
+      "tags": ["ingress-nginx","victorialogs"],
       "time": { "from": "now-6h", "to": "now" },
       "templating": {
         "list": [
           {
             "name": "host",
             "type": "query",
-            "datasource": {"type":"loki","uid":"loki"},
+            "datasource": {"type":"loki","uid":"victorialogs"},
             "query": "label_values({namespace=\"ingress-nginx\", container=\"controller\"}, pod)",
             "includeAll": true,
             "multi": true
@@ -31,7 +31,7 @@ data:
           "type": "stat",
           "title": "5xx (last 15m)",
           "gridPos": {"x":0,"y":0,"w":6,"h":6},
-          "datasource": {"type":"loki","uid":"loki"},
+          "datasource": {"type":"loki","uid":"victorialogs"},
           "options": {"reduceOptions":{"calcs":["sum"]}},
           "targets": [
             { "expr": "sum(count_over_time({namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \" [15m]))" }
@@ -41,7 +41,7 @@ data:
           "type": "timeseries",
           "title": "5xx over time (by pod)",
           "gridPos": {"x":6,"y":0,"w":18,"h":6},
-          "datasource": {"type":"loki","uid":"loki"},
+          "datasource": {"type":"loki","uid":"victorialogs"},
           "targets": [
             { "expr": "sum by (pod) (count_over_time({namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \" [5m]))" }
           ]
@@ -50,7 +50,7 @@ data:
           "type": "table",
           "title": "Top URLs (best effort)",
           "gridPos": {"x":0,"y":6,"w":12,"h":10},
-          "datasource": {"type":"loki","uid":"loki"},
+          "datasource": {"type":"loki","uid":"victorialogs"},
           "targets": [
             { "expr": "topk(20, sum by (line) (count_over_time({namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \" [10m])))" }
           ]
@@ -59,7 +59,7 @@ data:
           "type": "logs",
           "title": "5xx raw",
           "gridPos": {"x":12,"y":6,"w":12,"h":10},
-          "datasource": {"type":"loki","uid":"loki"},
+          "datasource": {"type":"loki","uid":"victorialogs"},
           "targets": [
             { "expr": "{namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \"" }
           ]

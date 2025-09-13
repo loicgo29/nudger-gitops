@@ -12,14 +12,14 @@ data:
       "timezone": "browser",
       "schemaVersion": 39,
       "version": 1,
-      "tags": ["flux", "loki"],
+      "tags": ["flux", "victorialogs"],
       "time": { "from": "now-1h", "to": "now" },
       "templating": {
         "list": [
           {
             "name": "controller",
             "type": "query",
-            "datasource": {"type":"loki","uid":"loki"},
+            "datasource": {"type":"loki","uid":"victorialogs"},
             "query": "label_values({namespace=\"flux-system\"}, container)",
             "refresh": 1,
             "includeAll": true,
@@ -32,7 +32,7 @@ data:
           "type": "stat",
           "title": "Flux error lines (last 1h)",
           "gridPos": {"x":0,"y":0,"w":6,"h":6},
-          "datasource": {"type":"loki","uid":"loki"},
+          "datasource": {"type":"loki","uid":"victorialogs"},
           "options": {"reduceOptions":{"calcs":["sum"]}},
           "targets": [
             { "expr": "sum(count_over_time({namespace=\"flux-system\"} |~ \"(?i)error|failed|timeout\" [1h]))" }
@@ -42,7 +42,7 @@ data:
           "type": "timeseries",
           "title": "Errors by controller (5m rate)",
           "gridPos": {"x":6,"y":0,"w":18,"h":6},
-          "datasource": {"type":"loki","uid":"loki"},
+          "datasource": {"type":"loki","uid":"victorialogs"},
           "targets": [
             { "expr": "sum by (container) (count_over_time({namespace=\"flux-system\", container=~\"$controller\"} |~ \"(?i)error|failed|timeout\" [5m]))" }
           ]
@@ -51,7 +51,7 @@ data:
           "type": "table",
           "title": "Top error messages",
           "gridPos": {"x":0,"y":6,"w":12,"h":10},
-          "datasource": {"type":"loki","uid":"loki"},
+          "datasource": {"type":"loki","uid":"victorialogs"},
           "targets": [
             { "expr": "topk(20, sum by (msg) (count_over_time(({namespace=\"flux-system\", container=~\"$controller\"} |~ \"(?i)error|failed|timeout\" | line_format \"{{ . | replace \"\\n\" \" \" }}\")[10m])))", "refId":"A"}
           ],
@@ -61,7 +61,7 @@ data:
           "type": "logs",
           "title": "Raw error logs",
           "gridPos": {"x":12,"y":6,"w":12,"h":10},
-          "datasource": {"type":"loki","uid":"loki"},
+          "datasource": {"type":"loki","uid":"victorialogs"},
           "targets": [
             { "expr": "{namespace=\"flux-system\", container=~\"$controller\"} |~ \"(?i)error|failed|timeout\"" }
           ]
