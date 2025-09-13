@@ -1,0 +1,20 @@
+- name: Add Grafana datasource for VictoriaLogs
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: grafana-datasource-victorialogs
+        namespace: observability
+        labels:
+          grafana_datasource: "1"
+      data:
+        victorialogs.yaml: |
+          apiVersion: 1
+          datasources:
+            - name: VictoriaLogs
+              type: loki
+              url: http://victorialogs.logging.svc:9428
+              access: proxy
+              isDefault: true

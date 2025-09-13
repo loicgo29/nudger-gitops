@@ -68,7 +68,7 @@ spec:
       server:
         http_listen_port: 3101
       clients:
-        - url: http://loki.logging.svc.cluster.local:3100/loki/api/v1/push
+        - url: http://victorialogs.logging.svc:9428/insert/loki/api/v1/push
           batchwait: 2s # plus fréquent, paquets plus petits
           batchsize: 1048576 # 1MiB
           backoff_config:

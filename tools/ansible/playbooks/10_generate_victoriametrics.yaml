@@ -3,4 +3,5 @@
   gather_facts: false
   roles:
     - role: victoriametrics_writer
+    - role: victorialogs
       tags: "10"

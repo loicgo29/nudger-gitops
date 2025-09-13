@@ -4,7 +4,7 @@ resources:
   - helmrepository-prometheus-community.yaml
   - ../releases/grafana/grafana-helmrelease.yaml
   - helmrepository-grafana.yaml
-  - loki-datasource.yaml
+  - victorialogs-datasource.yaml
   - logging-namespace.yaml
   - ../releases/kube-prometheus-stack
   - policy-reporter-servicemonitor.yaml
