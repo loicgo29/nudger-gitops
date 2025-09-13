@@ -1,0 +1,5 @@
+# Variables par défaut pour VictoriaMetrics
+gitops_root: "{{ playbook_dir | realpath | regex_replace('/tools/ansible/playbooks$', '') }}"
+branch_name: "feat/victoriametrics-init"
+namespace: logging
+chart_version: "0.24.5"  # version stable récente compatible K8s 1.27+

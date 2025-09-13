@@ -1,0 +1,6 @@
+- name: Generate VictoriaMetrics manifests (GitOps only)
+  hosts: local
+  gather_facts: false
+  roles:
+    - role: victoriametrics_writer
+      tags: "10"

@@ -1,0 +1,79 @@
+- name: Create directories for VictoriaMetrics GitOps
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ gitops_root }}/infra/victoria-metrics/base"
+    - "{{ gitops_root }}/infra/victoria-metrics/overlays/lab"
+
+- name: namespace.yaml
+  ansible.builtin.copy:
+    dest: "{{ gitops_root }}/infra/victoria-metrics/base/namespace.yaml"
+    mode: "0644"
+    content: |
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ namespace }}"
+        labels:
+          pod-security.kubernetes.io/enforce: "baseline"
+
+- name: helmrepository.yaml
+  ansible.builtin.copy:
+    dest: "{{ gitops_root }}/infra/victoria-metrics/base/helmrepository.yaml"
+    mode: "0644"
+    content: |
+      apiVersion: source.toolkit.fluxcd.io/v1
+      kind: HelmRepository
+      metadata:
+        name: victoria-metrics
+        namespace: flux-system
+      spec:
+        url: https://victoriametrics.github.io/helm-charts/
+        interval: 10m
+
+- name: helmrelease.yaml
+  ansible.builtin.copy:
+    dest: "{{ gitops_root }}/infra/victoria-metrics/base/helmrelease.yaml"
+    mode: "0644"
+    content: |
+      apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      metadata:
+        name: victoriametrics
+        namespace: "{{ namespace }}"
+      spec:
+        interval: 10m
+        chart:
+          spec:
+            chart: victoria-metrics-single
+            version: "{{ chart_version }}"
+            sourceRef:
+              kind: HelmRepository
+              name: victoria-metrics
+              namespace: flux-system
+        install:
+          createNamespace: false
+        values:
+          fullnameOverride: victoriametrics
+          service:
+            type: ClusterIP
+          persistence:
+            enabled: false
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+            limits:
+              memory: 600Mi
+
+- name: kustomization.yaml (base)
+  ansible.builtin.copy:
+    dest: "{{ gitops_root }}/infra/victoria-metrics/base/kustomization.yaml"
+    mode: "0644"
+    content: |
+      resources:
+        - namespace.yaml
+        - helmrepository.yaml
+        - helmrelease.yaml
