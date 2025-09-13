@@ -1,0 +1,54 @@
+- name: Ensure namespace exists
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ victoria_namespace }}"
+
+- name: Add VictoriaMetrics Helm repo
+  community.kubernetes.helm_repository:
+    name: "{{ victoria_repo_name }}"
+    repo_url: "{{ victoria_repo_url }}"
+
+# === Install VictoriaMetrics ===
+- name: Install VictoriaMetrics
+  community.kubernetes.helm:
+    name: "{{ victoriametrics_release_name }}"
+    chart_ref: "{{ victoria_repo_name }}/{{ victoriametrics_chart }}"
+    release_namespace: "{{ victoria_namespace }}"
+    chart_version: "{{ victoriametrics_version }}"
+    values: "{{ victoriametrics_values }}"
+
+# === Install VictoriaLogs ===
+- name: Install VictoriaLogs
+  community.kubernetes.helm:
+    name: "{{ victorialogs_release_name }}"
+    chart_ref: "{{ victoria_repo_name }}/{{ victorialogs_chart }}"
+    release_namespace: "{{ victoria_namespace }}"
+    chart_version: "{{ victorialogs_version }}"
+    values: "{{ victorialogs_values }}"
+
+# === Optionnel : Datasource Grafana ===
+- name: Add Grafana datasource for VictoriaLogs
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: grafana-datasource-victorialogs
+        namespace: "{{ grafana_namespace }}"
+        labels:
+          grafana_datasource: "1"
+      data:
+        victorialogs-datasource.yaml: |
+          apiVersion: 1
+          datasources:
+            - name: VictoriaLogs
+              type: loki
+              url: http://{{ victorialogs_release_name }}.{{ victoria_namespace }}.svc:9428
+              access: proxy
+              isDefault: true
+  when: create_grafana_datasource

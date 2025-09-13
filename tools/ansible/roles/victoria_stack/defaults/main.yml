@@ -1,0 +1,23 @@
+---
+# Namespace commun
+victoria_namespace: logging
+
+# Repo Helm
+victoria_repo_name: victoria-metrics
+victoria_repo_url: https://victoriametrics.github.io/helm-charts/
+
+# VictoriaMetrics
+victoriametrics_release_name: victoriametrics
+victoriametrics_chart: victoria-metrics-single
+victoriametrics_version: "0.24.5"
+victoriametrics_values: {}
+
+# VictoriaLogs
+victorialogs_release_name: victorialogs
+victorialogs_chart: victoria-logs-single
+victorialogs_version: "0.9.1"
+victorialogs_values: {}
+
+# Grafana datasource
+create_grafana_datasource: true
+grafana_namespace: observability

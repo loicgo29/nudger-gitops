@@ -3,8 +3,6 @@ kind: Kustomization
 resources:
   - helmrepository-prometheus-community.yaml
   - helmrepository-grafana.yaml
-  - victorialogs-datasource.yaml
-  - logging-namespace.yaml
   - ../releases/kube-prometheus-stack
   - policy-reporter-servicemonitor.yaml
   - kube-components-services

@@ -1,7 +1,0 @@
-- name: kustomization.yaml (overlay lab)
-  ansible.builtin.copy:
-    dest: "{{ gitops_root }}/infra/victoria-metrics/overlays/lab/kustomization.yaml"
-    mode: "0644"
-    content: |
-      resources:
-        - ../../base

@@ -2,6 +2,14 @@
   hosts: local
   gather_facts: false
   roles:
-    - role: victoriametrics_writer
-    - role: victorialogs
-      tags: "10"
+    - role: victoria_stack
+      vars:
+        victoriametrics_values:
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+            limits:
+              memory: 600Mi
+        victorialogs_values:
+          replicaCount: 1
