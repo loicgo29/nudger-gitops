@@ -84,9 +84,9 @@ spec:
             type: victoriametrics-logs-datasource
             access: proxy
             url: http://victorialogs.logging.svc.cluster.local:9428
-            isDefault: true
-              jsonData:
-                tlsSkipVerify: true
+            isDefault: false
+            jsonData:
+              tlsSkipVerify: true
     #####################################
     # Dashboards (sidecar qui surveille des ConfigMaps/Secrets)
     #####################################
