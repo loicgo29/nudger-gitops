@@ -11,7 +11,7 @@ data:
       "title": "Flux — Errors (last hour)",
       "timezone": "browser",
       "schemaVersion": 39,
-      "version": 2,
+      "version": 3,
       "tags": ["flux", "victorialogs"],
       "time": { "from": "now-1h", "to": "now" },
       "templating": {
@@ -33,27 +33,27 @@ data:
           "title": "Flux error lines (last 1h)",
           "gridPos": {"x":0,"y":0,"w":6,"h":6},
           "datasource": {"type":"loki","uid":"VictoriaLogs"},
-          "options": {"reduceOptions":{"calcs":["sum"]}},
+          "options": {"reduceOptions":{"calcs":["lastNotNull"]}},
           "targets": [
-            { "expr": "sum(count_over_time({namespace=\"flux-system\"} |~ \"(?i)error|failed|timeout\" [1h]))" }
+            { "expr": "error OR failed OR timeout _time:1h | stats count() as errors" }
           ]
         },
         {
           "type": "timeseries",
-          "title": "Errors by controller (5m rate)",
+          "title": "Errors by controller (5m buckets)",
           "gridPos": {"x":6,"y":0,"w":18,"h":6},
           "datasource": {"type":"loki","uid":"VictoriaLogs"},
           "targets": [
-            { "expr": "sum by (container) (count_over_time({namespace=\"flux-system\", container=~\"$controller\"} |~ \"(?i)error|failed|timeout\" [5m]))" }
+            { "expr": "{namespace=\"flux-system\", container=~\"$controller\"} (error OR failed OR timeout) _time:5m | stats by (container) count() as errors" }
           ]
         },
         {
           "type": "table",
-          "title": "Top error messages",
+          "title": "Top error messages (10m)",
           "gridPos": {"x":0,"y":6,"w":12,"h":10},
           "datasource": {"type":"loki","uid":"VictoriaLogs"},
           "targets": [
-            { "expr": "topk(20, sum by (msg) (count_over_time(({namespace=\"flux-system\", container=~\"$controller\"} |~ \"(?i)error|failed|timeout\" | line_format \"{{ . | replace \\\"\\\\n\\\" \\\" \\\" }}\")[10m])))", "refId":"A"}
+            { "expr": "{namespace=\"flux-system\", container=~\"$controller\"} (error OR failed OR timeout) _time:10m | stats by (msg) count() as errors | top 20 by errors", "refId":"A"}
           ],
           "options": { "showHeader": true }
         },
@@ -63,7 +63,7 @@ data:
           "gridPos": {"x":12,"y":6,"w":12,"h":10},
           "datasource": {"type":"loki","uid":"VictoriaLogs"},
           "targets": [
-            { "expr": "{namespace=\"flux-system\", container=~\"$controller\"} |~ \"(?i)error|failed|timeout\"" }
+            { "expr": "{namespace=\"flux-system\", container=~\"$controller\"} (error OR failed OR timeout)" }
           ]
         }
       ]
