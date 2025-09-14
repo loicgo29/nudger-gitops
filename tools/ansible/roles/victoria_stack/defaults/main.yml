@@ -6,18 +6,48 @@ victoria_namespace: logging
 victoria_repo_name: victoria-metrics
 victoria_repo_url: https://victoriametrics.github.io/helm-charts/
 
-# VictoriaMetrics
+# ===============================
+# VictoriaMetrics (time series DB)
+# ===============================
 victoriametrics_release_name: victoriametrics
 victoriametrics_chart: victoria-metrics-single
-victoriametrics_version: "0.24.5"
-victoriametrics_values: {}
+victoriametrics_version: "0.24.2"
 
-# VictoriaLogs
+victoriametrics_values:
+  replicaCount: 1
+  fullnameOverride: victoriametrics
+  service:
+    type: ClusterIP
+  persistence:
+    enabled: false   # ⚠️ activer avec storageClassName pour la prod
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+    limits:
+      memory: 600Mi
+
+# ===============================
+# VictoriaLogs (logs)
+# ===============================
 victorialogs_release_name: victorialogs
 victorialogs_chart: victoria-logs-single
 victorialogs_version: "0.9.1"
-victorialogs_values: {}
 
-# Grafana datasource
+victorialogs_values:
+  replicaCount: 1
+  server:
+    extraArgs:
+      - --retentionPeriod=7d   # durée de rétention (adapter)
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 512Mi
+
+# ===============================
+# Grafana datasource (injection)
+# ===============================
 create_grafana_datasource: true
 grafana_namespace: observability

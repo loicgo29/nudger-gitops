@@ -12,25 +12,29 @@
     name: "{{ victoria_repo_name }}"
     repo_url: "{{ victoria_repo_url }}"
 
-# === Install VictoriaMetrics ===
-- name: Install VictoriaMetrics
+- name: Install VictoriaMetrics (metrics storage)
   community.kubernetes.helm:
     name: "{{ victoriametrics_release_name }}"
-    chart_ref: "{{ victoria_repo_name }}/{{ victoriametrics_chart }}"
+    chart_ref: "{{ victoriametrics_chart }}"
+    chart_repo_url: "{{ victoria_repo_url }}"
     release_namespace: "{{ victoria_namespace }}"
     chart_version: "{{ victoriametrics_version }}"
     values: "{{ victoriametrics_values }}"
+    state: present
+    wait: true
 
-# === Install VictoriaLogs ===
-- name: Install VictoriaLogs
+- name: Install VictoriaLogs (logs storage)
   community.kubernetes.helm:
     name: "{{ victorialogs_release_name }}"
-    chart_ref: "{{ victoria_repo_name }}/{{ victorialogs_chart }}"
+    chart_ref: "{{ victorialogs_chart }}"
+    chart_repo_url: "{{ victoria_repo_url }}"
     release_namespace: "{{ victoria_namespace }}"
     chart_version: "{{ victorialogs_version }}"
     values: "{{ victorialogs_values }}"
+    state: present
+    wait: true
 
-# === Optionnel : Datasource Grafana ===
+# === Datasource Grafana ===
 - name: Add Grafana datasource for VictoriaLogs
   kubernetes.core.k8s:
     state: present
@@ -47,8 +51,31 @@
           apiVersion: 1
           datasources:
             - name: VictoriaLogs
-              type: loki
-              url: http://{{ victorialogs_release_name }}.{{ victoria_namespace }}.svc:9428
+              type: victoriametrics-logs-datasource
+              url: http://{{ victorialogs_release_name }}.{{ victoria_namespace }}.svc.cluster.local:9428
               access: proxy
               isDefault: true
+              jsonData:
+                tlsSkipVerify: true
   when: create_grafana_datasource
+- name: Ensure stable ClusterIP service for VictoriaLogs
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: victorialogs
+        namespace: "{{ victoria_namespace }}"
+        labels:
+          app.kubernetes.io/name: victoria-logs-single
+          app.kubernetes.io/instance: "{{ victorialogs_release_name }}"
+      spec:
+        ports:
+          - name: http
+            port: 9428
+            targetPort: http
+        selector:
+          app.kubernetes.io/name: victoria-logs-single
+          app.kubernetes.io/instance: "{{ victorialogs_release_name }}"
+        type: ClusterIP

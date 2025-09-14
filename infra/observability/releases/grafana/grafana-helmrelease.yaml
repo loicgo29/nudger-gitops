@@ -80,13 +80,13 @@ spec:
             uid: PBFA97CFB590B2093
             jsonData:
               timeInterval: 15s
-          - name: Loki
-            type: loki
+          - name: VictoriaLogs
+            type: victoriametrics-logs-datasource
             access: proxy
-            url: http://loki.logging.svc.cluster.local:3100
-            isDefault: false
-            uid: loki
-
+            url: http://victorialogs.{{ victoria_namespace }}.svc.cluster.local:9428
+            isDefault: true
+            jsonData:
+              tlsSkipVerify: true
     #####################################
     # Dashboards (sidecar qui surveille des ConfigMaps/Secrets)
     #####################################
