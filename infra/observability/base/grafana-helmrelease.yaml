@@ -14,6 +14,15 @@ spec:
         name: grafana
         namespace: flux-system
   values:
+    datasources:
+      enabled: true
+      defaultDatasourceEnabled: false
+      datasources:
+        - name: VictoriaLogs
+          type: victorialogs-datasource
+          access: proxy
+          url: http://victorialogs-victoria-logs-single-server.logging.svc.cluster.local:9428
+        isDefault: false
     persistence:
       enabled: false
     service:
