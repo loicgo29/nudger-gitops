@@ -8,4 +8,3 @@ resources:
   - kube-components-services
   - kube-components-rbac
   - grafana-helmrelease.yaml
-  - grafana-values-cm.yaml 
