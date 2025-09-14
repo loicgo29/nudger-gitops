@@ -9,61 +9,91 @@ data:
   flux-errors.json: |
     {
       "title": "Flux — Errors (last hour)",
+      "description": "Monitor Flux errors via VictoriaLogs",
       "timezone": "browser",
-      "schemaVersion": 39,
-      "version": 5,
+      "schemaVersion": 41,
+      "version": 1,
       "tags": ["flux", "victorialogs"],
       "time": { "from": "now-1h", "to": "now" },
+
       "templating": {
         "list": [
           {
+            "type": "datasource",
+            "name": "DS_VICTORIALOGS",
+            "label": "VictoriaLogs DS",
+            "query": "victoriametrics-logs-datasource",
+            "current": { "selected": true },
+            "hide": 2
+          },
+          {
             "name": "controller",
             "type": "query",
-            "datasource": {"type":"victoriametrics-logs-datasource","name":"VictoriaLogs"},
-            "query": "label_values({namespace=\"flux-system\"}, container)",
-            "refresh": 1,
+            "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
+            "query": {
+              "field": "kubernetes.container_name",
+              "limit": 50,
+              "query": "{namespace=\"flux-system\"}"
+            },
+            "refresh": 2,
             "includeAll": true,
             "multi": true
           }
         ]
       },
+
       "panels": [
         {
           "type": "stat",
           "title": "Flux error lines (last 1h)",
           "gridPos": {"x":0,"y":0,"w":6,"h":6},
-          "datasource": {"type":"victoriametrics-logs-datasource","name":"VictoriaLogs"},
+          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
           "options": {"reduceOptions":{"calcs":["lastNotNull"]}},
           "targets": [
-            { "expr": "{namespace=\"flux-system\"} (error OR failed OR timeout) _time:1h | stats count() as errors" }
+            {
+              "refId": "A",
+              "expr": "{namespace=\"flux-system\", kubernetes.container_name=~\"$controller\"} (error or failed or timeout) _time:1h | stats count() as errors",
+              "queryType": "statsRange"
+            }
           ]
         },
         {
           "type": "timeseries",
           "title": "Errors by controller (5m buckets)",
           "gridPos": {"x":6,"y":0,"w":18,"h":6},
-          "datasource": {"type":"victoriametrics-logs-datasource","name":"VictoriaLogs"},
+          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
           "targets": [
-            { "expr": "{namespace=\"flux-system\", container=~\"$controller\"} (error OR failed OR timeout) _time:5m | stats by (container) count() as errors" }
+            {
+              "refId": "A",
+              "expr": "{namespace=\"flux-system\", kubernetes.container_name=~\"$controller\"} (error or failed or timeout) | stats by (_time:$__interval, kubernetes.container_name) count() as errors",
+              "queryType": "statsRange"
+            }
           ]
         },
         {
           "type": "table",
           "title": "Top error messages (10m)",
           "gridPos": {"x":0,"y":6,"w":12,"h":10},
-          "datasource": {"type":"victoriametrics-logs-datasource","name":"VictoriaLogs"},
+          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
           "targets": [
-            { "expr": "{namespace=\"flux-system\", container=~\"$controller\"} (error OR failed OR timeout) _time:10m | stats by (msg) count() as errors | top 20 by errors", "refId":"A"}
-          ],
-          "options": { "showHeader": true }
+            {
+              "refId": "A",
+              "expr": "{namespace=\"flux-system\", kubernetes.container_name=~\"$controller\"} (error or failed or timeout) _time:10m | top 20 by (_msg) hits as errors",
+              "queryType": "stats"
+            }
+          ]
         },
         {
           "type": "logs",
           "title": "Raw error logs",
           "gridPos": {"x":12,"y":6,"w":12,"h":10},
-          "datasource": {"type":"victoriametrics-logs-datasource","name":"VictoriaLogs"},
+          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
           "targets": [
-            { "expr": "{namespace=\"flux-system\", container=~\"$controller\"} (error OR failed OR timeout)" }
+            {
+              "refId": "A",
+              "expr": "{namespace=\"flux-system\", kubernetes.container_name=~\"$controller\"} (error or failed or timeout)",
+              "queryType": "range"
+            }
           ]
         }
       ]
