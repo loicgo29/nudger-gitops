@@ -32,67 +32,88 @@ data:
             "type": "victoriametrics-logs-datasource",
             "uid": "victorialogs"
           },
-          "type": "stat",
-          "title": "5xx in last 30m",
           "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+          "id": 1,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "textMode": "auto"
+          },
           "targets": [
             {
               "expr": "{namespace=\"ingress-nginx\", container=\"controller\"} status>=500 and status<600 _time:30m | stats count() as errors",
               "queryType": "statsRange",
               "refId": "A"
             }
-          ]
+          ],
+          "title": "5xx in last 30m",
+          "type": "stat"
         },
         {
           "datasource": {
             "type": "victoriametrics-logs-datasource",
             "uid": "victorialogs"
           },
-          "type": "timeseries",
-          "title": "5xx errors over time (1m buckets)",
           "gridPos": { "h": 6, "w": 18, "x": 6, "y": 0 },
+          "id": 2,
+          "options": {
+            "legend": { "showLegend": true },
+            "tooltip": { "mode": "single" }
+          },
           "targets": [
             {
-              "expr": "{namespace=\"ingress-nginx\", container=\"controller\"} status>=500 and status<600 _time:30m | stats by (_time:1m) count() as errors",
+              "expr": "{namespace=\"ingress-nginx\", container=\"controller\"} status>=500 and status<600 | stats by (_time:$__interval) count()",
               "queryType": "statsRange",
               "refId": "B"
             }
-          ]
+          ],
+          "title": "5xx errors over time",
+          "type": "timeseries"
         },
         {
           "datasource": {
             "type": "victoriametrics-logs-datasource",
             "uid": "victorialogs"
           },
-          "type": "table",
-          "title": "Top 10 URLs with 5xx",
-          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 6 },
+          "gridPos": { "h": 6, "w": 24, "x": 0, "y": 6 },
+          "id": 3,
+          "options": {
+            "legend": { "showLegend": true },
+            "tooltip": { "mode": "single" }
+          },
           "targets": [
             {
-              "expr": "{namespace=\"ingress-nginx\", container=\"controller\"} status>=500 and status<600 _time:30m | stats by (request) count() as hits | sort -hits | limit 10",
-              "queryType": "stats",
+              "expr": "{namespace=\"ingress-nginx\", container=\"controller\"} status>=500 and status<600 _time:30m | stats by (request) count() as hits | sort by (hits desc) | limit 10",
+              "queryType": "statsRange",
               "refId": "C"
             }
           ],
-          "options": {
-            "showHeader": true
-          }
+          "title": "Top 10 requests causing 5xx",
+          "type": "table"
         },
         {
           "datasource": {
             "type": "victoriametrics-logs-datasource",
             "uid": "victorialogs"
           },
-          "type": "logs",
-          "title": "Raw ingress 5xx logs",
-          "gridPos": { "h": 10, "w": 24, "x": 0, "y": 14 },
+          "gridPos": { "h": 10, "w": 24, "x": 0, "y": 12 },
+          "id": 4,
+          "options": {
+            "dedupStrategy": "none",
+            "enableLogDetails": true,
+            "showTime": true,
+            "sortOrder": "Descending"
+          },
           "targets": [
             {
               "expr": "{namespace=\"ingress-nginx\", container=\"controller\"} status>=500 and status<600",
               "queryType": "range",
               "refId": "D"
             }
-          ]
+          ],
+          "title": "Raw ingress 5xx logs",
+          "type": "logs"
         }
       ],
       "schemaVersion": 41,
