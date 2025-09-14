@@ -16,6 +16,7 @@ spec:
   values:
     adminUser: admin
     adminPassword: admin123
+
     datasources:
       datasources.yaml: |
         apiVersion: 1
