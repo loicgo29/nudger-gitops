@@ -81,9 +81,9 @@ spec:
             jsonData:
               timeInterval: 15s
           - name: VictoriaLogs
-            type: victoriametrics-logs-datasource
+            type: victorialogs-datasource
             access: proxy
-            url: url: http://victorialogs.logging.svc.cluster.local:9428
+            url: http://victorialogs.logging.svc.cluster.local:9428
             isDefault: true
             jsonData:
               tlsSkipVerify: true
@@ -109,16 +109,6 @@ spec:
           # Et surtout, chemin ABSOLU lu par Grafana
         options:
           path: /var/lib/grafana/dashboards/Kubernetes
-      datasources:
-        datasources.yaml: |
-          apiVersion: 1
-          datasources:
-            - name: VictoriaLogs
-              type: victorialogs-datasource
-              access: proxy
-               url: http://victorialogs-victoria-logs-single-server.logging.svc.cluster.local:9428
-               isDefault: false
-
     # Exemple de dashboard géré par le chart lui-même (optionnel)
     # Place ton JSON dans un ConfigMap labelisé grafana_dashboard=1 pour itérer sans toucher ce fichier.
     dashboards:
