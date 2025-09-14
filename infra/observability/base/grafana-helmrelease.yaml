@@ -19,6 +19,7 @@ spec:
     service:
       type: ClusterIP
       port: 80
+      targetPort: 3000
     adminUser: admin
     adminPassword: admin123   # ⚠️ à externaliser en Secret en prod
     ingress:
