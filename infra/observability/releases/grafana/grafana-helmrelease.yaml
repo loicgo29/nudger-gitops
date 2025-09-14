@@ -51,6 +51,10 @@ spec:
     # Paramètres Grafana
     #####################################
     env:
+      - name: GF_SECURITY_ADMIN_USER
+        value: "admin"
+      - name: GF_SECURITY_ADMIN_PASSWORD
+        value: "changeme"
       - name: TZ
         value: "Europe/Paris"
       - name: GF_INSTALL_PLUGINS
@@ -64,8 +68,6 @@ spec:
     #   existingSecret: grafana-admin
     #   userKey: admin-user
     #   passwordKey: admin-password
-    adminUser: admin
-    adminPassword: "changeme"
 
     #####################################
     # Datasources (Loki + Prometheus)
