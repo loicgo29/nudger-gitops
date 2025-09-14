@@ -21,6 +21,10 @@ spec:
     remediation:
       retries: 3
   values:
+    vmagent:
+      enabled: false   # si tu n’en as pas besoin
+    vmalert:
+      enabled: false
     fullnameOverride: victoria-metrics
     replicaCount: 1
     service:
