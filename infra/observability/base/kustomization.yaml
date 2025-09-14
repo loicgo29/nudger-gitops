@@ -7,4 +7,3 @@ resources:
   - policy-reporter-servicemonitor.yaml
   - kube-components-services
   - kube-components-rbac
-  - grafana-helmrelease.yaml
