@@ -32,5 +32,5 @@ spec:
     service:
       type: ClusterIP
     server: 
-      persistenceVolume:
+      persistentVolume:
         enabled: false
