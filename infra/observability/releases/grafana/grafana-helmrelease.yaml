@@ -52,7 +52,7 @@ spec:
     #####################################
     env:
       TZ: Europe/Paris
-      GF_INSTALL_PLUGINS: ""
+      GF_INSTALL_PLUGINS: "victoriametrics-logs-datasource@1.0.0"
       # Important pour générer des URLs correctes
       GF_SERVER_ROOT_URL: https://grafana.nudger.logo-solutions.fr
       GF_SECURITY_COOKIE_SAMESITE: lax
