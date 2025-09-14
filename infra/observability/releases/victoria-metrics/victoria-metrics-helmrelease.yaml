@@ -14,9 +14,13 @@ spec:
         name: victoria-metrics
         namespace: flux-system
   install:
+    remediation:
+      retries: 3
+    replace: true
     createNamespace: true
     remediation:
       retries: 3
+      remediateLastFailure: true
   upgrade:
     remediation:
       retries: 3
