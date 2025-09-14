@@ -17,7 +17,7 @@ spec:
     adminUser: admin
     adminPassword: admin123
     datasources:
-      datasources.yaml:
+      datasources.yaml: |
         apiVersion: 1
         datasources:
           - name: VictoriaLogs
@@ -25,6 +25,7 @@ spec:
             access: proxy
             url: http://victorialogs-victoria-logs-single-server.logging.svc.cluster.local:9428
             isDefault: false
+
     persistence:
       enabled: false
     service:
