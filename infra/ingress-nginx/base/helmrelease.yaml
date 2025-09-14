@@ -16,6 +16,8 @@ spec:
   values:
     controller:
       kind: DaemonSet
+      config:
+        enable-access-log: "true"
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       daemonset:
