@@ -81,12 +81,12 @@ spec:
             jsonData:
               timeInterval: 15s
           - name: VictoriaLogs
-            type: victorialogs-datasource
+            type: victoriametrics-logs-datasource
             access: proxy
             url: http://victorialogs.logging.svc.cluster.local:9428
             isDefault: true
-            jsonData:
-              tlsSkipVerify: true
+              jsonData:
+                tlsSkipVerify: true
     #####################################
     # Dashboards (sidecar qui surveille des ConfigMaps/Secrets)
     #####################################
