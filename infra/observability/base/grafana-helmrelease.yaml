@@ -14,24 +14,24 @@ spec:
         name: grafana
         namespace: flux-system
 values:
-  grafana:
-    adminUser: admin
-    adminPassword: admin123
-    persistence:
-      enabled: false
-    service:
-      type: ClusterIP
-      port: 80
-      targetPort: 3000
-    ingress:
-      enabled: false
+  adminUser: admin
+  adminPassword: admin123
 
-    datasources:
-      datasources.yaml:
-        apiVersion: 1
-        datasources:
-          - name: VictoriaLogs
-            type: victorialogs-datasource
-            access: proxy
-            url: http://victorialogs-victoria-logs-single-server.logging.svc.cluster.local:9428
-            isDefault: false
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: VictoriaLogs
+          type: victorialogs-datasource
+          access: proxy
+          url: http://victorialogs-victoria-logs-single-server.logging.svc.cluster.local:9428
+          isDefault: false
+
+  persistence:
+    enabled: false
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3000
+  ingress:
+    enabled: false
