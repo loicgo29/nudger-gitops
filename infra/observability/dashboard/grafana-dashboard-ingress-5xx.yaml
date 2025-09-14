@@ -8,51 +8,95 @@ metadata:
 data:
   ingress-5xx.json: |
     {
-      "title": "Ingress — 5xx Errors",
-      "tags": ["victorialogs","ingress"],
-      "timezone": "browser",
-      "schemaVersion": 41,
-      "version": 3,
-      "time": { "from": "now-30m", "to": "now" },
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": {
+              "type": "grafana",
+              "uid": "-- Grafana --"
+            },
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
+      },
+      "editable": true,
+      "id": null,
       "panels": [
         {
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "victorialogs"
+          },
           "type": "stat",
           "title": "5xx in last 30m",
-          "gridPos": {"x":0,"y":0,"w":6,"h":6},
-          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
+          "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
           "targets": [
             {
-              "refId": "A",
-              "expr": "{namespace=\"ingress-nginx\", app_kubernetes_io_name=\"ingress-nginx\"} status>=500 and status<600 _time:30m | stats count() as errors",
-              "queryType": "statsRange"
+              "expr": "{namespace=\"ingress-nginx\", container=\"controller\"} status>=500 and status<600 _time:30m | stats count() as errors",
+              "queryType": "statsRange",
+              "refId": "A"
             }
           ]
         },
         {
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "victorialogs"
+          },
           "type": "timeseries",
-          "title": "5xx errors over time",
-          "gridPos": {"x":6,"y":0,"w":18,"h":6},
-          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
+          "title": "5xx errors over time (1m buckets)",
+          "gridPos": { "h": 6, "w": 18, "x": 6, "y": 0 },
           "targets": [
             {
-              "refId": "B",
-              "expr": "{namespace=\"ingress-nginx\", app_kubernetes_io_name=\"ingress-nginx\"} status>=500 and status<600 | stats by (_time:$__interval) count()",
-              "queryType": "statsRange"
+              "expr": "{namespace=\"ingress-nginx\", container=\"controller\"} status>=500 and status<600 _time:30m | stats by (_time:1m) count() as errors",
+              "queryType": "statsRange",
+              "refId": "B"
             }
           ]
         },
         {
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "victorialogs"
+          },
+          "type": "table",
+          "title": "Top 10 URLs with 5xx",
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 6 },
+          "targets": [
+            {
+              "expr": "{namespace=\"ingress-nginx\", container=\"controller\"} status>=500 and status<600 _time:30m | stats by (request) count() as hits | sort -hits | limit 10",
+              "queryType": "stats",
+              "refId": "C"
+            }
+          ],
+          "options": {
+            "showHeader": true
+          }
+        },
+        {
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "victorialogs"
+          },
           "type": "logs",
           "title": "Raw ingress 5xx logs",
-          "gridPos": {"x":0,"y":6,"w":24,"h":10},
-          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
+          "gridPos": { "h": 10, "w": 24, "x": 0, "y": 14 },
           "targets": [
             {
-              "refId": "C",
-              "expr": "{namespace=\"ingress-nginx\", app_kubernetes_io_name=\"ingress-nginx\"} status>=500 and status<600",
-              "queryType": "range"
+              "expr": "{namespace=\"ingress-nginx\", container=\"controller\"} status>=500 and status<600",
+              "queryType": "range",
+              "refId": "D"
             }
           ]
         }
-      ]
+      ],
+      "schemaVersion": 41,
+      "title": "Ingress — 5xx Errors",
+      "uid": "ingress-5xx",
+      "version": 1
     }
