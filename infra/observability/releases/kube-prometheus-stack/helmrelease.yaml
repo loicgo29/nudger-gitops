@@ -23,6 +23,8 @@ spec:
     remediation:
       retries: 3
   values:
+    plugins:
+      - victoriametrics-logs-datasource
     alertmanager:
       enabled: true
     grafana:
