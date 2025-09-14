@@ -32,7 +32,4 @@ spec:
     adminUser: admin
     adminPassword: admin123   # ⚠️ à externaliser en Secret en prod
     ingress:
-      enabled: true
-      ingressClassName: nginx
-      hosts:
-        - grafana.nudger.logo-solutions.fr
+      enabled: false
