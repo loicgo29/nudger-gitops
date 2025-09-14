@@ -26,6 +26,6 @@ spec:
         useHostPort: true
         hostPorts:
           http: 80
-          https: 44
+          https: 443
       service:
         type: ClusterIP
