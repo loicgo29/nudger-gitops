@@ -11,7 +11,7 @@ data:
       "title": "Flux — Errors (last hour)",
       "timezone": "browser",
       "schemaVersion": 39,
-      "version": 4,
+      "version": 5,
       "tags": ["flux", "victorialogs"],
       "time": { "from": "now-1h", "to": "now" },
       "templating": {
@@ -19,7 +19,7 @@ data:
           {
             "name": "controller",
             "type": "query",
-            "datasource": {"type":"victoriametrics-logs-datasource","uid":"VictoriaLogs"},
+            "datasource": {"type":"victoriametrics-logs-datasource","name":"VictoriaLogs"},
             "query": "label_values({namespace=\"flux-system\"}, container)",
             "refresh": 1,
             "includeAll": true,
@@ -32,7 +32,7 @@ data:
           "type": "stat",
           "title": "Flux error lines (last 1h)",
           "gridPos": {"x":0,"y":0,"w":6,"h":6},
-          "datasource": {"type":"victoriametrics-logs-datasource","uid":"VictoriaLogs"},
+          "datasource": {"type":"victoriametrics-logs-datasource","name":"VictoriaLogs"},
           "options": {"reduceOptions":{"calcs":["lastNotNull"]}},
           "targets": [
             { "expr": "{namespace=\"flux-system\"} (error OR failed OR timeout) _time:1h | stats count() as errors" }
@@ -42,7 +42,7 @@ data:
           "type": "timeseries",
           "title": "Errors by controller (5m buckets)",
           "gridPos": {"x":6,"y":0,"w":18,"h":6},
-          "datasource": {"type":"victoriametrics-logs-datasource","uid":"VictoriaLogs"},
+          "datasource": {"type":"victoriametrics-logs-datasource","name":"VictoriaLogs"},
           "targets": [
             { "expr": "{namespace=\"flux-system\", container=~\"$controller\"} (error OR failed OR timeout) _time:5m | stats by (container) count() as errors" }
           ]
@@ -51,7 +51,7 @@ data:
           "type": "table",
           "title": "Top error messages (10m)",
           "gridPos": {"x":0,"y":6,"w":12,"h":10},
-          "datasource": {"type":"victoriametrics-logs-datasource","uid":"VictoriaLogs"},
+          "datasource": {"type":"victoriametrics-logs-datasource","name":"VictoriaLogs"},
           "targets": [
             { "expr": "{namespace=\"flux-system\", container=~\"$controller\"} (error OR failed OR timeout) _time:10m | stats by (msg) count() as errors | top 20 by errors", "refId":"A"}
           ],
@@ -61,7 +61,7 @@ data:
           "type": "logs",
           "title": "Raw error logs",
           "gridPos": {"x":12,"y":6,"w":12,"h":10},
-          "datasource": {"type":"victoriametrics-logs-datasource","uid":"VictoriaLogs"},
+          "datasource": {"type":"victoriametrics-logs-datasource","name":"VictoriaLogs"},
           "targets": [
             { "expr": "{namespace=\"flux-system\", container=~\"$controller\"} (error OR failed OR timeout)" }
           ]
