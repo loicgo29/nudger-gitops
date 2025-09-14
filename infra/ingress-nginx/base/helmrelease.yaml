@@ -15,7 +15,14 @@ spec:
         namespace: flux-system
   values:
     controller:
-      service:
-        type: NodePort # ou LoadBalancer selon ton setup
-        nodePort: 30080
-      hostNetwork: false
+      controller:
+        kind: DaemonSet
+        hostNetwork: true
+        dnsPolicy: ClusterFirstWithHostNet
+        daemonset:
+          useHostPort: true
+          hostPorts:
+            http: 80
+            https: 443
+        service:
+          type: ClusterIP
