@@ -1,0 +1,899 @@
+./dump/install-dump/longhorndujour.txt:6:flux-system   ingress-nginx          6d20h   True    Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
+./apps/xwiki/README-requirement.md:15:- **Namespaces** : `open4goods-prod`, `open4goods-integration`, `open4goods-recette`, `ingress-nginx`, `cert-manager`, `observability`.
+./apps/xwiki/README-requirement.md:22:- **Ansible** = bootstrap & infra partagée (rare) : CRDs, Helm charts (Longhorn, ingress-nginx, cert-manager, kube-prom-stack), namespaces/PSA, SC, RBAC de base.
+./apps/xwiki/README-requirement.md:54:- **Mode d’exposition** : sur un VPS unique → **ingress-nginx en hostNetwork** (ports 80/443 directement sur l’hôte).  
+./apps/xwiki/README-requirement.md:64:  - Autoriser ingress-nginx → XWiki:8080 ; XWiki → MySQL:3306 ; apps → kube-dns:53 ; cert-manager ↔ ACME ; external-dns → provider.  
+./apps/xwiki/README-descriptionEPIC.md:5:Mettre en place les briques de base du cluster Kubernetes sur Hetzner : stockage (Longhorn), exposition (ingress-nginx), certificats (cert-manager), namespaces, et configuration initiale.
+./apps/xwiki/README-EPIC-STOIES.md:9:- **Story 1.2** : En tant qu’admin, je veux installer ingress-nginx en hostNetwork pour exposer les services en HTTPS sur l’IP publique du VPS.  
+./apps/xwiki/README-SPRINT-PLANNING.md:15:- Story 1.2 : Installer ingress-nginx en hostNetwork pour exposer ports 80/443.
+./apps/ingress-nginx/base/namespace.yaml:4:  name: ingress-nginx
+./.git/logs/refs/heads/main:51:9ca7b5f716a520e05d1429242fef74220c85919b 4ec0ecaf404ca22b1ebd54112c991cedb34d3878 LoGo <loicgourmelon@gmail.com> 1757269664 +0000	commit: ingress-nginx: hostNetwork on DaemonSet (no NodePort)
+./.git/logs/HEAD:63:df89515efbcd07fb74d79075af7afe0aab57c051 8c5b6c349eca6c4a7024497218e566d90e431700 LoGo <loicgourmelon@gmail.com> 1757188752 +0000	commit: ingress-nginx: switch to Deployment + NodePort; drop hostPort
+./.git/logs/HEAD:64:8c5b6c349eca6c4a7024497218e566d90e431700 7b210540958bbf40da3047416d3ef319f4537a64 LoGo <loicgourmelon@gmail.com> 1757189074 +0000	commit: ingress-nginx: switch to Deployment + NodePort; drop hostPort
+./.git/logs/HEAD:65:7b210540958bbf40da3047416d3ef319f4537a64 1c0181fe858f4e1561a94386851a4a19ba0b6fc7 LoGo <loicgourmelon@gmail.com> 1757189295 +0000	commit: ingress-nginx: switch to Deploé
+./.git/logs/HEAD:101:9ca7b5f716a520e05d1429242fef74220c85919b 4ec0ecaf404ca22b1ebd54112c991cedb34d3878 LoGo <loicgourmelon@gmail.com> 1757269664 +0000	commit: ingress-nginx: hostNetwork on DaemonSet (no NodePort)
+./.github/workflows/ci-on-pr.yml:37:      # INGRESS_LAB_DIR: "apps/ingress-nginx/overlays/lab"
+./scripts/dump-all.sh:7:NS_ING="${NS_ING:-ingress-nginx}"
+./scripts/dump-all.sh:68:kubectl -n "${NS_ING}" get svc ingress-nginx-controller -o yaml > "${OUT}/ingress/svc-controller.yaml" 2>&1 || true
+./scripts/dump-all.sh:69:kubectl -n "${NS_ING}" get deploy ingress-nginx-controller -o yaml > "${OUT}/ingress/deploy-controller.yaml" 2>&1 || true
+./scripts/dump-all.sh:71:kubectl -n "${NS_ING}" logs deploy/ingress-nginx-controller --tail=400 > "${OUT}/ingress/controller.log" 2>&1 || true
+./scripts/dump-all.sh:123:kubectl -n "${NS_ING}" get svc ingress-nginx-controller -o wide > "${OUT}/ingress/svc-controller.wide.txt" 2>&1 || true
+./scripts/dump-all.sh:124:kubectl -n "${NS_ING}" get endpoints ingress-nginx-controller -o wide > "${OUT}/ingress/ep-controller.txt" 2>&1 || true
+./scripts/dump-all.sh:148:  kubectl -n "${NS_ING}" get svc ingress-nginx-controller -o wide || true
+./scripts/github_workflows/ci-on-pr.sh:11:#   3. Construit les manifests des répertoires cibles (apps/whoami, ingress-nginx/overlays/lab)
+./scripts/github_workflows/ci-on-pr.sh:19:#   - CHECK_INGRESS_LAB (1/0, active ou non la validation ingress-nginx/lab)
+./scripts/github_workflows/ci-on-pr.sh:139:  # Validation ingress-nginx overlay lab
+./scripts/github_workflows/ci-on-pr.sh:141:    validate_kustomize_dir "apps/ingress-nginx/overlays/lab" "/tmp/ingress.yaml" || failures=$((failures+1))
+./scripts/github_workflows/ci-on-pr.sh:143:    warn "Validation ingress-nginx/lab désactivée (CHECK_INGRESS_LAB=0)."
+./scripts/flux/flux-fastreconciliation.sh:8:  echo "Ex: $0 grafana | ingress-nginx | loki | promtail"
+./scripts/flux/flux-fastreconciliation.sh:23:  ingress-nginx)
+./scripts/flux/flux-fastreconciliation.sh:24:    echo ">> Reconcile Kustomization ingress-nginx"
+./scripts/flux/flux-fastreconciliation.sh:25:    flux -n flux-system reconcile kustomization ingress-nginx --with-source || true
+./scripts/flux/flux-fastreconciliation.sh:26:    echo ">> Reconcile HelmRelease ingress-nginx"
+./scripts/flux/flux-fastreconciliation.sh:27:    flux -n ingress-nginx reconcile helmrelease ingress-nginx --with-source || true
+./scripts/flux/hardrefresh.sh:2:flux suspend kustomization ingress-nginx -n flux-system
+./scripts/flux/hardrefresh.sh:3:flux resume  kustomization ingress-nginx -n flux-system
+./scripts/flux/hardrefresh.sh:6:kubectl -n flux-system annotate kustomization ingress-nginx \
+./scripts/flux/refacto/4patch-kustomizations.sh.log:3:📄 ./apps/ingress-nginx/base/kustomization.yaml → helmrelease.yaml ⟶ helmrelease-kube-prometheus-stack.yaml
+./scripts/flux/refacto/4patch-kustomizations.sh.log:4:✅ Modifié : ./apps/ingress-nginx/base/kustomization.yaml
+./scripts/flux/refacto/lstfiles.txt:6:./flux-system/sources/ingress-nginx-helmrepository.yaml
+./scripts/flux/refacto/lstfiles.txt:72:./clusters/lab/ingress-nginx.kustomization.yaml
+./scripts/flux/refacto/lstfiles.txt:78:./clusters/lab/ingress-nginx-values-patch.yaml
+./scripts/flux/refacto/helmrelease-list2.txt:1:/home/ops-loic-1/nudger-gitops/apps/ingress-nginx/base/helmrelease.yaml /home/ops-loic-1/nudger-gitops/clusters/lab/ingress-nginx-values-patch.yaml /home/ops-loic-1/nudger-gitops/clusters/lab/ingress-nginx.kustomization.yaml /home/ops-loic-1/nudger-gitops/clusters/lab/kyverno.hr.yaml /home/ops-loic-1/nudger-gitops/infra/cert-manager/overlays/lab/helmrelease.yaml /home/ops-loic-1/nudger-gitops/infra/longhorn/overlays/lab/helmrelease.yaml /home/ops-loic-1/nudger-gitops/infra/observability/base/loki-helmrelease.yaml /home/ops-loic-1/nudger-gitops/infra/observability/base/policy-reporter-helmrelease.yaml /home/ops-loic-1/nudger-gitops/infra/observability/base/promtail-helmrelease.yaml /home/ops-loic-1/nudger-gitops/infra/observability/overlays/lab/grafana-helmrelease.yaml /home/ops-loic-1/nudger-gitops/infra/observability/overlays/lab/helmrelease.yaml /home/ops-loic-1/nudger-gitops/tools/ansible/playbooks/02_validate_render.yaml /home/ops-loic-1/nudger-gitops/tools/ansible/playbooks/99_create_pr.yaml /home/ops-loic-1/nudger-gitops/tools/ansible/roles/gitops_writer/tasks/longhorn.yaml 
+./scripts/flux/refacto/3rennomefiles.sh:36:mv_if_exists flux-system/sources/ingress-nginx-helmrepository.yaml           flux-system/sources/helmrepository-ingress-nginx.yaml
+./scripts/flux/refacto/helmrelease-list1.txt:1:/home/ops-loic-1/nudger-gitops/apps/ingress-nginx/base/helmrelease.yaml: ingress-nginx
+./scripts/flux/refacto/05patch.sh:10:    -e 's|ingress-nginx-helmrepository-prometheus-community.yaml|../../observability/base/helmrepository-prometheus-community.yaml|g' \
+./scripts/flux/refacto/helmrelease-liist.txt:3:/home/ops-loic-1/nudger-gitops/apps/ingress-nginx/base/helmrelease.yaml /home/ops-loic-1/nudger-gitops/clusters/lab/ingress-nginx-values-patch.yaml /home/ops-loic-1/nudger-gitops/clusters/lab/ingress-nginx.kustomization.yaml /home/ops-loic-1/nudger-gitops/clusters/lab/kyverno.hr.yaml /home/ops-loic-1/nudger-gitops/infra/cert-manager/overlays/lab/helmrelease.yaml /home/ops-loic-1/nudger-gitops/infra/longhorn/overlays/lab/helmrelease.yaml /home/ops-loic-1/nudger-gitops/infra/observability/base/loki-helmrelease.yaml /home/ops-loic-1/nudger-gitops/infra/observability/base/policy-reporter-helmrelease.yaml /home/ops-loic-1/nudger-gitops/infra/observability/base/promtail-helmrelease.yaml /home/ops-loic-1/nudger-gitops/infra/observability/overlays/lab/grafana-helmrelease.yaml /home/ops-loic-1/nudger-gitops/infra/observability/overlays/lab/helmrelease.yaml /home/ops-loic-1/nudger-gitops/tools/ansible/playbooks/02_validate_render.yaml /home/ops-loic-1/nudger-gitops/tools/ansible/playbooks/99_create_pr.yaml /home/ops-loic-1/nudger-gitops/tools/ansible/roles/gitops_writer/tasks/longhorn.yaml 
+./scripts/flux/refacto/helmrelease-liist.txt:4:/home/ops-loic-1/nudger-gitops/apps/ingress-nginx/base/helmrelease.yaml: ingress-nginx
+./scripts/flux/refacto/4patch-kustomizations.sh:18:  ["helmrepository-ingress-nginx.yaml"]="helmrepository-ingress-nginx.yaml"
+./scripts/flux/refacto/helmrelease-list.txt:13:flux-system/sources/ingress-nginx-helmrepository.yaml: ingress-nginx
+./scripts/ci/validate-gitops-naming.sh.log:17:❌ [./infra/observability/releases/kube-prometheus-stack/helmrelease.yaml] HelmRelease → 'ingress-nginx' n'a pas de préfixe valide parmi: helm-
+./scripts/2flux/sources.json:1144:          "kustomize.toolkit.fluxcd.io/name": "ingress-nginx",
+./scripts/2flux/sources.json:1366:        "name": "ingress-nginx",
+./scripts/2flux/sources.json:1377:            "name": "ingress-nginx-controller",
+./scripts/2flux/sources.json:1378:            "namespace": "ingress-nginx"
+./scripts/2flux/sources.json:1384:            "patch": "apiVersion: helm.toolkit.fluxcd.io/v2\nkind: HelmRelease\nmetadata:\n  name: ingress-nginx\n  namespace: ingress-nginx\nspec:\n  values:\n    controller:\n      extraVolumes:\n        - name: nginx-run\n          emptyDir: {}\n        - name: nginx-cache\n          emptyDir: {}\n      extraVolumeMounts:\n        - name: nginx-run\n          mountPath: /var/run\n        - name: nginx-cache\n          mountPath: /var/cache/nginx\n      containerSecurityContext:\n        readOnlyRootFilesystem: false\n      podLabels:\n        security.nudger/allow-rw-rootfs: \"true\"\n      podAnnotations:\n        security.nudger/justification: \"NGINX needs /var/run & cache write access\"\n",
+./scripts/2flux/sources.json:1388:              "name": "ingress-nginx",
+./scripts/2flux/sources.json:1389:              "namespace": "ingress-nginx",
+./scripts/2flux/sources.json:1394:        "path": "apps/ingress-nginx/overlays/lab",
+./scripts/2flux/sources.json:1425:              "id": "_ingress-nginx__Namespace",
+./scripts/2flux/sources.json:1555:              "id": "flux-system_ingress-nginx_kustomize.toolkit.fluxcd.io_Kustomization",
+./scripts/2flux/sources.json:1804:          "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"kustomize.toolkit.fluxcd.io/v1\",\"kind\":\"Kustomization\",\"metadata\":{\"annotations\":{},\"name\":\"whoami\",\"namespace\":\"flux-system\"},\"spec\":{\"dependsOn\":[{\"name\":\"ingress-nginx\"}],\"interval\":\"1m\",\"path\":\"./apps/whoami\",\"prune\":true,\"sourceRef\":{\"kind\":\"GitRepository\",\"name\":\"gitops\"},\"timeout\":\"5m\",\"wait\":true}}\n",
+./scripts/makehelp.sh:20:KZ_ING  ?= ingress-nginx
+./smoke-tests/sanitycheck.sh:12:ING_NS="${ING_NS:-ingress-nginx}"
+./smoke-tests/sanitycheck.sh:216:if kubectl -n "$ING_NS" get deploy ingress-nginx-controller >/dev/null 2>&1; then
+./smoke-tests/sanitycheck.sh:217:  if kubectl -n "$ING_NS" logs deploy/ingress-nginx-controller --tail=200 | egrep -i "error|crit" >/dev/null; then
+./smoke-tests/sanitycheck.sh:219:    kubectl -n "$ING_NS" logs deploy/ingress-nginx-controller --tail=100 | egrep -i "error|crit" || true
+./smoke-tests/ingress-nginx/job-controller-health.yaml:5:  namespace: ingress-nginx
+./smoke-tests/ingress-nginx/job-controller-health.yaml:18:              SVC="http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:10254/healthz"
+./flux-system/gitrepository/kustomization.yaml:4:  - ingress-nginx-chart.yaml
+./flux-system/gitrepository/ingress-nginx-chart.yaml:4:  name: ingress-nginx-chart
+./flux-system/gitrepository/ingress-nginx-chart.yaml:8:  url: https://github.com/kubernetes/ingress-nginx
+./flux-system/third_party/ingress-nginx/templates/controller-configmap.yaml:5:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-configmap.yaml:13:  name: {{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-configmap.yaml:14:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-configmap.yaml:18:  add-headers: {{ include "ingress-nginx.namespace" . }}/{{ include "ingress-nginx.fullname" . }}-custom-add-headers
+./flux-system/third_party/ingress-nginx/templates/controller-configmap.yaml:21:  proxy-set-headers: {{ include "ingress-nginx.namespace" . }}/{{ include "ingress-nginx.fullname" . }}-custom-proxy-headers
+./flux-system/third_party/ingress-nginx/templates/controller-configmap.yaml:24:  ssl-dh-param: {{ include "ingress-nginx.namespace" . }}/{{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-ingressclass-aliases.yaml:8:    {{- include "ingress-nginx.labels" $ | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-rolebinding.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-rolebinding.yaml:11:  name: {{ include "ingress-nginx.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-rolebinding.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-rolebinding.yaml:16:  name: {{ include "ingress-nginx.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-rolebinding.yaml:19:    name: {{ template "ingress-nginx.serviceAccountName" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-rolebinding.yaml:20:    namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-service-webhook.yaml:9:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-service-webhook.yaml:14:  name: {{ include "ingress-nginx.controller.fullname" . }}-admission
+./flux-system/third_party/ingress-nginx/templates/controller-service-webhook.yaml:15:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-service-webhook.yaml:38:    {{- include "ingress-nginx.selectorLabels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-extra-configmaps.yaml:8:    {{- include "ingress-nginx.labels" $ | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-extra-configmaps.yaml:17:  namespace: {{ include "ingress-nginx.namespace" $ }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-serviceaccount.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-serviceaccount.yaml:11:  name: {{ include "ingress-nginx.defaultBackend.serviceAccountName" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-serviceaccount.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-service.yaml:9:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-service.yaml:14:  name: {{ include "ingress-nginx.defaultBackend.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-service.yaml:15:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-service.yaml:39:    {{- include "ingress-nginx.selectorLabels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-role.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-role.yaml:11:  name: {{ include "ingress-nginx.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-role.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-role.yaml:69:      - {{ include "ingress-nginx.controller.electionID" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-role.yaml:101:    resourceNames:  [{{ include "ingress-nginx.fullname" . }}]
+./flux-system/third_party/ingress-nginx/templates/default-backend-hpa.yaml:9:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-hpa.yaml:14:  name: {{ include "ingress-nginx.defaultBackend.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-hpa.yaml:15:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-hpa.yaml:20:    name: {{ include "ingress-nginx.defaultBackend.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-configmap-udp.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-configmap-udp.yaml:14:  name: {{ include "ingress-nginx.fullname" . }}-udp
+./flux-system/third_party/ingress-nginx/templates/controller-configmap-udp.yaml:15:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-configmap-tcp.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-configmap-tcp.yaml:14:  name: {{ include "ingress-nginx.fullname" . }}-tcp
+./flux-system/third_party/ingress-nginx/templates/controller-configmap-tcp.yaml:15:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/_params.tpl:1:{{- define "ingress-nginx.params" -}}
+./flux-system/third_party/ingress-nginx/templates/_params.tpl:7:- --default-backend-service=$(POD_NAMESPACE)/{{ include "ingress-nginx.defaultBackend.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/_params.tpl:11:- --publish-service={{ template "ingress-nginx.controller.publishServicePath" . }}
+./flux-system/third_party/ingress-nginx/templates/_params.tpl:13:- --publish-service={{ template "ingress-nginx.controller.publishServicePath" . }}-internal
+./flux-system/third_party/ingress-nginx/templates/_params.tpl:16:- --election-id={{ include "ingress-nginx.controller.electionID" . }}
+./flux-system/third_party/ingress-nginx/templates/_params.tpl:21:- --configmap={{ default "$(POD_NAMESPACE)" .Values.controller.configMapNamespace }}/{{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/_params.tpl:23:- --tcp-services-configmap={{ default "$(POD_NAMESPACE)" .Values.controller.tcp.configMapNamespace }}/{{ include "ingress-nginx.fullname" . }}-tcp
+./flux-system/third_party/ingress-nginx/templates/_params.tpl:26:- --udp-services-configmap={{ default "$(POD_NAMESPACE)" .Values.controller.udp.configMapNamespace }}/{{ include "ingress-nginx.fullname" . }}-udp
+./flux-system/third_party/ingress-nginx/templates/controller-prometheusrule.yaml:5:  name: {{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-prometheusrule.yaml:9:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-prometheusrule.yaml:12:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-prometheusrule.yaml:20:  - name: {{ template "ingress-nginx.name" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-ingressclass.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-psp.yaml:6:  name: {{ include "ingress-nginx.fullname" . }}-backend
+./flux-system/third_party/ingress-nginx/templates/default-backend-psp.yaml:10:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-daemonset.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-daemonset.yaml:11:  name: {{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-daemonset.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-daemonset.yaml:19:      {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+./flux-system/third_party/ingress-nginx/templates/controller-daemonset.yaml:35:        {{- include "ingress-nginx.labels" . | nindent 8 }}
+./flux-system/third_party/ingress-nginx/templates/controller-daemonset.yaml:79:          image: {{ if .repository }}{{ .repository }}{{ else }}{{ .registry }}/{{ include "ingress-nginx.image" . }}{{ end }}:{{ .tag }}{{ include "ingress-nginx.imageDigest" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-daemonset.yaml:85:          args: {{ include "ingress-nginx.params" . | nindent 12 }}
+./flux-system/third_party/ingress-nginx/templates/controller-daemonset.yaml:86:          securityContext: {{ include "ingress-nginx.controller.containerSecurityContext" . | nindent 12 }}
+./flux-system/third_party/ingress-nginx/templates/controller-daemonset.yaml:210:      serviceAccountName: {{ template "ingress-nginx.serviceAccountName" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-daemonset.yaml:229:            secretName: {{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-deployment.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-deployment.yaml:11:  name: {{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-deployment.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-deployment.yaml:19:      {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+./flux-system/third_party/ingress-nginx/templates/controller-deployment.yaml:38:        {{- include "ingress-nginx.labels" . | nindent 8 }}
+./flux-system/third_party/ingress-nginx/templates/controller-deployment.yaml:82:          image: {{ if .repository }}{{ .repository }}{{ else }}{{ .registry }}/{{ include "ingress-nginx.image" . }}{{ end }}:{{ .tag }}{{ include "ingress-nginx.imageDigest" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-deployment.yaml:88:          args: {{ include "ingress-nginx.params" . | nindent 12 }}
+./flux-system/third_party/ingress-nginx/templates/controller-deployment.yaml:89:          securityContext: {{ include "ingress-nginx.controller.containerSecurityContext" . | nindent 12 }}
+./flux-system/third_party/ingress-nginx/templates/controller-deployment.yaml:213:      serviceAccountName: {{ template "ingress-nginx.serviceAccountName" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-deployment.yaml:232:            secretName: {{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-rolebinding.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-rolebinding.yaml:11:  name: {{ include "ingress-nginx.fullname" . }}-backend
+./flux-system/third_party/ingress-nginx/templates/default-backend-rolebinding.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-rolebinding.yaml:16:  name: {{ include "ingress-nginx.fullname" . }}-backend
+./flux-system/third_party/ingress-nginx/templates/default-backend-rolebinding.yaml:19:    name: {{ template "ingress-nginx.defaultBackend.serviceAccountName" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-rolebinding.yaml:20:    namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-configmap-addheaders.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-configmap-addheaders.yaml:11:  name: {{ include "ingress-nginx.fullname" . }}-custom-add-headers
+./flux-system/third_party/ingress-nginx/templates/controller-configmap-addheaders.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/clusterrolebinding.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/clusterrolebinding.yaml:10:  name: {{ include "ingress-nginx.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/clusterrolebinding.yaml:14:  name: {{ include "ingress-nginx.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/clusterrolebinding.yaml:17:    name: {{ template "ingress-nginx.serviceAccountName" . }}
+./flux-system/third_party/ingress-nginx/templates/clusterrolebinding.yaml:18:    namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-configmap-proxyheaders.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-configmap-proxyheaders.yaml:11:  name: {{ include "ingress-nginx.fullname" . }}-custom-proxy-headers
+./flux-system/third_party/ingress-nginx/templates/controller-configmap-proxyheaders.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-psp.yaml:6:  name: {{ include "ingress-nginx.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-psp.yaml:10:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-hpa.yaml:9:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-hpa.yaml:14:  name: {{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-hpa.yaml:15:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-hpa.yaml:20:    name: {{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:5:{{- define "ingress-nginx.name" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:12:{{- define "ingress-nginx.chart" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:20:{{- define "ingress-nginx.fullname" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:37:{{- define "ingress-nginx.namespace" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:44:{{- define "ingress-nginx.controller.containerSecurityContext" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:72:{{- define "ingress-nginx.image" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:83:{{- define "ingress-nginx.imageDigest" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:99:{{- define "ingress-nginx.controller.fullname" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:100:{{- printf "%s-%s" (include "ingress-nginx.fullname" .) .Values.controller.name | trunc 63 | trimSuffix "-" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:107:{{- define "ingress-nginx.controller.electionID" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:108:{{- $defElectionID := printf "%s-leader" (include "ingress-nginx.fullname" .) -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:121:{{- define "ingress-nginx.controller.publishServicePath" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:122:{{- $defServiceName := printf "%s/%s" "$(POD_NAMESPACE)" (include "ingress-nginx.controller.fullname" .) -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:130:{{- define "ingress-nginx.labels" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:131:helm.sh/chart: {{ include "ingress-nginx.chart" . }}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:132:{{ include "ingress-nginx.selectorLabels" . }}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:136:app.kubernetes.io/part-of: {{ template "ingress-nginx.name" . }}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:146:{{- define "ingress-nginx.selectorLabels" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:147:app.kubernetes.io/name: {{ include "ingress-nginx.name" . }}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:154:{{- define "ingress-nginx.serviceAccountName" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:156:    {{ default (include "ingress-nginx.fullname" .) .Values.serviceAccount.name }}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:166:{{- define "ingress-nginx.admissionWebhooks.fullname" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:167:{{- printf "%s-%s" (include "ingress-nginx.fullname" .) .Values.controller.admissionWebhooks.name | trunc 63 | trimSuffix "-" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:173:{{- define "ingress-nginx.admissionWebhooks.patch.serviceAccountName" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:175:    {{ default (include "ingress-nginx.admissionWebhooks.fullname" .) .Values.controller.admissionWebhooks.patch.serviceAccount.name }}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:185:{{- define "ingress-nginx.admissionWebhooks.createSecretJob.fullname" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:186:{{- printf "%s-%s" (include "ingress-nginx.admissionWebhooks.fullname" .) .Values.controller.admissionWebhooks.createSecretJob.name | trunc 63 | trimSuffix "-" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:193:{{- define "ingress-nginx.admissionWebhooks.patchWebhookJob.fullname" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:194:{{- printf "%s-%s" (include "ingress-nginx.admissionWebhooks.fullname" .) .Values.controller.admissionWebhooks.patchWebhookJob.name | trunc 63 | trimSuffix "-" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:201:{{- define "ingress-nginx.defaultBackend.fullname" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:202:{{- printf "%s-%s" (include "ingress-nginx.fullname" .) .Values.defaultBackend.name | trunc 63 | trimSuffix "-" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:208:{{- define "ingress-nginx.defaultBackend.serviceAccountName" -}}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:210:    {{ default (printf "%s-backend" (include "ingress-nginx.fullname" .)) .Values.defaultBackend.serviceAccount.name }}
+./flux-system/third_party/ingress-nginx/templates/_helpers.tpl:219:{{- define "ingress-nginx.defaultBackend.containerSecurityContext" -}}
+./flux-system/third_party/ingress-nginx/templates/controller-service-metrics.yaml:9:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-service-metrics.yaml:14:  name: {{ include "ingress-nginx.controller.fullname" . }}-metrics
+./flux-system/third_party/ingress-nginx/templates/controller-service-metrics.yaml:15:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-service-metrics.yaml:43:    {{- include "ingress-nginx.selectorLabels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-service.yaml:10:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-service.yaml:15:  name: {{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-service.yaml:16:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-service.yaml:103:    {{- include "ingress-nginx.selectorLabels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-networkpolicy.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-networkpolicy.yaml:11:  name: {{ include "ingress-nginx.defaultBackend.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-networkpolicy.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-networkpolicy.yaml:16:      {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+./flux-system/third_party/ingress-nginx/templates/controller-keda.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-keda.yaml:11:  name: {{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-keda.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-keda.yaml:19:    deploymentName: {{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-keda.yaml:21:    name: {{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-service-internal.yaml:10:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-service-internal.yaml:15:  name: {{ include "ingress-nginx.controller.fullname" . }}-internal
+./flux-system/third_party/ingress-nginx/templates/controller-service-internal.yaml:16:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-service-internal.yaml:103:    {{- include "ingress-nginx.selectorLabels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/clusterrole.yaml:12:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/clusterrole.yaml:16:  name: {{ include "ingress-nginx.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/NOTES.txt:1:The ingress-nginx controller has been installed.
+./flux-system/third_party/ingress-nginx/templates/NOTES.txt:9:  export HTTP_NODE_PORT=$(kubectl get service --namespace {{ include "ingress-nginx.namespace" . }} {{ include "ingress-nginx.controller.fullname" . }} --output jsonpath="{.spec.ports[0].nodePort}")
+./flux-system/third_party/ingress-nginx/templates/NOTES.txt:14:  export HTTPS_NODE_PORT=$(kubectl get service --namespace {{ include "ingress-nginx.namespace" . }} {{ include "ingress-nginx.controller.fullname" . }} --output jsonpath="{.spec.ports[1].nodePort}")
+./flux-system/third_party/ingress-nginx/templates/NOTES.txt:22:You can watch the status by running 'kubectl get service --namespace {{ include "ingress-nginx.namespace" . }} {{ include "ingress-nginx.controller.fullname" . }} --output wide --watch'
+./flux-system/third_party/ingress-nginx/templates/NOTES.txt:25:  export POD_NAME="$(kubectl get pods --namespace {{ include "ingress-nginx.namespace" . }} --selector app.kubernetes.io/name={{ include "ingress-nginx.name" . }},app.kubernetes.io/instance={{ .Release.Name }},app.kubernetes.io/component=controller --output jsonpath="{.items[0].metadata.name}")"
+./flux-system/third_party/ingress-nginx/templates/NOTES.txt:26:  kubectl port-forward --namespace {{ include "ingress-nginx.namespace" . }} "${POD_NAME}" 8080:80
+./flux-system/third_party/ingress-nginx/templates/controller-poddisruptionbudget.yaml:15:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-poddisruptionbudget.yaml:20:  name: {{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-poddisruptionbudget.yaml:21:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-poddisruptionbudget.yaml:28:      {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+./flux-system/third_party/ingress-nginx/templates/controller-networkpolicy.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-networkpolicy.yaml:11:  name: {{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-networkpolicy.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-networkpolicy.yaml:16:      {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-deployment.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-deployment.yaml:11:  name: {{ include "ingress-nginx.defaultBackend.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-deployment.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-deployment.yaml:16:      {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-deployment.yaml:33:        {{- include "ingress-nginx.labels" . | nindent 8 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-deployment.yaml:52:        - name: {{ template "ingress-nginx.name" . }}-default-backend
+./flux-system/third_party/ingress-nginx/templates/default-backend-deployment.yaml:68:          securityContext: {{ include "ingress-nginx.defaultBackend.containerSecurityContext" . | nindent 12 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-deployment.yaml:105:      serviceAccountName: {{ include "ingress-nginx.defaultBackend.serviceAccountName" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/rolebinding.yaml:5:  name: {{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/rolebinding.yaml:6:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/rolebinding.yaml:11:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/rolebinding.yaml:19:  name: {{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/rolebinding.yaml:22:    name: {{ include "ingress-nginx.admissionWebhooks.patch.serviceAccountName" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/rolebinding.yaml:23:    namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-patchWebhook.yaml:5:  name: {{ include "ingress-nginx.admissionWebhooks.patchWebhookJob.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-patchWebhook.yaml:6:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-patchWebhook.yaml:14:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-patchWebhook.yaml:26:      name: {{ include "ingress-nginx.admissionWebhooks.patchWebhookJob.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-patchWebhook.yaml:31:        {{- include "ingress-nginx.labels" . | nindent 8 }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-patchWebhook.yaml:51:            - --webhook-name={{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-patchWebhook.yaml:54:            - --secret-name={{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-patchWebhook.yaml:71:      serviceAccountName: {{ include "ingress-nginx.admissionWebhooks.patch.serviceAccountName" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/networkpolicy.yaml:5:  name: {{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/networkpolicy.yaml:6:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/networkpolicy.yaml:11:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/networkpolicy.yaml:19:      {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/serviceaccount.yaml:5:  name: {{ include "ingress-nginx.admissionWebhooks.patch.serviceAccountName" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/serviceaccount.yaml:6:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/serviceaccount.yaml:11:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/clusterrolebinding.yaml:5:  name: {{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/clusterrolebinding.yaml:10:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/clusterrolebinding.yaml:18:  name: {{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/clusterrolebinding.yaml:21:    name: {{ include "ingress-nginx.admissionWebhooks.patch.serviceAccountName" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/clusterrolebinding.yaml:22:    namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml:5:  name: {{ include "ingress-nginx.admissionWebhooks.createSecretJob.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml:6:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml:14:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml:26:      name: {{ include "ingress-nginx.admissionWebhooks.createSecretJob.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml:31:        {{- include "ingress-nginx.labels" . | nindent 8 }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml:51:            - --host={{ include "ingress-nginx.controller.fullname" . }}-admission,{{ include "ingress-nginx.controller.fullname" . }}-admission.$(POD_NAMESPACE).svc
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml:53:            - --secret-name={{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml:69:      serviceAccountName: {{ include "ingress-nginx.admissionWebhooks.patch.serviceAccountName" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/clusterrole.yaml:5:  name: {{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/clusterrole.yaml:10:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/clusterrole.yaml:30:    resourceNames:  [{{ include "ingress-nginx.admissionWebhooks.fullname" . }}]
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/psp.yaml:6:  name: {{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/psp.yaml:12:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/role.yaml:5:  name: {{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/role.yaml:6:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/job-patch/role.yaml:11:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/validating-webhook.yaml:9:    certmanager.k8s.io/inject-ca-from: {{ printf "%s/%s" (include "ingress-nginx.namespace" .) (include "ingress-nginx.admissionWebhooks.fullname" .) | quote }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/validating-webhook.yaml:10:    cert-manager.io/inject-ca-from: {{ printf "%s/%s" (include "ingress-nginx.namespace" .) (include "ingress-nginx.admissionWebhooks.fullname" .) | quote }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/validating-webhook.yaml:16:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/validating-webhook.yaml:21:  name: {{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/validating-webhook.yaml:41:        name: {{ include "ingress-nginx.controller.fullname" . }}-admission
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/validating-webhook.yaml:42:        namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:8:  name: {{ include "ingress-nginx.fullname" . }}-self-signed-issuer
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:9:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:17:  name: {{ include "ingress-nginx.fullname" . }}-root-cert
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:18:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:20:  secretName: {{ include "ingress-nginx.fullname" . }}-root-cert
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:23:    name: {{ include "ingress-nginx.fullname" . }}-self-signed-issuer
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:24:  commonName: "ca.webhook.ingress-nginx"
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:28:      - ingress-nginx
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:34:  name: {{ include "ingress-nginx.fullname" . }}-root-issuer
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:35:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:38:    secretName: {{ include "ingress-nginx.fullname" . }}-root-cert
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:45:  name: {{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:46:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:48:  secretName: {{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:54:    name: {{ include "ingress-nginx.fullname" . }}-root-issuer
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:57:    - {{ include "ingress-nginx.controller.fullname" . }}-admission
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:58:    - {{ include "ingress-nginx.controller.fullname" . }}-admission.{{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:59:    - {{ include "ingress-nginx.controller.fullname" . }}-admission.{{ include "ingress-nginx.namespace" . }}.svc
+./flux-system/third_party/ingress-nginx/templates/admission-webhooks/cert-manager.yaml:62:      - ingress-nginx-admission
+./flux-system/third_party/ingress-nginx/templates/controller-servicemonitor.yaml:5:  name: {{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-servicemonitor.yaml:9:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-servicemonitor.yaml:12:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-servicemonitor.yaml:41:      - {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-servicemonitor.yaml:51:      {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-poddisruptionbudget.yaml:11:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-poddisruptionbudget.yaml:16:  name: {{ include "ingress-nginx.defaultBackend.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-poddisruptionbudget.yaml:17:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-poddisruptionbudget.yaml:21:      {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+./flux-system/third_party/ingress-nginx/templates/controller-serviceaccount.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-serviceaccount.yaml:11:  name: {{ template "ingress-nginx.serviceAccountName" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-serviceaccount.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-secret.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/controller-secret.yaml:11:  name: {{ include "ingress-nginx.controller.fullname" . }}
+./flux-system/third_party/ingress-nginx/templates/controller-secret.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-role.yaml:6:    {{- include "ingress-nginx.labels" . | nindent 4 }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-role.yaml:11:  name: {{ include "ingress-nginx.fullname" . }}-backend
+./flux-system/third_party/ingress-nginx/templates/default-backend-role.yaml:12:  namespace: {{ include "ingress-nginx.namespace" . }}
+./flux-system/third_party/ingress-nginx/templates/default-backend-role.yaml:20:    resourceNames:  [{{ include "ingress-nginx.fullname" . }}-backend]
+./flux-system/third_party/ingress-nginx/tests/controller-hpa_test.yaml:16:          value: RELEASE-NAME-ingress-nginx-controller
+./flux-system/third_party/ingress-nginx/tests/controller-networkpolicy_test.yaml:23:          value: RELEASE-NAME-ingress-nginx-controller
+./flux-system/third_party/ingress-nginx/tests/controller-configmap_test.yaml:14:          value: RELEASE-NAME-ingress-nginx-controller
+./flux-system/third_party/ingress-nginx/tests/controller-service-metrics_test.yaml:23:          value: RELEASE-NAME-ingress-nginx-controller-metrics
+./flux-system/third_party/ingress-nginx/tests/controller-prometheusrule_test.yaml:17:          value: RELEASE-NAME-ingress-nginx-controller
+./flux-system/third_party/ingress-nginx/tests/controller-ingressclass-aliases_test.yaml:58:  - it: should create an IngressClass alias with controller "k8s.io/ingress-nginx-internal" if `controller.ingressClassResource.controllerValue` is "k8s.io/ingress-nginx-internal"
+./flux-system/third_party/ingress-nginx/tests/controller-ingressclass-aliases_test.yaml:62:      controller.ingressClassResource.controllerValue: k8s.io/ingress-nginx-internal
+./flux-system/third_party/ingress-nginx/tests/controller-ingressclass-aliases_test.yaml:73:          value: k8s.io/ingress-nginx-internal
+./flux-system/third_party/ingress-nginx/tests/controller-ingressclass_test.yaml:59:  - it: should create an IngressClass with controller "k8s.io/ingress-nginx-internal" if `controller.ingressClassResource.controllerValue` is "k8s.io/ingress-nginx-internal"
+./flux-system/third_party/ingress-nginx/tests/controller-ingressclass_test.yaml:61:      controller.ingressClassResource.controllerValue: k8s.io/ingress-nginx-internal
+./flux-system/third_party/ingress-nginx/tests/controller-ingressclass_test.yaml:72:          value: k8s.io/ingress-nginx-internal
+./flux-system/third_party/ingress-nginx/tests/controller-configmap-addheaders_test.yaml:24:          value: RELEASE-NAME-ingress-nginx-custom-add-headers
+./flux-system/third_party/ingress-nginx/tests/controller-keda_test.yaml:16:          value: RELEASE-NAME-ingress-nginx-controller
+./flux-system/third_party/ingress-nginx/tests/controller-deployment_test.yaml:14:          value: RELEASE-NAME-ingress-nginx-controller
+./flux-system/third_party/ingress-nginx/tests/controller-deployment_test.yaml:62:  - it: should create a Deployment with argument `--controller-class=k8s.io/ingress-nginx-internal` if `controller.ingressClassResource.controllerValue` is "k8s.io/ingress-nginx-internal"
+./flux-system/third_party/ingress-nginx/tests/controller-deployment_test.yaml:64:      controller.ingressClassResource.controllerValue: k8s.io/ingress-nginx-internal
+./flux-system/third_party/ingress-nginx/tests/controller-deployment_test.yaml:68:          content: --controller-class=k8s.io/ingress-nginx-internal
+./flux-system/third_party/ingress-nginx/tests/controller-deployment_test.yaml:87:              app.kubernetes.io/name: '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/tests/controller-deployment_test.yaml:95:              app.kubernetes.io/name: '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/tests/controller-deployment_test.yaml:107:                  app.kubernetes.io/name: ingress-nginx
+./flux-system/third_party/ingress-nginx/tests/controller-deployment_test.yaml:115:                  app.kubernetes.io/name: ingress-nginx
+./flux-system/third_party/ingress-nginx/tests/controller-deployment_test.yaml:132:                      - '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/tests/controller-deployment_test.yaml:153:                          - ingress-nginx
+./flux-system/third_party/ingress-nginx/tests/controller-deployment_test.yaml:172:          value: custom.registry.io/ingress-nginx/controller:v1.0.0-dev@sha256:faa2d18687f734994b6bd9e309e7a73852a81c30e1b8f63165fcd4f0a087e3cd
+./flux-system/third_party/ingress-nginx/tests/controller-deployment_test.yaml:191:          value: registry.k8s.io/ingress-nginx/controller:custom-tag@sha256:faa2d18687f734994b6bd9e309e7a73852a81c30e1b8f63165fcd4f0a087e3cd
+./flux-system/third_party/ingress-nginx/tests/default-backend-service_test.yaml:23:          value: RELEASE-NAME-ingress-nginx-defaultbackend
+./flux-system/third_party/ingress-nginx/tests/default-backend-poddisruptionbudget_test.yaml:17:          value: RELEASE-NAME-ingress-nginx-defaultbackend
+./flux-system/third_party/ingress-nginx/tests/default-backend-poddisruptionbudget_test.yaml:39:          value: RELEASE-NAME-ingress-nginx-defaultbackend
+./flux-system/third_party/ingress-nginx/tests/controller-service_test.yaml:23:          value: RELEASE-NAME-ingress-nginx-controller
+./flux-system/third_party/ingress-nginx/tests/controller-servicemonitor_test.yaml:17:          value: RELEASE-NAME-ingress-nginx-controller
+./flux-system/third_party/ingress-nginx/tests/controller-service-internal_test.yaml:25:          value: RELEASE-NAME-ingress-nginx-controller-internal
+./flux-system/third_party/ingress-nginx/tests/controller-daemonset_test.yaml:16:          value: RELEASE-NAME-ingress-nginx-controller
+./flux-system/third_party/ingress-nginx/tests/controller-daemonset_test.yaml:36:  - it: should create a DaemonSet with argument `--controller-class=k8s.io/ingress-nginx-internal` if `controller.ingressClassResource.controllerValue` is "k8s.io/ingress-nginx-internal"
+./flux-system/third_party/ingress-nginx/tests/controller-daemonset_test.yaml:39:      controller.ingressClassResource.controllerValue: k8s.io/ingress-nginx-internal
+./flux-system/third_party/ingress-nginx/tests/controller-daemonset_test.yaml:43:          content: --controller-class=k8s.io/ingress-nginx-internal
+./flux-system/third_party/ingress-nginx/tests/controller-daemonset_test.yaml:64:              app.kubernetes.io/name: '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/tests/controller-daemonset_test.yaml:72:              app.kubernetes.io/name: '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/tests/controller-daemonset_test.yaml:84:                  app.kubernetes.io/name: ingress-nginx
+./flux-system/third_party/ingress-nginx/tests/controller-daemonset_test.yaml:92:                  app.kubernetes.io/name: ingress-nginx
+./flux-system/third_party/ingress-nginx/tests/controller-daemonset_test.yaml:110:                      - '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/tests/controller-daemonset_test.yaml:131:                          - ingress-nginx
+./flux-system/third_party/ingress-nginx/tests/controller-daemonset_test.yaml:151:          value: custom.registry.io/ingress-nginx/controller:v1.0.0-dev@sha256:faa2d18687f734994b6bd9e309e7a73852a81c30e1b8f63165fcd4f0a087e3cd
+./flux-system/third_party/ingress-nginx/tests/controller-daemonset_test.yaml:172:          value: registry.k8s.io/ingress-nginx/controller:custom-tag@sha256:faa2d18687f734994b6bd9e309e7a73852a81c30e1b8f63165fcd4f0a087e3cd
+./flux-system/third_party/ingress-nginx/tests/admission-webhooks/job-patch/serviceaccount_test.yaml:23:          value: ingress-nginx-admission
+./flux-system/third_party/ingress-nginx/tests/admission-webhooks/job-patch/serviceaccount_test.yaml:27:      controller.admissionWebhooks.patch.serviceAccount.name: ingress-nginx-admission-test-sa
+./flux-system/third_party/ingress-nginx/tests/admission-webhooks/job-patch/serviceaccount_test.yaml:35:          value: ingress-nginx-admission-test-sa
+./flux-system/third_party/ingress-nginx/tests/controller-poddisruptionbudget_test.yaml:16:          value: RELEASE-NAME-ingress-nginx-controller
+./flux-system/third_party/ingress-nginx/tests/controller-poddisruptionbudget_test.yaml:36:          value: RELEASE-NAME-ingress-nginx-controller
+./flux-system/third_party/ingress-nginx/tests/controller-poddisruptionbudget_test.yaml:57:          value: RELEASE-NAME-ingress-nginx-controller
+./flux-system/third_party/ingress-nginx/tests/controller-configmap-proxyheaders_test.yaml:24:          value: RELEASE-NAME-ingress-nginx-custom-proxy-headers
+./flux-system/third_party/ingress-nginx/tests/controller-service-webhook_test.yaml:23:          value: RELEASE-NAME-ingress-nginx-controller-admission
+./flux-system/third_party/ingress-nginx/tests/default-backend-deployment_test.yaml:23:          value: RELEASE-NAME-ingress-nginx-defaultbackend
+./flux-system/third_party/ingress-nginx/tests/default-backend-deployment_test.yaml:61:              app.kubernetes.io/name: '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/tests/default-backend-deployment_test.yaml:69:              app.kubernetes.io/name: '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/tests/default-backend-deployment_test.yaml:81:                  app.kubernetes.io/name: ingress-nginx
+./flux-system/third_party/ingress-nginx/tests/default-backend-deployment_test.yaml:89:                  app.kubernetes.io/name: ingress-nginx
+./flux-system/third_party/ingress-nginx/tests/default-backend-deployment_test.yaml:107:                      - '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/tests/default-backend-deployment_test.yaml:128:                          - ingress-nginx
+./flux-system/third_party/ingress-nginx/README.md.gotmpl:2:[ingress-nginx](https://github.com/kubernetes/ingress-nginx) Ingress controller for Kubernetes using NGINX as a reverse proxy and load balancer
+./flux-system/third_party/ingress-nginx/README.md.gotmpl:8:This chart bootstraps an ingress-nginx deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+./flux-system/third_party/ingress-nginx/README.md.gotmpl:15:helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+./flux-system/third_party/ingress-nginx/README.md.gotmpl:24:helm install [RELEASE_NAME] ingress-nginx/ingress-nginx
+./flux-system/third_party/ingress-nginx/README.md.gotmpl:27:The command deploys ingress-nginx on the Kubernetes cluster in the default configuration.
+./flux-system/third_party/ingress-nginx/README.md.gotmpl:53:There are two main ways to migrate a release from `stable/nginx-ingress` to `ingress-nginx/ingress-nginx` chart:
+./flux-system/third_party/ingress-nginx/README.md.gotmpl:62:Note that there are some different and upgraded configurations between the two charts, described by Rimas Mocevicius from JFrog in the "Upgrading to ingress-nginx Helm chart" section of [Migrating from Helm chart nginx-ingress to ingress-nginx](https://rimusz.net/migrating-to-ingress-nginx). As the `ingress-nginx/ingress-nginx` chart continues to update, you will want to check current differences by running [helm configuration](#configuration) commands on both charts.
+./flux-system/third_party/ingress-nginx/README.md.gotmpl:69:helm show values ingress-nginx/ingress-nginx
+./flux-system/third_party/ingress-nginx/README.md.gotmpl:84:### ingress-nginx nginx\_status page/stats server
+./flux-system/third_party/ingress-nginx/README.md.gotmpl:88:- In [0.16.1](https://github.com/kubernetes/ingress-nginx/blob/main/Changelog.md#0161), the vts (virtual host traffic status) dashboard was removed
+./flux-system/third_party/ingress-nginx/README.md.gotmpl:89:- In [0.23.0](https://github.com/kubernetes/ingress-nginx/blob/main/Changelog.md#0230), the status page at port 18080 is now a unix socket webserver only available at localhost.
+./flux-system/third_party/ingress-nginx/README.md.gotmpl:90:  You can use `curl --unix-socket /tmp/nginx-status-server.sock http://localhost/nginx_status` inside the controller container to access it locally, or use the snippet from [nginx-ingress changelog](https://github.com/kubernetes/ingress-nginx/blob/main/Changelog.md#0230) to re-enable the http server
+./flux-system/third_party/ingress-nginx/README.md.gotmpl:105:Annotate the controller as shown in the [nginx-ingress l7 patch](https://github.com/kubernetes/ingress-nginx/blob/ab3a789caae65eec4ad6e3b46b19750b481b6bce/deploy/aws/l7/service-l7.yaml):
+./flux-system/third_party/ingress-nginx/README.md.gotmpl:200:With nginx-ingress-controller in 0.25.* work only with kubernetes 1.14+, 0.26 fix [this issue](https://github.com/kubernetes/ingress-nginx/pull/4521)
+./flux-system/third_party/ingress-nginx/Chart.yaml:9:home: https://github.com/kubernetes/ingress-nginx
+./flux-system/third_party/ingress-nginx/Chart.yaml:22:name: ingress-nginx
+./flux-system/third_party/ingress-nginx/Chart.yaml:24:- https://github.com/kubernetes/ingress-nginx
+./flux-system/third_party/ingress-nginx/README.md:1:# ingress-nginx
+./flux-system/third_party/ingress-nginx/README.md:3:[ingress-nginx](https://github.com/kubernetes/ingress-nginx) Ingress controller for Kubernetes using NGINX as a reverse proxy and load balancer
+./flux-system/third_party/ingress-nginx/README.md:9:This chart bootstraps an ingress-nginx deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+./flux-system/third_party/ingress-nginx/README.md:18:helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+./flux-system/third_party/ingress-nginx/README.md:27:helm install [RELEASE_NAME] ingress-nginx/ingress-nginx
+./flux-system/third_party/ingress-nginx/README.md:30:The command deploys ingress-nginx on the Kubernetes cluster in the default configuration.
+./flux-system/third_party/ingress-nginx/README.md:56:There are two main ways to migrate a release from `stable/nginx-ingress` to `ingress-nginx/ingress-nginx` chart:
+./flux-system/third_party/ingress-nginx/README.md:65:Note that there are some different and upgraded configurations between the two charts, described by Rimas Mocevicius from JFrog in the "Upgrading to ingress-nginx Helm chart" section of [Migrating from Helm chart nginx-ingress to ingress-nginx](https://rimusz.net/migrating-to-ingress-nginx). As the `ingress-nginx/ingress-nginx` chart continues to update, you will want to check current differences by running [helm configuration](#configuration) commands on both charts.
+./flux-system/third_party/ingress-nginx/README.md:72:helm show values ingress-nginx/ingress-nginx
+./flux-system/third_party/ingress-nginx/README.md:87:### ingress-nginx nginx\_status page/stats server
+./flux-system/third_party/ingress-nginx/README.md:91:- In [0.16.1](https://github.com/kubernetes/ingress-nginx/blob/main/Changelog.md#0161), the vts (virtual host traffic status) dashboard was removed
+./flux-system/third_party/ingress-nginx/README.md:92:- In [0.23.0](https://github.com/kubernetes/ingress-nginx/blob/main/Changelog.md#0230), the status page at port 18080 is now a unix socket webserver only available at localhost.
+./flux-system/third_party/ingress-nginx/README.md:93:  You can use `curl --unix-socket /tmp/nginx-status-server.sock http://localhost/nginx_status` inside the controller container to access it locally, or use the snippet from [nginx-ingress changelog](https://github.com/kubernetes/ingress-nginx/blob/main/Changelog.md#0230) to re-enable the http server
+./flux-system/third_party/ingress-nginx/README.md:108:Annotate the controller as shown in the [nginx-ingress l7 patch](https://github.com/kubernetes/ingress-nginx/blob/ab3a789caae65eec4ad6e3b46b19750b481b6bce/deploy/aws/l7/service-l7.yaml):
+./flux-system/third_party/ingress-nginx/README.md:203:With nginx-ingress-controller in 0.25.* work only with kubernetes 1.14+, 0.26 fix [this issue](https://github.com/kubernetes/ingress-nginx/pull/4521)
+./flux-system/third_party/ingress-nginx/README.md:237:| controller.addHeaders | object | `{}` | Will add custom headers before sending response traffic to the client according to: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#add-headers |
+./flux-system/third_party/ingress-nginx/README.md:257:| controller.admissionWebhooks.patch.image.image | string | `"ingress-nginx/kube-webhook-certgen"` |  |
+./flux-system/third_party/ingress-nginx/README.md:294:| controller.config | object | `{}` | Global configuration passed to the ConfigMap consumed by the controller. Values may contain Helm templates. Ref.: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/ |
+./flux-system/third_party/ingress-nginx/README.md:330:| controller.image.image | string | `"ingress-nginx/controller"` |  |
+./flux-system/third_party/ingress-nginx/README.md:340:| controller.ingressClassResource | object | `{"aliases":[],"annotations":{},"controllerValue":"k8s.io/ingress-nginx","default":false,"enabled":true,"name":"nginx","parameters":{}}` | This section refers to the creation of the IngressClass resource. IngressClasses are immutable and cannot be changed after creation. We do not support namespaced IngressClasses, yet, so a ClusterRole and a ClusterRoleBinding is required. |
+./flux-system/third_party/ingress-nginx/README.md:343:| controller.ingressClassResource.controllerValue | string | `"k8s.io/ingress-nginx"` | Controller of the IngressClass. An Ingress Controller looks for IngressClasses it should reconcile by this value. This value is also being set as the `--controller-class` argument of this Ingress Controller. Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class |
+./flux-system/third_party/ingress-nginx/README.md:405:| controller.opentelemetry.image.image | string | `"ingress-nginx/opentelemetry-1.25.3"` |  |
+./flux-system/third_party/ingress-nginx/README.md:414:| controller.proxySetHeaders | object | `{}` | Will add custom headers before sending traffic to backends according to https://github.com/kubernetes/ingress-nginx/tree/main/docs/examples/customization/custom-headers |
+./flux-system/third_party/ingress-nginx/README.md:427:| controller.reportNodeInternalIp | bool | `false` | Bare-metal considerations via the host network https://kubernetes.github.io/ingress-nginx/deploy/baremetal/#via-the-host-network Ingress status was blank because there is no Service exposing the Ingress-Nginx Controller in a configuration using the host network, the default --publish-service flag used in standard cloud setups does not apply |
+./flux-system/third_party/ingress-nginx/README.md:546:| dhParam | string | `""` | A base64-encoded Diffie-Hellman parameter. This can be generated with: `openssl dhparam 4096 2> /dev/null | base64` # Ref: https://github.com/kubernetes/ingress-nginx/tree/main/docs/examples/customization/ssl-dh-param |
+./flux-system/third_party/ingress-nginx/README.md:558:| tcp | object | `{}` | TCP service key-value pairs # Ref: https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/exposing-tcp-udp-services.md # |
+./flux-system/third_party/ingress-nginx/README.md:559:| udp | object | `{}` | UDP service key-value pairs # Ref: https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/exposing-tcp-udp-services.md # |
+./flux-system/third_party/ingress-nginx/values.yaml:2:## Ref: https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/index.md
+./flux-system/third_party/ingress-nginx/values.yaml:25:    image: ingress-nginx/controller
+./flux-system/third_party/ingress-nginx/values.yaml:49:  # Ref.: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/
+./flux-system/third_party/ingress-nginx/values.yaml:53:  # -- Will add custom headers before sending traffic to backends according to https://github.com/kubernetes/ingress-nginx/tree/main/docs/examples/customization/custom-headers
+./flux-system/third_party/ingress-nginx/values.yaml:55:  # -- Will add custom headers before sending response traffic to the client according to: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#add-headers
+./flux-system/third_party/ingress-nginx/values.yaml:75:  # -- Bare-metal considerations via the host network https://kubernetes.github.io/ingress-nginx/deploy/baremetal/#via-the-host-network
+./flux-system/third_party/ingress-nginx/values.yaml:133:    controllerValue: k8s.io/ingress-nginx
+./flux-system/third_party/ingress-nginx/values.yaml:263:  #           - '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/values.yaml:282:  #         - '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/values.yaml:299:  #       app.kubernetes.io/name: '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/values.yaml:307:  #       app.kubernetes.io/name: '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/values.yaml:377:  ## ref: https://github.com/kubernetes/ingress-nginx/issues/4735#issuecomment-551204903
+./flux-system/third_party/ingress-nginx/values.yaml:681:  #     image: ingress-nginx/mytestmodule
+./flux-system/third_party/ingress-nginx/values.yaml:709:      image: ingress-nginx/opentelemetry-1.25.3
+./flux-system/third_party/ingress-nginx/values.yaml:803:        image: ingress-nginx/kube-webhook-certgen
+./flux-system/third_party/ingress-nginx/values.yaml:1028:  #           - '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/values.yaml:1047:  #         - '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/values.yaml:1063:  #       app.kubernetes.io/name: '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/values.yaml:1071:  #       app.kubernetes.io/name: '{{ include "ingress-nginx.name" . }}'
+./flux-system/third_party/ingress-nginx/values.yaml:1155:## Enable RBAC as per https://github.com/kubernetes/ingress-nginx/blob/main/docs/deploy/rbac.md and https://github.com/kubernetes/ingress-nginx/issues/266
+./flux-system/third_party/ingress-nginx/values.yaml:1175:## Ref: https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/exposing-tcp-udp-services.md
+./flux-system/third_party/ingress-nginx/values.yaml:1181:## Ref: https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/exposing-tcp-udp-services.md
+./flux-system/third_party/ingress-nginx/values.yaml:1191:## Ref: https://github.com/kubernetes/ingress-nginx/tree/main/docs/examples/customization/ssl-dh-param
+./flux-system/third_party/ingress-nginx/ci/controller-daemonset-extra-modules-values.yaml:16:      image: ingress-nginx/opentelemetry-1.25.3
+./flux-system/third_party/ingress-nginx/ci/controller-deployment-extra-modules-values.yaml:16:      image: ingress-nginx/opentelemetry-1.25.3
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.19.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.19.0.md:7:* Update ingress-nginx v0.43.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.19.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.18.0...helm-chart-3.19.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.15.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.15.1.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.15.0...ingress-nginx-3.15.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:7:* [8481](https://github.com/kubernetes/ingress-nginx/pull/8481) Fix log creation in chroot script
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:8:* [8479](https://github.com/kubernetes/ingress-nginx/pull/8479) changed nginx base img tag to img built with alpine3.14.6
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:9:* [8478](https://github.com/kubernetes/ingress-nginx/pull/8478) update base images and protobuf gomod
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:10:* [8468](https://github.com/kubernetes/ingress-nginx/pull/8468) Fallback to ngx.var.scheme for redirectScheme with use-forward-headers when X-Forwarded-Proto is empty
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:11:* [8456](https://github.com/kubernetes/ingress-nginx/pull/8456) Implement object deep inspector
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:12:* [8455](https://github.com/kubernetes/ingress-nginx/pull/8455) Update dependencies
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:13:* [8454](https://github.com/kubernetes/ingress-nginx/pull/8454) Update index.md
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:14:* [8447](https://github.com/kubernetes/ingress-nginx/pull/8447) typo fixing
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:15:* [8446](https://github.com/kubernetes/ingress-nginx/pull/8446) Fix suggested annotation-value-word-blocklist
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:16:* [8444](https://github.com/kubernetes/ingress-nginx/pull/8444) replace deprecated topology key in example with current one
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:17:* [8443](https://github.com/kubernetes/ingress-nginx/pull/8443) Add dependency review enforcement
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:18:* [8434](https://github.com/kubernetes/ingress-nginx/pull/8434) added new auth-tls-match-cn annotation
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:19:* [8426](https://github.com/kubernetes/ingress-nginx/pull/8426) Bump github.com/prometheus/common from 0.32.1 to 0.33.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.0.md:21:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.0.18...helm-chart-4.1.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.8.2.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.8.2.md:10:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.8.1...helm-chart-4.8.2
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.9.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.9.1.md:7:* [#5823](https://github.com/kubernetes/ingress-nginx/pull/5823) Add quoting to sysctls because numeric values need to be presented as strings (#5823)
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.9.1.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-2.9.0...ingress-nginx-2.9.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.1.md:7:* [7535] https://github.com/kubernetes/ingress-nginx/pull/7535 Release v1.0.0 ingress-nginx
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.1.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.34.0...helm-chart-4.0.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.11.2.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.11.2.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.11.1...helm-chart-4.11.2
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.11.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.11.md:7:* [7873] https://github.com/kubernetes/ingress-nginx/pull/7873 Makes the [appProtocol](https://kubernetes.io/docs/concepts/services-networking/_print/#application-protocol) field optional.
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.11.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.0.10...helm-chart-4.0.11
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.24.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.24.0.md:7:* [#6908](https://github.com/kubernetes/ingress-nginx/pull/6908) Add volumes to default-backend deployment
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.24.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.23.0...helm-chart-3.24.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.7.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.7.1.md:7:* [#6326](https://github.com/kubernetes/ingress-nginx/pull/6326) Fix liveness and readiness probe path in daemonset chart
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.7.1.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.7.0...ingress-nginx-3.7.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.5.2.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.5.2.md:13:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.4.3...helm-chart-4.5.2
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.10.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.10.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.9.0...ingress-nginx-3.10.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.12.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.12.md:7:* [7978] https://github.com/kubernetes/ingress-nginx/pull/7979 Support custom annotations in admissions Jobs
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.12.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.0.11...helm-chart-4.0.12
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.32.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.32.0.md:7:* [7117] https://github.com/kubernetes/ingress-nginx/pull/7117 Add annotations for HPA
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.32.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.31.0...helm-chart-3.32.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.10.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.10.md:7:* [7964] https://github.com/kubernetes/ingress-nginx/pull/7964 Update controller version to v1.1.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.10.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.0.9...helm-chart-4.0.10
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.7.2.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.7.2.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.7.1...helm-chart-4.7.2
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.2.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.2.md:7:* [7681] https://github.com/kubernetes/ingress-nginx/pull/7681 Release v1.0.1 of ingress-nginx
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.2.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.0.1...helm-chart-4.0.2
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.7.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.7.md:7:* [7923] https://github.com/kubernetes/ingress-nginx/pull/7923 Release v1.0.5 of ingress-nginx
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.7.md:8:* [7806] https://github.com/kubernetes/ingress-nginx/pull/7806 Choice option for internal/external loadbalancer type service
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.7.md:10:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.0.6...helm-chart-4.0.7
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.15.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.15.0.md:7:* [#6087](https://github.com/kubernetes/ingress-nginx/pull/6087) Adding parameter for externalTrafficPolicy in internal controller service spec
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.15.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-2.14.0...ingress-nginx-2.15.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.18.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.18.0.md:7:* [#6688](https://github.com/kubernetes/ingress-nginx/pull/6688) Allow volume-type emptyDir in controller podsecuritypolicy
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.18.0.md:8:* [#6691](https://github.com/kubernetes/ingress-nginx/pull/6691) Improve parsing of helm parameters
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.18.0.md:10:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.17.0...helm-chart-3.18.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.17.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.17.0.md:7:* Update ingress-nginx v0.42.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.17.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.16.1...helm-chart-3.17.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.13.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.13.0.md:7:* [#6544](https://github.com/kubernetes/ingress-nginx/pull/6544) Fix default backend HPA name variable
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.13.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.12.0...ingress-nginx-3.13.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.3.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.3.md:7:* [7707] https://github.com/kubernetes/ingress-nginx/pull/7707 Release v1.0.2 of ingress-nginx
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.3.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.0.2...helm-chart-4.0.3
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.6.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.6.0.md:18:* Deployment/DaemonSet: Label pods using `ingress-nginx.labels`. (#9732)
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.6.0.md:24:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.5.2...helm-chart-4.6.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.20.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.20.1.md:10:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.20.0...helm-chart-3.20.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.9.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.9.md:7:* [6992] https://github.com/kubernetes/ingress-nginx/pull/6992 Add ability to specify labels for all resources
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.9.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.0.7...helm-chart-4.0.9
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.9.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.9.0.md:7:* [#5795](https://github.com/kubernetes/ingress-nginx/pull/5795) Use fully qualified images to avoid cri-o issues
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.9.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-TODO...ingress-nginx-2.9.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.16.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.16.0.md:7:* [#6646](https://github.com/kubernetes/ingress-nginx/pull/6646) Added LoadBalancerIP value for internal service
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.16.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.15.1...helm-chart-3.16.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.10.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.10.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.9.1...helm-chart-4.10.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.11.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.11.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.10.1...ingress-nginx-3.11.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.9.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.9.1.md:10:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.9.0...helm-chart-4.9.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.31.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.31.0.md:7:* [7137] https://github.com/kubernetes/ingress-nginx/pull/7137 Add support for custom probes
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.31.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.30.0...helm-chart-3.31.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.20.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.20.0.md:7:* [#6730](https://github.com/kubernetes/ingress-nginx/pull/6730) Do not create HPA for defaultBackend if not enabled.
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.20.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.19.0...helm-chart-3.20.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.0.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.0.0.md:7:* [#6167](https://github.com/kubernetes/ingress-nginx/pull/6167) Update chart requirements
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.0.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-2.16.0...ingress-nginx-3.0.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.30.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.30.0.md:7:* [#7092](https://github.com/kubernetes/ingress-nginx/pull/7092) Removes the possibility of using localhost in ExternalNames as endpoints
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.30.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.29.0...helm-chart-3.30.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.14.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.14.0.md:7:* [#6469](https://github.com/kubernetes/ingress-nginx/pull/6469) Allow custom service names for controller and backend
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.14.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.13.0...ingress-nginx-3.14.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.22.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.22.0.md:7:* [#6802](https://github.com/kubernetes/ingress-nginx/pull/6802) Add value for configuring a custom Diffie-Hellman parameters file
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.22.0.md:8:* [#6815](https://github.com/kubernetes/ingress-nginx/pull/6815) Allow use of numeric namespaces in helm chart
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.22.0.md:10:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.21.0...helm-chart-3.22.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.7.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.7.1.md:12:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.7.0...helm-chart-4.7.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.9.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.9.0.md:7:* [#6423](https://github.com/kubernetes/ingress-nginx/pull/6423) Add Default backend HPA autoscaling
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.9.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.8.0...ingress-nginx-3.9.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.16.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.16.1.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.16.0...helm-chart-3.16.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:8:* [8810](https://github.com/kubernetes/ingress-nginx/pull/8810) Prepare for v1.3.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:9:* [8808](https://github.com/kubernetes/ingress-nginx/pull/8808) revert arch var name
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:10:* [8805](https://github.com/kubernetes/ingress-nginx/pull/8805) Bump k8s.io/klog/v2 from 2.60.1 to 2.70.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:11:* [8803](https://github.com/kubernetes/ingress-nginx/pull/8803) Update to nginx base with alpine v3.16
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:12:* [8802](https://github.com/kubernetes/ingress-nginx/pull/8802) chore: start v1.3.0 release process
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:13:* [8798](https://github.com/kubernetes/ingress-nginx/pull/8798) Add v1.24.0 to test matrix
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:14:* [8796](https://github.com/kubernetes/ingress-nginx/pull/8796) fix: add MAC_OS variable for static-check
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:15:* [8793](https://github.com/kubernetes/ingress-nginx/pull/8793) changed to alpine-v3.16
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:16:* [8781](https://github.com/kubernetes/ingress-nginx/pull/8781) Bump github.com/stretchr/testify from 1.7.5 to 1.8.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:17:* [8778](https://github.com/kubernetes/ingress-nginx/pull/8778) chore: remove stable.txt from release process
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:18:* [8775](https://github.com/kubernetes/ingress-nginx/pull/8775) Remove stable
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:19:* [8773](https://github.com/kubernetes/ingress-nginx/pull/8773) Bump github/codeql-action from 2.1.14 to 2.1.15
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:20:* [8772](https://github.com/kubernetes/ingress-nginx/pull/8772) Bump ossf/scorecard-action from 1.1.1 to 1.1.2
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:21:* [8771](https://github.com/kubernetes/ingress-nginx/pull/8771) fix bullet md format
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:22:* [8770](https://github.com/kubernetes/ingress-nginx/pull/8770) Add condition for monitoring.coreos.com/v1 API
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:23:* [8769](https://github.com/kubernetes/ingress-nginx/pull/8769) Fix typos and add links to developer guide
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:24:* [8767](https://github.com/kubernetes/ingress-nginx/pull/8767) change v1.2.0 to v1.2.1 in deploy doc URLs
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:25:* [8765](https://github.com/kubernetes/ingress-nginx/pull/8765) Bump github/codeql-action from 1.0.26 to 2.1.14
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:26:* [8752](https://github.com/kubernetes/ingress-nginx/pull/8752) Bump github.com/spf13/cobra from 1.4.0 to 1.5.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:27:* [8751](https://github.com/kubernetes/ingress-nginx/pull/8751) Bump github.com/stretchr/testify from 1.7.2 to 1.7.5
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:28:* [8750](https://github.com/kubernetes/ingress-nginx/pull/8750) added announcement
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:29:* [8740](https://github.com/kubernetes/ingress-nginx/pull/8740) change sha e2etestrunner and echoserver
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:30:* [8738](https://github.com/kubernetes/ingress-nginx/pull/8738) Update docs to make it easier for noobs to follow step by step
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:31:* [8737](https://github.com/kubernetes/ingress-nginx/pull/8737) updated baseimage sha
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:32:* [8736](https://github.com/kubernetes/ingress-nginx/pull/8736) set ld-musl-path
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:33:* [8733](https://github.com/kubernetes/ingress-nginx/pull/8733) feat: migrate leaderelection lock to leases
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:34:* [8726](https://github.com/kubernetes/ingress-nginx/pull/8726) prometheus metric: upstream_latency_seconds
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:35:* [8720](https://github.com/kubernetes/ingress-nginx/pull/8720) Ci pin deps
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:36:* [8719](https://github.com/kubernetes/ingress-nginx/pull/8719) Working OpenTelemetry sidecar (base nginx image)
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:37:* [8714](https://github.com/kubernetes/ingress-nginx/pull/8714) Create Openssf scorecard
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:38:* [8708](https://github.com/kubernetes/ingress-nginx/pull/8708) Bump github.com/prometheus/common from 0.34.0 to 0.35.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:39:* [8703](https://github.com/kubernetes/ingress-nginx/pull/8703) Bump actions/dependency-review-action from 1 to 2
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:40:* [8701](https://github.com/kubernetes/ingress-nginx/pull/8701) Fix several typos
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:41:* [8699](https://github.com/kubernetes/ingress-nginx/pull/8699) fix the gosec test and a make target for it
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:42:* [8698](https://github.com/kubernetes/ingress-nginx/pull/8698) Bump actions/upload-artifact from 2.3.1 to 3.1.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:43:* [8697](https://github.com/kubernetes/ingress-nginx/pull/8697) Bump actions/setup-go from 2.2.0 to 3.2.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:44:* [8695](https://github.com/kubernetes/ingress-nginx/pull/8695) Bump actions/download-artifact from 2 to 3
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:45:* [8694](https://github.com/kubernetes/ingress-nginx/pull/8694) Bump crazy-max/ghaction-docker-buildx from 1.6.2 to 3.3.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.0.md:47:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.1.2...helm-chart-4.2.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.8.3.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.8.3.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.8.2...helm-chart-4.8.3
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.12.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.12.0.md:7:* [#6039](https://github.com/kubernetes/ingress-nginx/pull/6039) Add configurable serviceMonitor metricRelabelling and targetLabels
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.12.0.md:8:* [#6044](https://github.com/kubernetes/ingress-nginx/pull/6044) Fix YAML linting
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.12.0.md:10:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-2.11.3...ingress-nginx-2.12.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.3.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.3.0.md:7:* [#6203](https://github.com/kubernetes/ingress-nginx/pull/6203) Refactor parsing of key values
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.3.0.md:8:* [#6162](https://github.com/kubernetes/ingress-nginx/pull/6162) Add helm chart options to expose metrics service as NodePort
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.3.0.md:9:* [#6180](https://github.com/kubernetes/ingress-nginx/pull/6180) Fix helm chart admissionReviewVersions regression
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.3.0.md:10:* [#6169](https://github.com/kubernetes/ingress-nginx/pull/6169) Fix Typo in example prometheus rules
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.3.0.md:12:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.0.0...ingress-nginx-3.3.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.11.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.11.1.md:7:* [#6505](https://github.com/kubernetes/ingress-nginx/pull/6505) Reorder HPA resource list to work with GitOps tooling
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.11.1.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.11.0...ingress-nginx-3.11.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.7.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.7.0.md:14:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.6.1...helm-chart-4.7.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.16.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.16.0.md:7:* [#6154](https://github.com/kubernetes/ingress-nginx/pull/6154) add `topologySpreadConstraint` to controller
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.16.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-2.15.0...ingress-nginx-2.16.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.14.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.14.0.md:7:* [#6104](https://github.com/kubernetes/ingress-nginx/pull/6104) Misc fixes for nginx-ingress chart for better keel and prometheus-operator integration
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.14.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-2.13.0...ingress-nginx-2.14.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.10.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.10.1.md:11:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.10.0...helm-chart-4.10.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.9.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.9.0.md:13:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.8.3...helm-chart-4.9.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.1.md:8:* [8896](https://github.com/kubernetes/ingress-nginx/pull/8896) updated to new images built today
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.2.1.md:10:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.2.0...helm-chart-4.2.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.10.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.10.1.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.10.0...ingress-nginx-3.10.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.2.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.2.md:7:* [8587](https://github.com/kubernetes/ingress-nginx/pull/8587) Add CAP_SYS_CHROOT to DS/PSP when needed
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.2.md:8:* [8458](https://github.com/kubernetes/ingress-nginx/pull/8458) Add portNamePrefix Helm chart parameter
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.2.md:9:* [8522](https://github.com/kubernetes/ingress-nginx/pull/8522) Add documentation for controller.service.loadBalancerIP in Helm chart
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.1.2.md:11:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.1.0...helm-chart-4.1.2
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.11.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.11.0.md:18:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.10.2...helm-chart-4.11.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.4.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.4.0.md:7:* Adding support for disabling liveness and readiness probes to the Helm chart by @njegosrailic in https://github.com/kubernetes/ingress-nginx/pull/9238
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.4.0.md:8:* add:(admission-webhooks) ability to set securityContext by @ybelMekk in https://github.com/kubernetes/ingress-nginx/pull/9186
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.4.0.md:9:* #7652 - Updated Helm chart to use the fullname for the electionID if not specified. by @FutureMatt in https://github.com/kubernetes/ingress-nginx/pull/9133
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.4.0.md:10:* Rename controller-wehbooks-networkpolicy.yaml. by @Gacko in https://github.com/kubernetes/ingress-nginx/pull/9123
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.4.0.md:12:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.3.0...helm-chart-4.4.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.23.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.23.0.md:7:* Update ingress-nginx v0.44.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.23.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.22.0...helm-chart-3.23.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.21.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.21.0.md:7:* [#6783](https://github.com/kubernetes/ingress-nginx/pull/6783) Add custom annotations to ScaledObject
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.21.0.md:8:* [#6761](https://github.com/kubernetes/ingress-nginx/pull/6761) Adding quotes in the serviceAccount name in Helm values
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.21.0.md:9:* [#6767](https://github.com/kubernetes/ingress-nginx/pull/6767) Remove ClusterRole when scope option is enabled
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.21.0.md:10:* [#6785](https://github.com/kubernetes/ingress-nginx/pull/6785) Update kube-webhook-certgen image to v1.5.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.21.0.md:12:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.20.1...helm-chart-3.21.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.27.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.27.0.md:7:* Update ingress-nginx v0.45.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.27.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.26.0...helm-chart-3.27.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.6.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.6.0.md:7:* [#6305](https://github.com/kubernetes/ingress-nginx/pull/6305) Add default linux nodeSelector
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.6.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.5.1...ingress-nginx-3.6.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.11.3.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.11.3.md:7:* [#6038](https://github.com/kubernetes/ingress-nginx/pull/6038) Bump chart version PATCH
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.11.3.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-2.11.2...ingress-nginx-2.11.3
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.11.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.11.1.md:7:* [#5900](https://github.com/kubernetes/ingress-nginx/pull/5900) Release helm chart for v0.34.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.11.1.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-2.11.0...ingress-nginx-2.11.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.25.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.25.0.md:7:* [#6957](https://github.com/kubernetes/ingress-nginx/pull/6957) Add ability to specify automountServiceAccountToken
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.25.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.24.0...helm-chart-3.25.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.15.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.15.0.md:7:* [#6586](https://github.com/kubernetes/ingress-nginx/pull/6586) Fix 'maxmindLicenseKey' location in values.yaml
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.15.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.14.0...ingress-nginx-3.15.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.12.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.12.1.md:7:* [#6075](https://github.com/kubernetes/ingress-nginx/pull/6075) Sync helm chart affinity examples
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.12.1.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-2.12.0...ingress-nginx-2.12.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.7.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.7.0.md:7:* [#6316](https://github.com/kubernetes/ingress-nginx/pull/6316) Numerals in podAnnotations in quotes [#6315](https://github.com/kubernetes/ingress-nginx/issues/6315)
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.7.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.6.0...ingress-nginx-3.7.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.28.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.28.0.md:7:* [#6900](https://github.com/kubernetes/ingress-nginx/pull/6900) Support existing PSPs
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.28.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.27.0...helm-chart-3.28.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.33.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.33.0.md:7:* [7164] https://github.com/kubernetes/ingress-nginx/pull/7164 Update nginx to v1.20.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.33.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.32.0...helm-chart-3.33.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:7:* [8120] https://github.com/kubernetes/ingress-nginx/pull/8120    Update go in runner and release v1.1.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:8:* [8119] https://github.com/kubernetes/ingress-nginx/pull/8119    Update to go v1.17.6
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:9:* [8118] https://github.com/kubernetes/ingress-nginx/pull/8118    Remove deprecated libraries, update other libs
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:10:* [8117] https://github.com/kubernetes/ingress-nginx/pull/8117    Fix codegen errors
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:11:* [8115] https://github.com/kubernetes/ingress-nginx/pull/8115    chart/ghaction: set the correct permission to have access to push a release
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:12:* [8098] https://github.com/kubernetes/ingress-nginx/pull/8098    generating SHA for CA only certs in backend_ssl.go + comparison of P…
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:13:* [8088] https://github.com/kubernetes/ingress-nginx/pull/8088    Fix Edit this page link to use main branch
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:14:* [8072] https://github.com/kubernetes/ingress-nginx/pull/8072    Expose GeoIP2 Continent code as variable
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:15:* [8061] https://github.com/kubernetes/ingress-nginx/pull/8061    docs(charts): using helm-docs for chart
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:16:* [8058] https://github.com/kubernetes/ingress-nginx/pull/8058    Bump github.com/spf13/cobra from 1.2.1 to 1.3.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:17:* [8054] https://github.com/kubernetes/ingress-nginx/pull/8054    Bump google.golang.org/grpc from 1.41.0 to 1.43.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:18:* [8051] https://github.com/kubernetes/ingress-nginx/pull/8051    align bug report with feature request regarding kind documentation
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:19:* [8046] https://github.com/kubernetes/ingress-nginx/pull/8046    Report expired certificates (#8045)
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:20:* [8044] https://github.com/kubernetes/ingress-nginx/pull/8044    remove G109 check till gosec resolves issues
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:21:* [8042] https://github.com/kubernetes/ingress-nginx/pull/8042    docs_multiple_instances_one_cluster_ticket_7543
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:22:* [8041] https://github.com/kubernetes/ingress-nginx/pull/8041    docs: fix typo'd executable name
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:23:* [8035] https://github.com/kubernetes/ingress-nginx/pull/8035    Comment busy owners
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:24:* [8029] https://github.com/kubernetes/ingress-nginx/pull/8029    Add stream-snippet as a ConfigMap and Annotation option
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:25:* [8023] https://github.com/kubernetes/ingress-nginx/pull/8023    fix nginx compilation flags
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:26:* [8021] https://github.com/kubernetes/ingress-nginx/pull/8021    Disable default modsecurity_rules_file if modsecurity-snippet is specified
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:27:* [8019] https://github.com/kubernetes/ingress-nginx/pull/8019    Revise main documentation page
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:28:* [8018] https://github.com/kubernetes/ingress-nginx/pull/8018    Preserve order of plugin invocation
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:29:* [8015] https://github.com/kubernetes/ingress-nginx/pull/8015    Add newline indenting to admission webhook annotations
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:30:* [8014] https://github.com/kubernetes/ingress-nginx/pull/8014    Add link to example error page manifest in docs
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:31:* [8009] https://github.com/kubernetes/ingress-nginx/pull/8009    Fix spelling in documentation and top-level files
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:32:* [8008] https://github.com/kubernetes/ingress-nginx/pull/8008    Add relabelings in controller-servicemonitor.yaml
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:33:* [8003] https://github.com/kubernetes/ingress-nginx/pull/8003    Minor improvements (formatting, consistency) in install guide
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:34:* [8001] https://github.com/kubernetes/ingress-nginx/pull/8001    fix: go-grpc Dockerfile
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:35:* [7999] https://github.com/kubernetes/ingress-nginx/pull/7999    images: use k8s-staging-test-infra/gcb-docker-gcloud
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:36:* [7996] https://github.com/kubernetes/ingress-nginx/pull/7996    doc: improvement
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:37:* [7983] https://github.com/kubernetes/ingress-nginx/pull/7983    Fix a couple of misspellings in the annotations documentation.
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:38:* [7979] https://github.com/kubernetes/ingress-nginx/pull/7979    allow set annotations for admission Jobs
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:39:* [7977] https://github.com/kubernetes/ingress-nginx/pull/7977    Add ssl_reject_handshake to default server
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:40:* [7975] https://github.com/kubernetes/ingress-nginx/pull/7975    add legacy version update v0.50.0 to main changelog
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:41:* [7972] https://github.com/kubernetes/ingress-nginx/pull/7972    updated service upstream definition
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.15.md:43:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.0.14...helm-chart-4.0.15
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.8.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.8.1.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.8.0...helm-chart-4.8.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.34.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.34.0.md:7:* [7256] https://github.com/kubernetes/ingress-nginx/pull/7256 Add namespace field in the namespace scoped resource templates
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.34.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.33.0...helm-chart-3.34.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.12.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.12.0.md:7:* [#6514](https://github.com/kubernetes/ingress-nginx/pull/6514) Remove helm2 support and update docs
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.12.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.11.1...ingress-nginx-3.12.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.11.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.11.1.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.11.0...helm-chart-4.11.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart.md.gotmpl:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart.md.gotmpl:11:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-{{ .PreviousHelmChartVersion }}...helm-chart-{{ .NewHelmChartVersion }}
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.11.3.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.11.3.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.11.2...helm-chart-4.11.3
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.13.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.13.0.md:7:* [#6093](https://github.com/kubernetes/ingress-nginx/pull/6093) Release v0.35.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.13.0.md:8:* [#6080](https://github.com/kubernetes/ingress-nginx/pull/6080) Switch images to k8s.gcr.io after Vanity Domain Flip
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.13.0.md:10:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-2.12.1...ingress-nginx-2.13.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.3.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.3.1.md:7:* [#6259](https://github.com/kubernetes/ingress-nginx/pull/6259) Release helm chart
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.3.1.md:8:* [#6258](https://github.com/kubernetes/ingress-nginx/pull/6258) Fix chart markdown link
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.3.1.md:9:* [#6253](https://github.com/kubernetes/ingress-nginx/pull/6253) Release v0.40.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.3.1.md:10:* [#6233](https://github.com/kubernetes/ingress-nginx/pull/6233) Add admission controller e2e test
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.3.1.md:12:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.3.0...ingress-nginx-3.3.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.29.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.29.0.md:7:* [#6945](https://github.com/kubernetes/ingress-nginx/pull/7020) Add option to specify job label for ServiceMonitor
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.29.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.28.0...helm-chart-3.29.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.5.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.5.0.md:7:* [#6260](https://github.com/kubernetes/ingress-nginx/pull/6260) Allow Helm Chart to customize admission webhook's annotations, timeoutSeconds, namespaceSelector, objectSelector and cert files locations
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.5.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.4.0...ingress-nginx-3.5.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.6.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.6.1.md:11:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.6.0...helm-chart-4.6.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.8.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.8.0.md:13:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.7.2...helm-chart-4.8.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.10.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.10.0.md:7:* [#5843](https://github.com/kubernetes/ingress-nginx/pull/5843) Update jettech/kube-webhook-certgen image
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.10.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-2.9.1...ingress-nginx-2.10.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.5.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.5.md:7:* [7740] https://github.com/kubernetes/ingress-nginx/pull/7740 Release v1.0.3 of ingress-nginx
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.5.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.0.3...helm-chart-4.0.5
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.8.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.8.0.md:7:* [#6395](https://github.com/kubernetes/ingress-nginx/pull/6395) Update jettech/kube-webhook-certgen image
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.8.0.md:8:* [#6377](https://github.com/kubernetes/ingress-nginx/pull/6377) Added loadBalancerSourceRanges for internal lbs
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.8.0.md:9:* [#6356](https://github.com/kubernetes/ingress-nginx/pull/6356) Add securitycontext settings on defaultbackend
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.8.0.md:10:* [#6401](https://github.com/kubernetes/ingress-nginx/pull/6401) Fix controller service annotations
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.8.0.md:11:* [#6403](https://github.com/kubernetes/ingress-nginx/pull/6403) Initial helm chart changelog
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.8.0.md:13:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.7.1...ingress-nginx-3.8.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.8.0-beta.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.8.0-beta.0.md:13:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.7.2...helm-chart-4.8.0-beta.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.5.1.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.5.1.md:7:* [#6299](https://github.com/kubernetes/ingress-nginx/pull/6299) Fix helm chart release
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.5.1.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.5.0...ingress-nginx-3.5.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.11.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.11.0.md:7:* [#5879](https://github.com/kubernetes/ingress-nginx/pull/5879) Update helm chart for v0.34.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.11.0.md:8:* [#5671](https://github.com/kubernetes/ingress-nginx/pull/5671) Make liveness probe more fault tolerant than readiness probe
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.11.0.md:10:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-2.10.0...ingress-nginx-2.11.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:7:* [8291](https://github.com/kubernetes/ingress-nginx/pull/8291) remove git tag env from cloud build
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:8:* [8286](https://github.com/kubernetes/ingress-nginx/pull/8286) Fix OpenTelemetry sidecar image build
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:9:* [8277](https://github.com/kubernetes/ingress-nginx/pull/8277) Add OpenSSF Best practices badge
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:10:* [8273](https://github.com/kubernetes/ingress-nginx/pull/8273) Issue#8241
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:11:* [8267](https://github.com/kubernetes/ingress-nginx/pull/8267) Add fsGroup value to admission-webhooks/job-patch charts
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:12:* [8262](https://github.com/kubernetes/ingress-nginx/pull/8262) Updated confusing error
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:13:* [8256](https://github.com/kubernetes/ingress-nginx/pull/8256) fix: deny locations with invalid auth-url annotation
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:14:* [8253](https://github.com/kubernetes/ingress-nginx/pull/8253) Add a certificate info metric
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:15:* [8236](https://github.com/kubernetes/ingress-nginx/pull/8236) webhook: remove useless code.
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:16:* [8227](https://github.com/kubernetes/ingress-nginx/pull/8227) Update libraries in webhook image
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:17:* [8225](https://github.com/kubernetes/ingress-nginx/pull/8225) fix inconsistent-label-cardinality for prometheus metrics: nginx_ingress_controller_requests
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:18:* [8221](https://github.com/kubernetes/ingress-nginx/pull/8221) Do not validate ingresses with unknown ingress class in admission webhook endpoint
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:19:* [8210](https://github.com/kubernetes/ingress-nginx/pull/8210) Bump github.com/prometheus/client_golang from 1.11.0 to 1.12.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:20:* [8209](https://github.com/kubernetes/ingress-nginx/pull/8209) Bump google.golang.org/grpc from 1.43.0 to 1.44.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:21:* [8204](https://github.com/kubernetes/ingress-nginx/pull/8204) Add Artifact Hub lint
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:22:* [8203](https://github.com/kubernetes/ingress-nginx/pull/8203) Fix Indentation of example and link to cert-manager tutorial
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:23:* [8201](https://github.com/kubernetes/ingress-nginx/pull/8201) feat(metrics): add path and method labels to requests countera
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:24:* [8199](https://github.com/kubernetes/ingress-nginx/pull/8199) use functional options to reduce number of methods creating an EchoDeployment
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:25:* [8196](https://github.com/kubernetes/ingress-nginx/pull/8196) docs: fix inconsistent controller annotation
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:26:* [8191](https://github.com/kubernetes/ingress-nginx/pull/8191) Using Go install for misspell
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:27:* [8186](https://github.com/kubernetes/ingress-nginx/pull/8186) prometheus+grafana using servicemonitor
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:28:* [8185](https://github.com/kubernetes/ingress-nginx/pull/8185) Append elements on match, instead of removing for cors-annotations
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:29:* [8179](https://github.com/kubernetes/ingress-nginx/pull/8179) Bump github.com/opencontainers/runc from 1.0.3 to 1.1.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:30:* [8173](https://github.com/kubernetes/ingress-nginx/pull/8173) Adding annotations to the controller service account
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:31:* [8163](https://github.com/kubernetes/ingress-nginx/pull/8163) Update the $req_id placeholder description
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:32:* [8162](https://github.com/kubernetes/ingress-nginx/pull/8162) Versioned static manifests
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:33:* [8159](https://github.com/kubernetes/ingress-nginx/pull/8159) Adding some geoip variables and default values
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:34:* [8155](https://github.com/kubernetes/ingress-nginx/pull/8155) #7271 feat: avoid-pdb-creation-when-default-backend-disabled-and-replicas-gt-1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:35:* [8151](https://github.com/kubernetes/ingress-nginx/pull/8151) Automatically generate helm docs
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:36:* [8143](https://github.com/kubernetes/ingress-nginx/pull/8143) Allow to configure delay before controller exits
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:37:* [8136](https://github.com/kubernetes/ingress-nginx/pull/8136) add ingressClass option to helm chart - back compatibility with ingress.class annotations
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:38:* [8126](https://github.com/kubernetes/ingress-nginx/pull/8126) Example for JWT
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.18.md:40:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.0.15...helm-chart-4.0.18
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.3.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.3.0.md:9:* [8890](https://github.com/kubernetes/ingress-nginx/pull/8890) migrate to endpointslices
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.3.0.md:10:* [9059](https://github.com/kubernetes/ingress-nginx/pull/9059) kubewebhookcertgen sha change after go1191
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.3.0.md:11:* [9046](https://github.com/kubernetes/ingress-nginx/pull/9046) Parameterize metrics port name
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.3.0.md:12:* [9104](https://github.com/kubernetes/ingress-nginx/pull/9104) Fix yaml formatting error with multiple annotations
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.3.0.md:14:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.2.1...helm-chart-4.3.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.4.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.4.0.md:7:* [#6268](https://github.com/kubernetes/ingress-nginx/pull/6268) Update to 0.40.2 in helm chart #6288
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.4.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-3.3.1...ingress-nginx-3.4.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.13.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.13.md:7:* [8008] https://github.com/kubernetes/ingress-nginx/pull/8008 Add relabelings in controller-servicemonitor.yaml
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.13.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.0.12...helm-chart-4.0.13
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.11.2.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.11.2.md:7:* [#5951](https://github.com/kubernetes/ingress-nginx/pull/5951) Bump chart patch version
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-2.11.2.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/ingress-nginx-2.11.1...ingress-nginx-2.11.2
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.6.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.6.md:7:* [7804] https://github.com/kubernetes/ingress-nginx/pull/7804 Release v1.0.4 of ingress-nginx
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.6.md:8:* [7651] https://github.com/kubernetes/ingress-nginx/pull/7651 Support ipFamilyPolicy and ipFamilies fields in Helm Chart
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.6.md:9:* [7798] https://github.com/kubernetes/ingress-nginx/pull/7798 Exoscale: use HTTP Healthcheck mode
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.6.md:10:* [7793] https://github.com/kubernetes/ingress-nginx/pull/7793 Update kube-webhook-certgen to v1.1.1
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.6.md:12:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.0.5...helm-chart-4.0.6
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.14.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.14.md:7:* [8061] https://github.com/kubernetes/ingress-nginx/pull/8061 Using helm-docs to populate values table in README.md
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.0.14.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.0.13...helm-chart-4.0.14
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.26.0.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.26.0.md:7:* [#6979](https://github.com/kubernetes/ingress-nginx/pull/6979) Changed servicePort value for metrics
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-3.26.0.md:9:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-3.25.0...helm-chart-3.26.0
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.10.2.md:3:This file documents all notable changes to [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Helm Chart. The release numbering uses [semantic versioning](http://semver.org).
+./flux-system/third_party/ingress-nginx/changelog/helm-chart-4.10.2.md:18:**Full Changelog**: https://github.com/kubernetes/ingress-nginx/compare/helm-chart-4.10.1...helm-chart-4.10.2
+./flux-system/third_party/ingress-nginx/OWNERS:4:- ingress-nginx-helm-maintainers
+./flux-system/third_party/ingress-nginx/OWNERS:7:- ingress-nginx-helm-reviewers
+./flux-system/sources/helmrepository-ingress-nginx.yaml:4:  name: ingress-nginx
+./flux-system/sources/helmrepository-ingress-nginx.yaml:7:  url: https://kubernetes.github.io/ingress-nginx
+./flux-system/sources/kustomization.yaml:6:  - ./helmrepository-ingress-nginx.yaml
+./infra/ingress-nginx/base/helmrelease.yaml:4:  name: ingress-nginx
+./infra/ingress-nginx/base/helmrelease.yaml:5:  namespace: ingress-nginx
+./infra/ingress-nginx/base/helmrelease.yaml:10:      chart: ingress-nginx
+./infra/ingress-nginx/base/helmrelease.yaml:14:        name: ingress-nginx
+./infra/ingress-nginx/base/helmrepository.yaml:4:  name: ingress-nginx
+./infra/ingress-nginx/base/helmrepository.yaml:8:  url: https://kubernetes.github.io/ingress-nginx
+./infra/observability/dashboard/Ingress_5xx.yaml:15:      "tags": ["ingress-nginx","victorialogs"],
+./infra/observability/dashboard/Ingress_5xx.yaml:23:            "query": "label_values({namespace=\"ingress-nginx\", container=\"controller\"}, pod)",
+./infra/observability/dashboard/Ingress_5xx.yaml:37:            { "expr": "sum(count_over_time({namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \" [15m]))" }
+./infra/observability/dashboard/Ingress_5xx.yaml:46:            { "expr": "sum by (pod) (count_over_time({namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \" [5m]))" }
+./infra/observability/dashboard/Ingress_5xx.yaml:55:            { "expr": "topk(20, sum by (line) (count_over_time({namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \" [10m])))" }
+./infra/observability/dashboard/Ingress_5xx.yaml:64:            { "expr": "{namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \"" }
+./infra/namespaces/policies/kyverno/nudger-security-guardrails.yaml:39:              namespaces: ["longhorn-system","ingress-nginx","logging","kyverno"]
+./infra/namespaces/policies/kyverno/nudger-security-guardrails.yaml:66:              namespaces: ["longhorn-system","ingress-nginx","logging","kyverno"]
+./infra/namespaces/policies/kyverno/nudger-security-guardrails.yaml:94:              namespaces: ["longhorn-system","ingress-nginx","logging","kyverno"]
+./infra/sources/helmrepository-ingress-nginx.yaml:4:  name: ingress-nginx
+./infra/sources/helmrepository-ingress-nginx.yaml:8:  url: https://kubernetes.github.io/ingress-nginx
+./clusters/lab/apps.whoami.kustomization.yaml:16:    - name: ingress-nginx
+./clusters/lab/ingress-nginx.kustomization.yaml:4:  name: ingress-nginx
+./clusters/lab/ingress-nginx.kustomization.yaml:14:  path: apps/ingress-nginx/overlays/lab
+./clusters/lab/ingress-nginx.kustomization.yaml:21:        name: ingress-nginx
+./clusters/lab/ingress-nginx.kustomization.yaml:22:        namespace: ingress-nginx
+./clusters/lab/ingress-nginx.kustomization.yaml:27:          name: ingress-nginx
+./clusters/lab/ingress-nginx.kustomization.yaml:28:          namespace: ingress-nginx
+./clusters/lab/ingress-nginx.kustomization.yaml:52:      name: ingress-nginx-controller
+./clusters/lab/ingress-nginx.kustomization.yaml:53:      namespace: ingress-nginx
+./clusters/lab/kustomization.yaml:5:  - ingress-nginx.kustomization.yaml
+./clusters/lab/ingress-nginx-values-patch.yaml:4:  name: ingress-nginx
+./clusters/lab/ingress-nginx-values-patch.yaml:5:  namespace: ingress-nginx

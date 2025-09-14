@@ -15,14 +15,13 @@ spec:
         namespace: flux-system
   values:
     controller:
-      controller:
-        kind: DaemonSet
-        hostNetwork: true
-        dnsPolicy: ClusterFirstWithHostNet
-        daemonset:
-          useHostPort: true
-          hostPorts:
-            http: 80
-            https: 443
-        service:
-          type: ClusterIP
+      kind: DaemonSet
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      daemonset:
+        useHostPort: true
+        hostPorts:
+          http: 80
+          https: 443
+      service:
+        type: ClusterIP
