@@ -54,15 +54,6 @@ spec:
       existingSecret: grafana-admin
       userKey: admin-user
       passwordKey: admin-password
-    env:
-      - name: TZ
-        value: "Europe/Paris"
-      - name: GF_INSTALL_PLUGINS
-        value: "victoriametrics-logs-datasource@0.4.0"
-      - name: GF_SERVER_ROOT_URL
-        value: "https://grafana.nudger.logo-solutions.fr"
-      - name: GF_SECURITY_COOKIE_SAMESITE
-        value: "lax"
     # ⚠️ En prod, remplace par un Secret existant (grafana-admin) ou SOPS :
     # admin:
     #   existingSecret: grafana-admin
@@ -147,6 +138,10 @@ spec:
       analytics:
         reporting_enabled: false
         check_for_updates: true
+      plugins:
+        - victoriametrics-logs-datasource@0.4.0
+      default:
+        timezone: Europe/Paris
       users:
         default_theme: light
         viewers_can_edit: false
