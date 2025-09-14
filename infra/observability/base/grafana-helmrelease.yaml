@@ -22,7 +22,7 @@ spec:
           type: victorialogs-datasource
           access: proxy
           url: http://victorialogs-victoria-logs-single-server.logging.svc.cluster.local:9428
-        isDefault: false
+      isDefault: false
     persistence:
       enabled: false
     service:
