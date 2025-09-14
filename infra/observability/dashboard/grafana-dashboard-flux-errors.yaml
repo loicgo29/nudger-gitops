@@ -35,7 +35,7 @@ data:
           "datasource": {"type":"loki","uid":"VictoriaLogs"},
           "options": {"reduceOptions":{"calcs":["lastNotNull"]}},
           "targets": [
-            { "expr": "error OR failed OR timeout _time:1h | stats count() as errors" }
+            { "expr": "{namespace=\"flux-system\"} (error OR failed OR timeout) _time:1h | stats count() as errors" }
           ]
         },
         {
