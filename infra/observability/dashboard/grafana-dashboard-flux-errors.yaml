@@ -8,20 +8,20 @@ metadata:
 data:
   flux-errors.json: |
     {
-      "title": "Flux — Errors",
-      "uid": "flux-errors",
-      "tags": ["flux","victorialogs"],
-      "schemaVersion": 39,
-      "version": 1,
+      "title": "Flux — Errors (last hour)",
       "timezone": "browser",
+      "schemaVersion": 39,
+      "version": 2,
+      "tags": ["flux", "victorialogs"],
       "time": { "from": "now-1h", "to": "now" },
       "templating": {
         "list": [
           {
             "name": "controller",
             "type": "query",
-            "datasource": {"type":"loki","uid":"victorialogs"},
+            "datasource": {"type":"loki","uid":"VictoriaLogs"},
             "query": "label_values({namespace=\"flux-system\"}, container)",
+            "refresh": 1,
             "includeAll": true,
             "multi": true
           }
@@ -32,7 +32,8 @@ data:
           "type": "stat",
           "title": "Flux error lines (last 1h)",
           "gridPos": {"x":0,"y":0,"w":6,"h":6},
-          "datasource": {"type":"loki","uid":"victorialogs"},
+          "datasource": {"type":"loki","uid":"VictoriaLogs"},
+          "options": {"reduceOptions":{"calcs":["sum"]}},
           "targets": [
             { "expr": "sum(count_over_time({namespace=\"flux-system\"} |~ \"(?i)error|failed|timeout\" [1h]))" }
           ]
@@ -41,16 +42,26 @@ data:
           "type": "timeseries",
           "title": "Errors by controller (5m rate)",
           "gridPos": {"x":6,"y":0,"w":18,"h":6},
-          "datasource": {"type":"loki","uid":"victorialogs"},
+          "datasource": {"type":"loki","uid":"VictoriaLogs"},
           "targets": [
             { "expr": "sum by (container) (count_over_time({namespace=\"flux-system\", container=~\"$controller\"} |~ \"(?i)error|failed|timeout\" [5m]))" }
           ]
         },
         {
+          "type": "table",
+          "title": "Top error messages",
+          "gridPos": {"x":0,"y":6,"w":12,"h":10},
+          "datasource": {"type":"loki","uid":"VictoriaLogs"},
+          "targets": [
+            { "expr": "topk(20, sum by (msg) (count_over_time(({namespace=\"flux-system\", container=~\"$controller\"} |~ \"(?i)error|failed|timeout\" | line_format \"{{ . | replace \\\"\\\\n\\\" \\\" \\\" }}\")[10m])))", "refId":"A"}
+          ],
+          "options": { "showHeader": true }
+        },
+        {
           "type": "logs",
           "title": "Raw error logs",
-          "gridPos": {"x":0,"y":6,"w":24,"h":10},
-          "datasource": {"type":"loki","uid":"victorialogs"},
+          "gridPos": {"x":12,"y":6,"w":12,"h":10},
+          "datasource": {"type":"loki","uid":"VictoriaLogs"},
           "targets": [
             { "expr": "{namespace=\"flux-system\", container=~\"$controller\"} |~ \"(?i)error|failed|timeout\"" }
           ]
