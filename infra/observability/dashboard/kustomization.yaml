@@ -1,7 +1,4 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - flux_errors.yaml
-  - App_exceptions.yaml
-  - Ingress_5xx.yaml
-  - policy-reporter-dashboard.yaml
+  - victoria1.yaml

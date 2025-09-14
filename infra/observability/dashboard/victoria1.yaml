@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-victorialogs-single
+  namespace: observability
+  labels:
+    grafana_dashboard: "1"
+data:
+  victorialogs-single-node.json: |
+    {
+      "id": null,
+      "uid": "victorialogs-single",
+      "title": "VictoriaLogs — Single Node",
+      "tags": ["victorialogs","logs"],
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "30s",
+      "panels": [
+        {
+          "type": "stat",
+          "title": "Ingested log lines / s",
+          "gridPos": {"x":0,"y":0,"w":8,"h":4},
+          "datasource": {"type": "victoriametrics-logs-datasource", "uid": "victorialogs"},
+          "targets": [
+            {
+              "expr": "rate(vl_log_ingested_lines_total[1m])",
+              "legendFormat": "lines/s"
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Ingested log bytes / s",
+          "gridPos": {"x":8,"y":0,"w":8,"h":4},
+          "datasource": {"type": "victoriametrics-logs-datasource", "uid": "victorialogs"},
+          "targets": [
+            {
+              "expr": "rate(vl_log_ingested_bytes_total[1m])",
+              "legendFormat": "bytes/s"
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Active tenants",
+          "gridPos": {"x":16,"y":0,"w":8,"h":4},
+          "datasource": {"type": "victoriametrics-logs-datasource", "uid": "victorialogs"},
+          "targets": [
+            {
+              "expr": "vl_active_tenants",
+              "legendFormat": "tenants"
+            }
+          ]
+        },
+        {
+          "type": "graph",
+          "title": "Query duration (p99)",
+          "gridPos": {"x":0,"y":4,"w":24,"h":6},
+          "datasource": {"type": "victoriametrics-logs-datasource", "uid": "victorialogs"},
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.99, sum(rate(vl_query_duration_seconds_bucket[5m])) by (le))",
+              "legendFormat": "p99"
+            }
+          ]
+        },
+        {
+          "type": "graph",
+          "title": "Query rate",
+          "gridPos": {"x":0,"y":10,"w":24,"h":6},
+          "datasource": {"type": "victoriametrics-logs-datasource", "uid": "victorialogs"},
+          "targets": [
+            {
+              "expr": "rate(vl_queries_total[1m])",
+              "legendFormat": "queries/s"
+            }
+          ]
+        }
+      ]
+    }
