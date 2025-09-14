@@ -1,55 +1,56 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-dashboard-ingress-5xx
+  name: grafana-dashboard-raw-logs
   namespace: observability
   labels:
     grafana_dashboard: "1"
 data:
-  ingress-5xx.json: |
+  raw-logs.json: |
     {
-      "title": "Ingress — 5xx Errors",
-      "tags": ["victorialogs","ingress"],
+      "title": "Raw Logs Explorer",
+      "tags": ["victorialogs"],
       "timezone": "browser",
       "schemaVersion": 41,
-      "version": 3,
-      "time": { "from": "now-30m", "to": "now" },
+      "version": 1,
+      "time": { "from": "now-15m", "to": "now" },
+      "templating": {
+        "list": [
+          {
+            "name": "namespace",
+            "type": "query",
+            "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
+            "query": {
+              "field": "kubernetes.pod_namespace",
+              "limit": 100
+            },
+            "refresh": 2,
+            "includeAll": true
+          },
+          {
+            "name": "container",
+            "type": "query",
+            "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
+            "query": {
+              "field": "kubernetes.container_name",
+              "limit": 100,
+              "query": "{kubernetes.pod_namespace=\"$namespace\"}"
+            },
+            "refresh": 2,
+            "includeAll": true
+          }
+        ]
+      },
       "panels": [
         {
-          "type": "stat",
-          "title": "5xx in last 30m",
-          "gridPos": {"x":0,"y":0,"w":6,"h":6},
+          "type": "logs",
+          "title": "Raw logs",
+          "gridPos": {"x":0,"y":0,"w":24,"h":15},
           "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
           "targets": [
             {
               "refId": "A",
-              "expr": "{namespace=\"ingress-nginx\", app_kubernetes_io_name=\"ingress-nginx\"} status>=500 and status<600 _time:30m | stats count() as errors",
-              "queryType": "statsRange"
-            }
-          ]
-        },
-        {
-          "type": "timeseries",
-          "title": "5xx errors over time",
-          "gridPos": {"x":6,"y":0,"w":18,"h":6},
-          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
-          "targets": [
-            {
-              "refId": "B",
-              "expr": "{namespace=\"ingress-nginx\", app_kubernetes_io_name=\"ingress-nginx\"} status>=500 and status<600 | stats by (_time:$__interval) count()",
-              "queryType": "statsRange"
-            }
-          ]
-        },
-        {
-          "type": "logs",
-          "title": "Raw ingress 5xx logs",
-          "gridPos": {"x":0,"y":6,"w":24,"h":10},
-          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
-          "targets": [
-            {
-              "refId": "C",
-              "expr": "{namespace=\"ingress-nginx\", app_kubernetes_io_name=\"ingress-nginx\"} status>=500 and status<600",
+              "expr": "{kubernetes.pod_namespace=\"$namespace\", kubernetes.container_name=~\"$container\"}",
               "queryType": "range"
             }
           ]
