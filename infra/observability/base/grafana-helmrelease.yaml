@@ -14,15 +14,6 @@ spec:
         name: grafana
         namespace: flux-system
   values:
-    controller:
-      kind: DaemonSet
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
-      daemonset:
-        useHostPort: true
-        hostPorts:
-          http: 80
-          https: 443
     persistence:
       enabled: false
     service:
