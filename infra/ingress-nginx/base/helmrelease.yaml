@@ -18,6 +18,8 @@ spec:
       kind: DaemonSet
       config:
         enable-access-log: "true"
+        access-log-format: >-
+          $remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       daemonset:
