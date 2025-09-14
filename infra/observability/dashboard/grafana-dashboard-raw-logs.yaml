@@ -9,40 +9,50 @@ data:
   raw-logs.json: |
     {
       "title": "Raw Logs Explorer",
-      "uid": "raw-logs",
-      "tags": ["logs","victorialogs"],
-      "schemaVersion": 39,
-      "version": 1,
+      "tags": ["victorialogs"],
       "timezone": "browser",
-      "time": { "from": "now-1h", "to": "now" },
+      "schemaVersion": 41,
+      "version": 1,
+      "time": { "from": "now-15m", "to": "now" },
       "templating": {
         "list": [
           {
-            "name": "ns",
+            "name": "namespace",
             "type": "query",
-            "datasource": {"type":"loki","uid":"victorialogs"},
-            "query": "label_values({namespace!=\"\"}, namespace)",
-            "includeAll": true,
-            "multi": true
+            "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
+            "query": {
+              "field": "kubernetes.pod_namespace",
+              "limit": 100
+            },
+            "refresh": 2,
+            "includeAll": true
           },
           {
-            "name": "pod",
+            "name": "container",
             "type": "query",
-            "datasource": {"type":"loki","uid":"victorialogs"},
-            "query": "label_values({namespace=~\"$ns\"}, pod)",
-            "includeAll": true,
-            "multi": true
+            "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
+            "query": {
+              "field": "kubernetes.container_name",
+              "limit": 100,
+              "query": "{kubernetes.pod_namespace=\"$namespace\"}"
+            },
+            "refresh": 2,
+            "includeAll": true
           }
         ]
       },
       "panels": [
         {
           "type": "logs",
-          "title": "Filtered logs",
-          "gridPos": {"x":0,"y":0,"w":24,"h":20},
-          "datasource": {"type":"loki","uid":"victorialogs"},
+          "title": "Raw logs",
+          "gridPos": {"x":0,"y":0,"w":24,"h":15},
+          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
           "targets": [
-            { "expr": "{namespace=~\"$ns\", pod=~\"$pod\"}" }
+            {
+              "refId": "A",
+              "expr": "{kubernetes.pod_namespace=\"$namespace\", kubernetes.container_name=~\"$container\"}",
+              "queryType": "range"
+            }
           ]
         }
       ]

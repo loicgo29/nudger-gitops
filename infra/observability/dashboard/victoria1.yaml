@@ -11,21 +11,22 @@ data:
       "id": null,
       "uid": "victorialogs-single",
       "title": "VictoriaLogs — Single Node",
-      "tags": ["victorialogs","logs"],
+      "tags": ["victorialogs","metrics"],
       "timezone": "browser",
       "schemaVersion": 39,
-      "version": 1,
+      "version": 2,
       "refresh": "30s",
       "panels": [
         {
           "type": "stat",
           "title": "Ingested log lines / s",
           "gridPos": {"x":0,"y":0,"w":8,"h":4},
-          "datasource": {"type": "victoriametrics-logs-datasource", "uid": "victorialogs"},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
           "targets": [
             {
               "expr": "rate(vl_log_ingested_lines_total[1m])",
-              "legendFormat": "lines/s"
+              "legendFormat": "lines/s",
+              "refId": "A"
             }
           ]
         },
@@ -33,11 +34,12 @@ data:
           "type": "stat",
           "title": "Ingested log bytes / s",
           "gridPos": {"x":8,"y":0,"w":8,"h":4},
-          "datasource": {"type": "victoriametrics-logs-datasource", "uid": "victorialogs"},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
           "targets": [
             {
               "expr": "rate(vl_log_ingested_bytes_total[1m])",
-              "legendFormat": "bytes/s"
+              "legendFormat": "bytes/s",
+              "refId": "B"
             }
           ]
         },
@@ -45,35 +47,38 @@ data:
           "type": "stat",
           "title": "Active tenants",
           "gridPos": {"x":16,"y":0,"w":8,"h":4},
-          "datasource": {"type": "victoriametrics-logs-datasource", "uid": "victorialogs"},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
           "targets": [
             {
               "expr": "vl_active_tenants",
-              "legendFormat": "tenants"
+              "legendFormat": "tenants",
+              "refId": "C"
             }
           ]
         },
         {
-          "type": "graph",
+          "type": "timeseries",
           "title": "Query duration (p99)",
           "gridPos": {"x":0,"y":4,"w":24,"h":6},
-          "datasource": {"type": "victoriametrics-logs-datasource", "uid": "victorialogs"},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
           "targets": [
             {
               "expr": "histogram_quantile(0.99, sum(rate(vl_query_duration_seconds_bucket[5m])) by (le))",
-              "legendFormat": "p99"
+              "legendFormat": "p99",
+              "refId": "D"
             }
           ]
         },
         {
-          "type": "graph",
+          "type": "timeseries",
           "title": "Query rate",
           "gridPos": {"x":0,"y":10,"w":24,"h":6},
-          "datasource": {"type": "victoriametrics-logs-datasource", "uid": "victorialogs"},
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
           "targets": [
             {
               "expr": "rate(vl_queries_total[1m])",
-              "legendFormat": "queries/s"
+              "legendFormat": "queries/s",
+              "refId": "E"
             }
           ]
         }

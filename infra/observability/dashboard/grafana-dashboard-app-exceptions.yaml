@@ -8,59 +8,50 @@ metadata:
 data:
   app-exceptions.json: |
     {
-      "title": "Apps — Exceptions & Errors",
-      "uid": "app-exceptions",
-      "tags": ["apps","victorialogs"],
-      "schemaVersion": 39,
-      "version": 1,
+      "title": "App Exceptions",
+      "tags": ["victorialogs","apps"],
       "timezone": "browser",
-      "time": { "from": "now-6h", "to": "now" },
-      "templating": {
-        "list": [
-          {
-            "name": "ns",
-            "type": "query",
-            "datasource": {"type":"loki","uid":"victorialogs"},
-            "query": "label_values({namespace!=\"\"}, namespace)",
-            "includeAll": true,
-            "multi": true
-          },
-          {
-            "name": "pod",
-            "type": "query",
-            "datasource": {"type":"loki","uid":"victorialogs"},
-            "query": "label_values({namespace=~\"$ns\"}, pod)",
-            "includeAll": true,
-            "multi": true
-          }
-        ]
-      },
+      "schemaVersion": 41,
+      "version": 1,
+      "time": { "from": "now-1h", "to": "now" },
       "panels": [
         {
           "type": "stat",
-          "title": "Exceptions (last 15m)",
+          "title": "Exceptions (last 1h)",
           "gridPos": {"x":0,"y":0,"w":6,"h":6},
-          "datasource": {"type":"loki","uid":"victorialogs"},
+          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
           "targets": [
-            { "expr": "sum(count_over_time({namespace=~\"$ns\", pod=~\"$pod\"} |~ \"(?i)exception|panic|error\" [15m]))" }
+            {
+              "refId": "A",
+              "expr": "(exception or error) _time:1h | stats count() as errors",
+              "queryType": "statsRange"
+            }
           ]
         },
         {
-          "type": "timeseries",
-          "title": "Error rate by pod",
-          "gridPos": {"x":6,"y":0,"w":18,"h":6},
-          "datasource": {"type":"loki","uid":"victorialogs"},
+          "type": "table",
+          "title": "Top exception messages",
+          "gridPos": {"x":6,"y":0,"w":18,"h":8},
+          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
           "targets": [
-            { "expr": "sum by (pod) (count_over_time({namespace=~\"$ns\", pod=~\"$pod\"} |~ \"(?i)exception|panic|error\" [5m]))" }
+            {
+              "refId": "B",
+              "expr": "(exception or error) _time:10m | top 20 by (_msg) hits as errors",
+              "queryType": "stats"
+            }
           ]
         },
         {
           "type": "logs",
-          "title": "Raw app logs",
-          "gridPos": {"x":0,"y":6,"w":24,"h":10},
-          "datasource": {"type":"loki","uid":"victorialogs"},
+          "title": "Raw exceptions",
+          "gridPos": {"x":0,"y":8,"w":24,"h":10},
+          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
           "targets": [
-            { "expr": "{namespace=~\"$ns\", pod=~\"$pod\"} |~ \"(?i)exception|panic|error\"" }
+            {
+              "refId": "C",
+              "expr": "(exception or error)",
+              "queryType": "range"
+            }
           ]
         }
       ]

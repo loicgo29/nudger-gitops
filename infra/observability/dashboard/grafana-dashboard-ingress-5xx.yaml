@@ -8,51 +8,50 @@ metadata:
 data:
   ingress-5xx.json: |
     {
-      "title": "Ingress NGINX — 5xx",
-      "uid": "ingress-5xx",
-      "tags": ["ingress-nginx","victorialogs"],
-      "schemaVersion": 39,
-      "version": 1,
+      "title": "Ingress — 5xx Errors",
+      "tags": ["victorialogs","ingress"],
       "timezone": "browser",
-      "time": { "from": "now-6h", "to": "now" },
-      "templating": {
-        "list": [
-          {
-            "name": "pod",
-            "type": "query",
-            "datasource": {"type":"loki","uid":"victorialogs"},
-            "query": "label_values({namespace=\"ingress-nginx\", container=\"controller\"}, pod)",
-            "includeAll": true,
-            "multi": true
-          }
-        ]
-      },
+      "schemaVersion": 41,
+      "version": 1,
+      "time": { "from": "now-30m", "to": "now" },
       "panels": [
         {
           "type": "stat",
-          "title": "5xx (last 15m)",
+          "title": "5xx in last 30m",
           "gridPos": {"x":0,"y":0,"w":6,"h":6},
-          "datasource": {"type":"loki","uid":"victorialogs"},
+          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
           "targets": [
-            { "expr": "sum(count_over_time({namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \" [15m]))" }
+            {
+              "refId": "A",
+              "expr": "{app=\"ingress-nginx\"} (\" 5.. \" or \"500\" or \"502\" or \"503\" or \"504\") _time:30m | stats count() as errors",
+              "queryType": "statsRange"
+            }
           ]
         },
         {
           "type": "timeseries",
-          "title": "5xx over time (by pod)",
+          "title": "5xx errors over time",
           "gridPos": {"x":6,"y":0,"w":18,"h":6},
-          "datasource": {"type":"loki","uid":"victorialogs"},
+          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
           "targets": [
-            { "expr": "sum by (pod) (count_over_time({namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \" [5m]))" }
+            {
+              "refId": "B",
+              "expr": "{app=\"ingress-nginx\"} (\" 5.. \" or \"500\" or \"502\" or \"503\" or \"504\") | stats by (_time:$__interval) count()",
+              "queryType": "statsRange"
+            }
           ]
         },
         {
           "type": "logs",
-          "title": "Raw 5xx logs",
+          "title": "Raw ingress 5xx logs",
           "gridPos": {"x":0,"y":6,"w":24,"h":10},
-          "datasource": {"type":"loki","uid":"victorialogs"},
+          "datasource": {"type":"victoriametrics-logs-datasource","uid":"victorialogs"},
           "targets": [
-            { "expr": "{namespace=\"ingress-nginx\", container=\"controller\"} |~ \" 5[0-9]{2} \"" }
+            {
+              "refId": "C",
+              "expr": "{app=\"ingress-nginx\"} (\" 5.. \" or \"500\" or \"502\" or \"503\" or \"504\")",
+              "queryType": "range"
+            }
           ]
         }
       ]
