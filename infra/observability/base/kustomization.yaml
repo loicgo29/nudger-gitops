@@ -8,3 +8,4 @@ resources:
   - policy-reporter-servicemonitor.yaml
   - kube-components-services
   - kube-components-rbac
+  - grafana-admin-secret.yaml
