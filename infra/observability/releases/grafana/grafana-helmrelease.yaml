@@ -30,7 +30,7 @@ spec:
       nodePort: 30080
 
     ingress:
-      enabled: true
+      enabled: false
       # ⚠️ décommente si tu utilises l'annotation plutôt que spec.ingressClassName
       # annotations:
       #   kubernetes.io/ingress.class: nginx
