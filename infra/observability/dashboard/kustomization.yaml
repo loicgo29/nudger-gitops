@@ -2,3 +2,10 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - victoria1.yaml
+  - grafana-dashboard-app-exceptions.yaml
+  - grafana-dashboard-flux-errors.yaml
+  - grafana-dashboard-ingress-5xx.yaml
+  - grafana-dashboard-raw-logs.yaml
+  - grafana-dashboard-victoriametrics-errors.yaml
+  - grafana-dashboard-victoriametrics-overview.yaml
+  - grafana-dashboard-victoriametrics-queries.yaml

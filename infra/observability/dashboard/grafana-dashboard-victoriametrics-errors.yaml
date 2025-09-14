@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-victoriametrics-errors
+  namespace: observability
+  labels:
+    grafana_dashboard: "1"
+data:
+  victoriametrics-errors.json: |
+    {
+      "title": "VictoriaMetrics — Errors",
+      "uid": "vm-errors",
+      "tags": ["victoriametrics"],
+      "schemaVersion": 39,
+      "version": 1,
+      "timezone": "browser",
+      "time": { "from": "now-6h", "to": "now" },
+      "panels": [
+        {
+          "type": "timeseries",
+          "title": "Rejected samples",
+          "gridPos": {"x":0,"y":0,"w":12,"h":6},
+          "datasource": {"type":"prometheus","uid":"victoriametrics"},
+          "targets": [
+            { "expr": "rate(vm_rows_rejected_total[5m])" }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Failed requests",
+          "gridPos": {"x":12,"y":0,"w":12,"h":6},
+          "datasource": {"type":"prometheus","uid":"victoriametrics"},
+          "targets": [
+            { "expr": "rate(vm_http_request_errors_total[5m])" }
+          ]
+        }
+      ]
+    }
