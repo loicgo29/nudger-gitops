@@ -1,32 +1,29 @@
-# infra/observability/releases/victoria-metrics/victoria-metrics-helmrelease.yaml
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: victoriametrics
+  name: victoria-metrics
   namespace: logging
 spec:
   interval: 10m
   chart:
     spec:
       chart: victoria-metrics-single
-      version: "0.24.2"                # adapte si tu veux une version précise
+      version: "0.24.5"   # prends la dernière
       sourceRef:
         kind: HelmRepository
         name: victoria-metrics
         namespace: flux-system
   install:
     createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
   values:
+    fullnameOverride: victoria-metrics
     replicaCount: 1
-    fullnameOverride: victoriametrics
     service:
       type: ClusterIP
     persistence:
-      enabled: false                   # ⚠️ bascule sur true si tu veux du stockage durable
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-      limits:
-        cpu: 500m
-        memory: 512Mi
+      enabled: false
