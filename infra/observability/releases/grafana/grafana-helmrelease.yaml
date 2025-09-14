@@ -110,10 +110,14 @@ spec:
         options:
           path: /var/lib/grafana/dashboards/Kubernetes
       datasources:
-        enabled: false
-        label: grafana_datasource
-        labelValue: "1"
-        searchNamespace: ALL
+        datasources.yaml: |
+          apiVersion: 1
+          datasources:
+            - name: VictoriaLogs
+              type: victorialogs-datasource
+              access: proxy
+               url: http://victorialogs-victoria-logs-single-server.logging.svc.cluster.local:9428
+               isDefault: false
 
     # Exemple de dashboard géré par le chart lui-même (optionnel)
     # Place ton JSON dans un ConfigMap labelisé grafana_dashboard=1 pour itérer sans toucher ce fichier.
