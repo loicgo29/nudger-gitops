@@ -76,6 +76,7 @@ spec:
             jsonData:
               timeInterval: 15s
           - name: VictoriaLogs
+            uid: victorialogs
             type: victoriametrics-logs-datasource
             access: proxy
             url: http://victorialogs.logging.svc.cluster.local:9428

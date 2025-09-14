@@ -13,6 +13,7 @@ echo "🔄 Reconciliation du GitRepository 'gitops'..."
 flux reconcile source git gitops -n "$NS_FLUX"
 
 echo "🔄 Reconciliation du Kustomization '$KS_NAME'..."
+echo "flux reconcile kustomization $KS_NAME -n $NS_FLUX --with-source"
 flux reconcile kustomization "$KS_NAME" -n "$NS_FLUX" --with-source
 
 echo
