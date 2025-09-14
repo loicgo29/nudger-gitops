@@ -9,3 +9,5 @@ resources:
   - kube-components-services
   - kube-components-rbac
   - grafana-admin-secret.yaml
+  - ../releases/promtail
+  - ../releases/victoria-metrics
