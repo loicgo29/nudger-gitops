@@ -4,7 +4,7 @@ set -euo pipefail
 # Racine du repo local
 REPO_ROOT="${REPO_ROOT:-$(git rev-parse --show-toplevel)}"
 
-echo "🔧 Vérification (build dry-run) de tous les Kustomizations déclarés dans le cluster"
+echo "🔧 Vérification (build + kubectl dry-run) de tous les Kustomizations déclarés dans le cluster"
 echo "Repo local racine : $REPO_ROOT"
 echo
 
@@ -30,6 +30,19 @@ kubectl get kustomizations --all-namespaces \
         echo "✅ Build réussi pour $name ($local_path)"
       else
         echo "❌ Build échoué pour $name ($local_path)"
+        continue
+      fi
+
+      echo "🧪 kubectl apply -k $local_path --dry-run=client -o yaml"
+      if output=$(kubectl apply -k "$local_path" --dry-run=client -o yaml 2>&1); then
+        echo "✅ Kubectl dry-run réussi pour $name ($local_path)"
+      else
+        if grep -q "no matches for kind" <<<"$output"; then
+          echo "⚠️ Kubectl dry-run impossible pour $name : CRD manquante"
+        else
+          echo "❌ Kubectl dry-run échoué pour $name ($local_path)"
+          echo "$output"
+        fi
       fi
 
       echo
