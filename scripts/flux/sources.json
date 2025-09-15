@@ -1381,7 +1381,7 @@
         "interval": "1h",
         "patches": [
           {
-            "patch": "apiVersion: helm.toolkit.fluxcd.io/v2\nkind: HelmRelease\nmetadata:\n  name: ingress-nginx\n  namespace: ingress-nginx\nspec:\n  values:\n    controller:\n      extraVolumes:\n        - name: nginx-run\n          emptyDir: {}\n        - name: nginx-cache\n          emptyDir: {}\n      extraVolumeMounts:\n        - name: nginx-run\n          mountPath: /var/run\n        - name: nginx-cache\n          mountPath: /var/cache/nginx\n      containerSecurityContext:\n        readOnlyRootFilesystem: false\n      podLabels:\n        security.nudger/allow-rw-rootfs: \"true\"\n      podAnnotations:\n        security.nudger/justification: \"NGINX needs /var/run & cache write access\"\n",
+            "patch": "apiVersion: helm.toolkit.fluxcd.io/v2\nkind: HelmRelease\nmetadata:\n  name: ingress-nginx\n  namespace: ns-ingress-nginx\nspec:\n  values:\n    controller:\n      extraVolumes:\n        - name: nginx-run\n          emptyDir: {}\n        - name: nginx-cache\n          emptyDir: {}\n      extraVolumeMounts:\n        - name: nginx-run\n          mountPath: /var/run\n        - name: nginx-cache\n          mountPath: /var/cache/nginx\n      containerSecurityContext:\n        readOnlyRootFilesystem: false\n      podLabels:\n        security.nudger/allow-rw-rootfs: \"true\"\n      podAnnotations:\n        security.nudger/justification: \"NGINX needs /var/run & cache write access\"\n",
             "target": {
               "group": "helm.toolkit.fluxcd.io",
               "kind": "HelmRelease",
