@@ -1,31 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="$(git rev-parse --show-toplevel)"
-cd "$ROOT_DIR"
-
 echo "🚀 [STEP 1] Build + Dry-Run local (0fluxBuildAllDryRun.sh)"
-if ./scripts/autom/0fluxBuildAllDryRun.sh; then
-  echo "✅ Step 1 terminé avec succès"
-else
-  echo "⚠️ Step 1 a rencontré des erreurs (voir logs)"
-fi
-echo
+./scripts/autom/0fluxBuildAllDryRun.sh
 
+echo
 echo "🚀 [STEP 2] Reconcile Sources (2fluxReconcileSources.sh)"
-if ./scripts/autom/2fluxReconcileSources.sh; then
-  echo "✅ Step 2 terminé avec succès"
-else
-  echo "⚠️ Step 2 a rencontré des erreurs (voir logs)"
-fi
-echo
+./scripts/autom/2fluxReconcileSources.sh
 
+echo
 echo "🚀 [STEP 3] Reconcile Kustomizations (3fluxReconcileKustomizations.sh)"
-if ./scripts/autom/3fluxReconcileKustomizations.sh; then
-  echo "✅ Step 3 terminé avec succès"
-else
-  echo "⚠️ Step 3 a rencontré des erreurs (voir logs)"
-fi
-echo
+./scripts/autom/3fluxReconcileKustomizations.sh
 
-echo "🎉 Pipeline complet terminé"
+echo
+echo "🚀 [STEP 4] Reconcile HelmReleases (--with-source)"
+for hr in $(kubectl get helmrelease -A -o jsonpath='{range .items[*]}{.metadata.namespace}/{.metadata.name}{"\n"}{end}'); do
+  ns="${hr%%/*}"
+  name="${hr##*/}"
+  echo "🔄 flux reconcile helmrelease ${name} -n ${ns} --with-source"
+  flux reconcile helmrelease "${name}" -n "${ns}" --with-source || true
+done

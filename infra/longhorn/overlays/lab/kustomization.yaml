@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../base
-  - ../../../observability/releases/kube-prometheus-stack
+  - ../../../observability/base/releases/kube-prometheus-stack
   - ingress.yaml
     #  - service.yaml
   - secret.yaml
