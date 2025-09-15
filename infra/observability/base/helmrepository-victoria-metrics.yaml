@@ -1,0 +1,9 @@
+# infra/observability/base/helmrepository-victoria-metrics.yaml
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: helmrepo-victoria-metrics
+  namespace: flux-system
+spec:
+  url: https://victoriametrics.github.io/helm-charts/
+  interval: 1h
