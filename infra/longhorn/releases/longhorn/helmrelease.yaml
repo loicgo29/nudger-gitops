@@ -2,7 +2,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: longhorn
-  namespace: longhorn-system
+  namespace: ns-longhorn-system
 spec:
   interval: 10m
   chart:
@@ -27,7 +27,7 @@ spec:
               kind: Deployment
               metadata:
                 name: longhorn-ui
-                namespace: longhorn-system
+                namespace: ns-longhorn-system
               spec:
                 template:
                   metadata:

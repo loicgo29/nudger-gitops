@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: smoke-optout-rw
-  namespace: open4goods-prod        # ⇦ PSA=restricted
+  namespace: ns-open4goods-prod        # ⇦ PSA=restricted
   labels:
     app: smoke
     env: prod

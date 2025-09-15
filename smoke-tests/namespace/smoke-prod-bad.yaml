@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: smoke-bad-prod
-  namespace: open4goods-prod
+  namespace: ns-open4goods-prod
   labels: { app: smoke, env: prod }
 spec:
   containers:

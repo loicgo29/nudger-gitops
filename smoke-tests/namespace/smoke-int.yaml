@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: smoke-ok-int
-  namespace: open4goods-integration
+  namespace: ns-open4goods-integration
   labels:
     app: smoke
     env: integration

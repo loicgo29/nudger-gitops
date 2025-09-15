@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: smoke-hardened
-  namespace: open4goods-prod  # ⇦ PSA=restricted ici
+  namespace: ns-open4goods-prod  # ⇦ PSA=restricted ici
   labels:
     app: smoke
     env: prod

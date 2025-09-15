@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cloudflared
-  namespace: observability
+  namespace: ns-observability
 spec:
   replicas: 1
   selector: { matchLabels: { app: cloudflared } }
@@ -39,7 +39,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: cloudflared-config
-  namespace: observability
+  namespace: ns-observability
 data:
   config.yaml: |
     tunnel: <TUNNEL-NAME-OU-ID>
