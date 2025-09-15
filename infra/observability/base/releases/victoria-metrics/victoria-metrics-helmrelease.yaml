@@ -11,7 +11,7 @@ spec:
       version: "0.24.5"   # prends la dernière
       sourceRef:
         kind: HelmRepository
-        name: victoria-metrics
+        name: helmrepo-victoria-metrics
         namespace: flux-system
   install:
     replace: true
