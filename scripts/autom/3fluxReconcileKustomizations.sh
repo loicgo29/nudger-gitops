@@ -7,7 +7,7 @@ echo "🔄 Reconciling all Kustomizations (namespaces first)"
 flux get kustomizations -A | tail -n +2 | awk '{print $1 "/" $2}' | grep "infra-namespaces" | while read item; do
   ns=$(echo $item | cut -d/ -f1)
   name=$(echo $item | cut -d/ -f2)
-  echo "🔄 Reconciling $name in $ns"
+  echo "🔄 flux reconcile kustomization $name -n $ns --with-source"
   flux reconcile kustomization $name -n $ns --with-source
 done
 
@@ -15,6 +15,6 @@ done
 flux get kustomizations -A | tail -n +2 | awk '{print $1 "/" $2}' | grep -v "infra-namespaces" | while read item; do
   ns=$(echo $item | cut -d/ -f1)
   name=$(echo $item | cut -d/ -f2)
-  echo "🔄 Reconciling $name in $ns"
+  echo "🔄 flux reconcile kustomization $name -n $ns --with-source"
   flux reconcile kustomization $name -n $ns --with-source
 done
