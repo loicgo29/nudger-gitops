@@ -1,13 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "🧹 [CLEANUP] Suppression des anciens HelmRelease, HelmChart et Kustomizations"
-kubectl get helmrelease -A -o name | xargs -r kubectl delete || true
-kubectl get helmchart -A -o name | xargs -r kubectl delete || true
-kubectl get kustomization -A -o name | xargs -r kubectl delete || true
+echo "🧹 [FORCE CLEANUP] Suppression de observability et promtail cassés"
 
-echo "⏳ Pause 15s pour laisser les CRD se nettoyer..."
-sleep 15
+# Supprimer la Kustomization observability si elle existe
+echo "+ kubectl delete kustomization observability -n flux-system --ignore-not-found --wait=false"
+kubectl delete kustomization observability -n flux-system --ignore-not-found --wait=false || true
+
+# Supprimer le HelmRelease promtail cassé si présent
+echo "+ kubectl delete helmrelease promtail -n ns-logging --ignore-not-found --wait=false"
+kubectl delete helmrelease promtail -n ns-logging --ignore-not-found --wait=false || true
+
+# Supprimer aussi le HelmChart associé qui traîne dans flux-system
+echo "+ kubectl delete helmchart ns-logging-promtail -n flux-system --ignore-not-found --wait=false"
+kubectl delete helmchart ns-logging-promtail -n flux-system --ignore-not-found --wait=false || true
 
 echo
 echo "🚀 [STEP 1] Build + Dry-Run local (0fluxBuildAllDryRun.sh)"
