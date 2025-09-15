@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -euxo pipefail
 
-ROOT_DIR="${1:-.}"
+ROOT_DIR="${1:-$HOME/nudger-gitops}"
 TMP_ERRORS=$(mktemp)
 trap 'rm -f "$TMP_ERRORS"' EXIT
 
