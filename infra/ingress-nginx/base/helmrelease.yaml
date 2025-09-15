@@ -27,7 +27,7 @@ spec:
         runAsGroup: 0
         runAsNonRoot: false
         allowPrivilegeEscalation: true
-    readOnlyRootFilesystem: false
+        readOnlyRootFilesystem: false
       config:
         enable-access-log: "true"
         access-log-path: /var/log/nginx/access.log
