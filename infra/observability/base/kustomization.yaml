@@ -9,7 +9,7 @@ resources:
   - kube-components-services
   - kube-components-rbac
   - grafana-admin-secret.yaml
-    #  - releases/promtail
+  - releases/promtail
   - releases/victoria-metrics
   - helmrepository-victoria-metrics.yaml
   - helmrepository-policy-reporter.yaml
