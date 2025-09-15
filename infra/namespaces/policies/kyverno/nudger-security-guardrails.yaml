@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: nudger-security-guardrails
+  name: kyverno-nudger-security-guardrails
 spec:
   validationFailureAction: Enforce
   background: false
@@ -26,7 +26,6 @@ spec:
           metadata:
             annotations:
               security.nudger/justification: "?*"
-
     # 2) Auto-harden par défaut (opt-in RW possible via label)
     - name: auto-harden
       match:
@@ -36,7 +35,7 @@ spec:
       exclude:
         any:
           - resources:
-              namespaces: ["longhorn-system","ingress-nginx","logging","kyverno"]
+              namespaces: ["longhorn-system", "ingress-nginx", "logging", "kyverno"]
       mutate:
         patchStrategicMerge:
           spec:
@@ -45,15 +44,14 @@ spec:
               - (name): "*"
                 securityContext:
                   allowPrivilegeEscalation: false
-                  capabilities: { drop: ["ALL"] }
+                  capabilities: {drop: ["ALL"]}
                   readOnlyRootFilesystem: true
                   runAsNonRoot: true
             securityContext:
               runAsNonRoot: true
               runAsUser: 10001
               runAsGroup: 10001
-              seccompProfile: { type: RuntimeDefault }
-
+              seccompProfile: {type: RuntimeDefault}
     # 3) Forcer RO si pas d’opt-in explicite
     - name: enforce-ro-rootfs
       match:
@@ -63,7 +61,7 @@ spec:
       exclude:
         any:
           - resources:
-              namespaces: ["longhorn-system","ingress-nginx","logging","kyverno"]
+              namespaces: ["longhorn-system", "ingress-nginx", "logging", "kyverno"]
       preconditions:
         all:
           - key: "{{ request.object.metadata.labels.\"security.nudger/allow-rw-rootfs\" || 'false' }}"
@@ -78,7 +76,6 @@ spec:
                   - name: "{{ element.name }}"
                     securityContext:
                       readOnlyRootFilesystem: true
-
     # 4) Injecter un init root standard quand autorisé
     - name: inject-root-init-when-allowed
       match:
@@ -91,7 +88,7 @@ spec:
       exclude:
         any:
           - resources:
-              namespaces: ["longhorn-system","ingress-nginx","logging","kyverno"]
+              namespaces: ["longhorn-system", "ingress-nginx", "logging", "kyverno"]
       mutate:
         patchStrategicMerge:
           spec:
@@ -102,9 +99,9 @@ spec:
                   - sh
                   - -lc
                   - >
-                    for d in /var/cache/nginx /var/run /var/log/nginx;
-                    do mkdir -p $d; chown -R 101:101 $d; chmod -R 0775 $d; done
+                    for d in /var/cache/nginx /var/run /var/log/nginx; do mkdir -p $d; chown -R 101:101 $d; chmod -R 0775 $d; done
+
                 securityContext:
                   runAsUser: 0
                   allowPrivilegeEscalation: false
-                  seccompProfile: { type: RuntimeDefault }
+                  seccompProfile: {type: RuntimeDefault}

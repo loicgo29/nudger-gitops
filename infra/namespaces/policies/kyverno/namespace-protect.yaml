@@ -1,13 +1,13 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: protect-protected-namespaces
+  name: kyverno-protect-protected-namespaces
 spec:
   validationFailureAction: Enforce
   background: false
   rules:
     - name: block-delete-protected-ns
-      match: { any: [ { resources: { kinds: ["Namespace"] } } ] }
+      match: {any: [{resources: {kinds: ["Namespace"]}}]}
       preconditions:
         all:
           - key: "{{ request.operation }}"

@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: kyverno
-      version: "3.2.x"   # mets la version stable actuelle
+      version: "3.2.8"   # mets la version stable actuelle
       sourceRef:
         kind: HelmRepository
         name: kyverno
