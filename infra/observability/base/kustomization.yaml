@@ -11,5 +11,6 @@ resources:
   - grafana-admin-secret.yaml
   - releases/promtail
   - releases/victoria-metrics
+  - helmrepository-victoria-metrics.yaml
   - helmrepository-policy-reporter.yaml
   - releases/policy-reporter
