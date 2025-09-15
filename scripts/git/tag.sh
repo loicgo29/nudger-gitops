@@ -29,7 +29,7 @@ Exemples:
   scripts/gitops-tag.sh --type fix --dry-run
 EOF
 }
-
+git remote set-url origin git@github.com:loicgo29/nudger-gitops.git
 SCOPE_OVERRIDE=""
 TYPE_OVERRIDE=""
 DRY_RUN="false"
