@@ -12,7 +12,7 @@ spec:
       version: "56.0.3"  # ou la version compatible avec ta HelmRepository
       sourceRef:
         kind: HelmRepository
-        name: prometheus-community
+        name: helmrepo-prometheus-community
         namespace: flux-system
   install:
     createNamespace: true

@@ -12,7 +12,7 @@ spec:
       version: "6.x.x"
       sourceRef:
         kind: HelmRepository
-        name: grafana
+        name: helmrepo-grafana
         namespace: flux-system
   values:
     extraVolumes: []
