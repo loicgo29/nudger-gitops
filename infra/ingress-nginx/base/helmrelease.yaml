@@ -18,6 +18,16 @@ spec:
       kind: DaemonSet
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      podSecurityContext:   # <-- niveau pod
+        runAsUser: 0
+        runAsGroup: 0
+        runAsNonRoot: false
+      containerSecurityContext:  # <-- niveau container
+        runAsUser: 0
+        runAsGroup: 0
+        runAsNonRoot: false
+        allowPrivilegeEscalation: true
+    readOnlyRootFilesystem: false
       config:
         enable-access-log: "true"
         access-log-path: /var/log/nginx/access.log
