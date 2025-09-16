@@ -12,42 +12,10 @@ spec:
     kind: GitRepository
     name: gitops
   path: apps/ingress-nginx/overlays/lab
-
-  patches:
-    - target:
-        group: helm.toolkit.fluxcd.io
-        version: v2
-        kind: HelmRelease
-        name: helm-ingress-nginx
-        namespace: ns-ingress-nginx
-      patch: |
-        apiVersion: helm.toolkit.fluxcd.io/v2
-        kind: HelmRelease
-        metadata:
-          name: helm-ingress-nginx
-          namespace: ns-ingress-nginx
-        spec:
-          values:
-            controller:
-              extraVolumes:
-                - name: nginx-run
-                  emptyDir: {}
-                - name: nginx-cache
-                  emptyDir: {}
-              extraVolumeMounts:
-                - name: nginx-run
-                  mountPath: /var/run
-                - name: nginx-cache
-                  mountPath: /var/cache/nginx
-              containerSecurityContext:
-                readOnlyRootFilesystem: false
-              podLabels:
-                security.nudger/allow-rw-rootfs: "true"
-              podAnnotations:
-                security.nudger/justification: "NGINX needs /var/run & cache write access"
-
   healthChecks:
     - apiVersion: apps/v1
       kind: DaemonSet
-      name: meta-ingress-nginx-controller
+      name: helm-ingress-nginx-controller
       namespace: ns-ingress-nginx
+  patches:
+    - path: ingress-nginx-values-patch.yaml   # ✅ appelle le fichier patch externe

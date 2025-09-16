@@ -1,7 +1,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: helm-helmrepo-victoria-metrics
+  name: helm-victoria-metrics
   namespace: ns-logging
 spec:
   interval: 10m
@@ -11,7 +11,7 @@ spec:
       version: "0.24.5"   # prends la dernière
       sourceRef:
         kind: HelmRepository
-        name: helm-helmrepo-victoria-metrics
+        name: helm-victoria-metrics
         namespace: flux-system
   install:
     replace: true
