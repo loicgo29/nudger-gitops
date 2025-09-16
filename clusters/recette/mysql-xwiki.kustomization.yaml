@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m
-  path: ./apps/mysql-xwiki/overlays/lab
+  path: ./apps/mysql-xwiki/overlays/recette
   prune: true
   sourceRef:
     kind: GitRepository
