@@ -4,6 +4,7 @@ metadata:
   name: recette-root
   namespace: flux-system
 spec:
+  ivalidation: client
   interval: 10m
   path: ./clusters/recette
   prune: true
