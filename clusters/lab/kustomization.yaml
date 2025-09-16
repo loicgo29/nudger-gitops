@@ -5,3 +5,4 @@ resources:
   - ingress-nginx.kustomization.yaml
   - observability.kustomization.yaml
   - kyverno.kustomization.yaml
+  - mysql-xwiki.kustomization.yaml
