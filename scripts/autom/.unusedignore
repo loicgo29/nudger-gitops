@@ -1,0 +1,4 @@
+^tests/
+^tools/ansible/
+^\.github/workflows/
+^smoke-tests/
