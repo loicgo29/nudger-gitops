@@ -17,32 +17,3 @@ spec:
       kind: DaemonSet
       name: helm-ingress-nginx-controller
       namespace: ns-ingress-nginx
-  patches:
-    - target:
-        group: helm.toolkit.fluxcd.io
-        version: v2
-        kind: HelmRelease
-        name: helm-ingress-nginx
-        namespace: ns-ingress-nginx
-      patch: |-
-        spec:
-          values:
-            admissionWebhooks:
-              enabled: false
-            controller:
-              containerSecurityContext:
-                readOnlyRootFilesystem: false
-              extraVolumes:
-                - name: nginx-run
-                  emptyDir: {}
-                - name: nginx-cache
-                  emptyDir: {}
-              extraVolumeMounts:
-                - name: nginx-run
-                  mountPath: /var/run
-                - name: nginx-cache
-                  mountPath: /var/cache/nginx
-              podLabels:
-                security.nudger/allow-rw-rootfs: "true"
-              podAnnotations:
-                security.nudger/justification: "NGINX needs /var/run & cache write access"
