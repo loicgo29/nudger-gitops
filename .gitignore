@@ -1,3 +1,4 @@
 *.bak
 *.swp
 ble.sh/
+apps/.DS_Store
