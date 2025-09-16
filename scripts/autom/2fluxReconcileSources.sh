@@ -6,7 +6,7 @@ flux get sources git -A | tail -n +2 | awk '{print $1 "/" $2}' | while read repo
   ns=$(echo $repo | cut -d/ -f1)
   name=$(echo $repo | cut -d/ -f2)
   echo "🔄 Reconciling GitRepository $name in $ns"
-  flux reconcile source git $name -n $ns
+  flux reconcile source git $name -n $ns --with-source
 done
 
 # Reconcilier toutes les sources Helm
