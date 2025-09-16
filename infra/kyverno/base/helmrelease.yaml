@@ -11,7 +11,7 @@ spec:
       version: "3.2.8"   # mets la version stable actuelle
       sourceRef:
         kind: HelmRepository
-        name: helm-kyverno
+        name: helmrepo-kyverno
         namespace: flux-system
   install:
     createNamespace: true
