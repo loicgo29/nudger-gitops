@@ -22,6 +22,9 @@ spec:
     remediation: { retries: 3 }
 
   values:
+    extraConfigmapMounts:
+      - name: grafana
+        mountPath: /etc/grafana/config
     #####################################
     # Service + Ingress (DNS-01 recommandé)
     #####################################
