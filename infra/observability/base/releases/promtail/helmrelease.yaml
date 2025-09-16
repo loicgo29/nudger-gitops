@@ -12,7 +12,7 @@ spec:
       version: "6.15.5"
       sourceRef:
         kind: HelmRepository
-        name: helmrepo-victoria-metrics  
+        name: helmrepo-grafana
         namespace: flux-system
   values:
     extraVolumes: []
