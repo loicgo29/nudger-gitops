@@ -1,5 +1,0 @@
-# ❌ Exemple invalide (ne commence pas par mysql- ou xwiki-)
-apiVersion: v1
-kind: Service
-metadata:
-  name: db-service

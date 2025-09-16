@@ -1,6 +1,0 @@
-# ✅ Exemple valide (MySQL)
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mysql-prod-db
-
