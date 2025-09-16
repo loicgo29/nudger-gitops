@@ -22,3 +22,9 @@ livenessProbe:
 
 + ajouter bind adress : 0.0.0.0
 --------------------------
+installer  :
+sudo snap remove yq
+sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 \
+  -O /usr/local/bin/yq
+sudo chmod +x /usr/local/bin/yq
+

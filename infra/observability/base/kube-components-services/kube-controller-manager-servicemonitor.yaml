@@ -1,7 +1,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: kube-controller-manager
+  name: sm-kube-controller-manager
   namespace: ns-observability
   labels:
     release: prometheus

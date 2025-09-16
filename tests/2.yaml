@@ -1,0 +1,6 @@
+# ✅ Exemple valide (XWiki)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: xwiki-int-app
+

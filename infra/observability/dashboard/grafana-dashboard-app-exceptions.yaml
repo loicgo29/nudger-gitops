@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-dashboard-app-exceptions
+  name: cfg-grafana-dashboard-app-exceptions
   namespace: ns-observability
   labels:
     grafana_dashboard: "1"

@@ -1,7 +1,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: kyverno
+  name: helm-kyverno
   namespace: flux-system
 spec:
   interval: 10m
@@ -19,7 +19,7 @@ spec:
       version: "3.5.x"          # ou fige la version voulue
       sourceRef:
         kind: HelmRepository
-        name: kyverno
+        name: helm-kyverno
         namespace: flux-system
   values:
     admissionController:

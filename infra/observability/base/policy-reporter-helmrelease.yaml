@@ -2,7 +2,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: policy-reporter
+  name: helmrepo-policy-reporter
   namespace: flux-system
 spec:
   interval: 1h
@@ -11,7 +11,7 @@ spec:
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: policy-reporter
+  name: helmrepo-policy-reporter
   namespace: ns-observability
 spec:
   interval: 10m
@@ -21,7 +21,7 @@ spec:
       version: "2.20.0"  # ❗️ à vérifier selon la version disponible
       sourceRef:
         kind: HelmRepository
-        name: policy-reporter
+        name: helmrepo-policy-reporter
         namespace: flux-system
   install:
     crds: Skip
@@ -47,7 +47,7 @@ spec:
       enabled: true
       service:
         labels:
-          app.kubernetes.io/name: policy-reporter
+          app.kubernetes.io/name: helmrepo-policy-reporter
         enabled: true
         port: 8080
         annotations:

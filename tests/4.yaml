@@ -1,0 +1,5 @@
+# ❌ Exemple invalide (mauvais préfixe)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: storage-xwiki-prod

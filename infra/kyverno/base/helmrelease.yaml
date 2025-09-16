@@ -1,7 +1,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: kyverno
+  name: helm-kyverno
   namespace: kyverno
 spec:
   interval: 30m
@@ -11,7 +11,7 @@ spec:
       version: "3.2.8"   # mets la version stable actuelle
       sourceRef:
         kind: HelmRepository
-        name: kyverno
+        name: helm-kyverno
         namespace: flux-system
   install:
     createNamespace: true

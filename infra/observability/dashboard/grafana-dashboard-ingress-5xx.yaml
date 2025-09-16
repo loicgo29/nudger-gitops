@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-dashboard-ingress-5xx
+  name: cfg-grafana-dashboard-ingress-5xx
   namespace: ns-observability
   labels:
     grafana_dashboard: "1"

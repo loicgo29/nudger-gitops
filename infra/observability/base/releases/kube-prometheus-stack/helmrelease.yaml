@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: kube-prometheus-stack
+  name: helm-kube-prometheus-stack
   namespace: ns-observability
 spec:
   interval: 10m

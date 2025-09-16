@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-dashboard-victoriametrics-queries
+  name: cfg-grafana-dashboard-victoriametrics-queries
   namespace: ns-observability
   labels:
     grafana_dashboard: "1"

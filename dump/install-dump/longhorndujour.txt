@@ -1,9 +1,0 @@
-NAMESPACE     NAME                   AGE     READY   STATUS
-flux-system   apps                   6d20h   True    Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
-flux-system   cert-manager           2d      True    Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
-flux-system   cert-manager-issuers   2d      True    Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
-flux-system   infra-longhorn         39h     True    Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
-flux-system   ingress-nginx          6d20h   True    Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
-flux-system   lab-root               6d20h   True    Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
-flux-system   observability          2d      True    Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2
-flux-system   whoami                 36h     True    Applied revision: main@sha1:82be0e1413786e46df95593a17c921cfcbe0caf2

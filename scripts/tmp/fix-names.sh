@@ -1,46 +1,42 @@
 #!/usr/bin/env bash
 set -euo pipefail
+APPLY=false
+if [[ "${1:-}" == "--apply" ]]; then
+  APPLY=true
+fi
 
-echo "🔧 [APPLY] Correction automatique des préfixes..."
+echo "APPLY=$APPLY"
 
-declare -A PREFIX_MAP=(
-  ["HelmRelease"]="helm-"
-  ["HelmRepository"]="helmrepo-"
-  ["GitRepository"]="gitrepo-"
-  ["ServiceMonitor"]="sm-"
-  ["ConfigMap"]="cfg-"
-  ["Secret"]="sec-"
-  ["Namespace"]="ns-"
-)
+for file in $(grep -Rl "kind:" ./apps ./infra ./clusters ./flux-system --include="*.yaml" --include="*.yml"); do
+  kind=$(grep -m1 "^kind:" "$file" | awk '{print $2}')
+  name=$(grep -m1 "name:" "$file" | awk '{print $2}' || true)
 
-get_kustomization_prefix() {
-  local file="$1"
-  case "$file" in
-    *apps/*) echo "apps-" ;;
-    *infra/*) echo "infra-" ;;
-    *kyverno/*) echo "kyverno-" ;;
-    *clusters/*) echo "meta-" ;;
-    *) echo "ks-" ;;
-  esac
-}
-
-find ./ -type f \( -name "*.yaml" -o -name "*.yml" \) | while read -r file; do
-  kind=$(yq e '.kind' "$file" 2>/dev/null || true)
-  name=$(yq e '.metadata.name' "$file" 2>/dev/null || true)
-
-  [[ -z "$kind" || -z "$name" || "$kind" == "null" || "$name" == "null" ]] && continue
-
-  if [[ "$kind" == "Kustomization" ]]; then
-    prefix=$(get_kustomization_prefix "$file")
-  else
-    prefix="${PREFIX_MAP[$kind]:-}"
+  # skip si pas de name
+  if [[ -z "${name}" ]]; then
+    continue
   fi
 
-  if [[ -n "$prefix" && ! "$name" =~ ^$prefix ]]; then
-    new_name="${prefix}${name}"
-    echo "✏️ [$file] $kind: $name → $new_name"
-    yq e -i ".metadata.name = \"$new_name\"" "$file"
+  case "$kind" in
+    HelmRelease)    prefix="helm-" ;;
+    HelmRepository) prefix="helmrepo-" ;;
+    GitRepository)  prefix="gitrepo-" ;;
+    Kustomization)  prefix="meta-" ;;
+    ConfigMap)      prefix="cfg-" ;;
+    Secret)         prefix="sec-" ;;
+    Namespace)      prefix="ns-" ;;
+    ServiceMonitor) prefix="sm-" ;;
+    *)              prefix="" ;;
+  esac
+
+  if [[ -n "$prefix" && "$name" != $prefix* ]]; then
+    new="$prefix$name"
+    if [[ "$APPLY" == "true" ]]; then
+      echo "✍️ [$file] $kind: $name → $new"
+      sed -i "s/\(name:\s*\)$name/\1$new/" "$file"
+    else
+      echo "❌ [$file] $kind → $name doit devenir $new"
+    fi
+  else
+    echo "✅ [$file] $kind: $name (ok)"
   fi
 done
-
-echo "✅ [APPLY] Tous les fichiers ont été corrigés."

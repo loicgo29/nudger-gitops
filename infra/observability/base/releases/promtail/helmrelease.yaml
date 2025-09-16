@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: promtail
+  name: helm-promtail
   namespace: ns-logging
 spec:
   interval: 5m
@@ -50,7 +50,7 @@ spec:
       create: true
     serviceAccount:
       create: true
-      name: promtail
+      name: helm-promtail
     deployment:
       enabled: false
     daemonset:

@@ -1,7 +1,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: ingress-nginx
+  name: helm-ingress-nginx
   namespace: ns-ingress-nginx
 spec:
   interval: 10m
@@ -18,11 +18,11 @@ spec:
       kind: DaemonSet
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
-      podSecurityContext:   # <-- niveau pod
+      podSecurityContext: # <-- niveau pod
         runAsUser: 0
         runAsGroup: 0
         runAsNonRoot: false
-      containerSecurityContext:  # <-- niveau container
+      containerSecurityContext: # <-- niveau container
         runAsUser: 0
         runAsGroup: 0
         runAsNonRoot: false
