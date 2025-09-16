@@ -1,4 +1,9 @@
-^tests/
-^tools/ansible/
-^\.github/workflows/
-^smoke-tests/
+# Ansible
+tools/**
+
+# GitHub workflows
+.github/workflows/**
+
+# Tests & smoke
+smoke-tests/**
+tests/**

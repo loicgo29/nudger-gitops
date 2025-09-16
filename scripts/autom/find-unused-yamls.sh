@@ -1,66 +1,70 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DEBUG=false
-if [[ "${1:-}" == "-d" ]]; then
-  DEBUG=true
+unusedignore="$HOME/nudger-gitops/scripts/autom/.unusedignore"
+IGNORES=()
+if [[ -f "$unusedignore" ]]; then
+  echo "📂 Fichiers ignorés depuis $unusedignore"
+  mapfile -t IGNORES < "$unusedignore"
 fi
 
 echo "🔍 Recherche des YAML non utilisés dans les kustomizations..."
+echo "────────────────────────────"
 
-# Charger les patterns d'exclusion si .unusedignore existe
-IGNORES=()
-unusedignore=$HOME/nudger-gitops/scripts/autom/.unusedignore
-if [[ -f "$unusedignore" ]]; then
-  mapfile -t IGNORES < $unusedignore
-fi
+declare -A refs
 
-is_ignored() {
-  local file="$1"
-  for pat in "${IGNORES[@]}"; do
-    # Match exact ou dans un dossier
-    if [[ "$file" == "$pat" ]] || [[ "$file" == $pat/* ]]; then
-      return 0
+# Fonction récursive : marque tous les resources d’un kustomization comme utilisés
+mark_kustomization() {
+  local kf="$1"
+  [[ ! -f "$kf" ]] && return
+  local dir
+  dir=$(dirname "$kf")
+
+  # Récupère les ressources/patches/patchesStrategicMerge
+  while read -r ref; do
+    [[ -z "$ref" || "$ref" == "null" ]] && continue
+    local child="$dir/$ref"
+    child=$(realpath --relative-to=. "$child" 2>/dev/null || echo "$child")
+
+    refs["$child"]="$kf"
+
+    # Si le child est lui-même un kustomization.yaml → descendre récursivement
+    if grep -q "kind: Kustomization" "$child" 2>/dev/null; then
+      mark_kustomization "$child"
     fi
-  done
-  return 1
+  done < <(yq eval '.resources[]?, .patches[]?.path?, .patchesStrategicMerge[]?' "$kf" 2>/dev/null || true)
 }
 
-# 1. Lister tous les fichiers YAML (hors .git, scripts, tests, README…)
-all_files=$(find . -type f \( -name "*.yaml" -o -name "*.yml" \) \
-  ! -path "./.git/*" \
-  ! -path "./scripts/*" \
-  ! -path "./tests/*" \
-  ! -name "kustomization.yaml" \
-  ! -name "kustomization.yml")
+# Indexation des références
+while IFS= read -r -d '' f; do
+  kind=$(yq eval '.kind' "$f" 2>/dev/null || echo "")
+  case "$kind" in
+    Kustomization)
+      mark_kustomization "$f"
+      ;;
+    HelmRelease)
+      src=$(yq eval '.spec.chart.spec.sourceRef.name' "$f" 2>/dev/null || echo "")
+      [[ -n "$src" && "$src" != "null" ]] && refs["$src.yaml"]="$f"
+      ;;
+    GitRepository|HelmRepository|ImageRepository|ImagePolicy|ImageUpdateAutomation)
+      # Considérés comme utilisés seulement si un parent les référence
+      :
+      ;;
+  esac
+done < <(find . -type f -name '*.yaml' -print0)
 
-# 2. Extraire les références depuis les kustomizations + HelmRelease/Kustomization
-declare -A refs
-while read -r kf; do
-  [[ -z "$kf" ]] && continue
-  while read -r ref; do
-    [[ -z "$ref" ]] && continue
-    ref=$(realpath --relative-to=. "$(dirname "$kf")/$ref" 2>/dev/null || echo "$ref")
-    refs["$ref"]="$kf"
-  done < <(
-    yq eval '.resources[]?, .patches[]?.path?, .patchesStrategicMerge[]?, .spec.chart.spec.sourceRef.name?, .spec.sourceRef.name?' "$kf" 2>/dev/null \
-      | grep -E '\.ya?ml$' || true
-  )
-done < <(find . -type f -name "kustomization.y*ml" -o -name "helmrelease.y*ml")
-
-echo "────────────────────────────"
-for file in $all_files; do
-  rel=$(realpath --relative-to=. "$file" 2>/dev/null || echo "$file")
-
-  if is_ignored "$rel"; then
-    $DEBUG && echo "🚫 Ignoré (via .unusedignore) : $rel"
-    continue
-  fi
+# Vérifie l’usage de chaque fichier YAML
+while IFS= read -r -d '' f; do
+  rel=$(realpath --relative-to=. "$f")
+  for ig in "${IGNORES[@]}"; do
+    if [[ "$rel" == $ig || "$rel" == $ig/* ]]; then
+      continue 2
+    fi
+  done
 
   if [[ -n "${refs[$rel]:-}" ]]; then
-    echo "✅ Utilisé : $rel (via ${refs[$rel]})"
+    continue # utilisé → on ne dit rien
   else
     echo "❌ Non utilisé : $rel"
   fi
-done
-
+done < <(find . -type f -name '*.yaml' -print0)
