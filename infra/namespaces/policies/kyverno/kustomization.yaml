@@ -3,11 +3,3 @@ kind: Kustomization
 resources:
   - nudger-security-guardrails.yaml
   - namespace-protect.yaml
-spec:
-  suspend: true
-  interval: 1h
-  path: ./infra/namespaces/policies/kyverno
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: gitops

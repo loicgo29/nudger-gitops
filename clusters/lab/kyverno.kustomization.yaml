@@ -4,6 +4,7 @@ metadata:
   name: meta-kyverno
   namespace: flux-system
 spec:
+  suspend: true
   interval: 30m
   path: ./infra/kyverno/base
   prune: true
