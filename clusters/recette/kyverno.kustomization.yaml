@@ -1,16 +1,14 @@
-# clusters/lab/infra-namespaces.ks.yaml
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: meta-infra-namespaces
+  name: meta-kyverno
   namespace: flux-system
 spec:
-  interval: 1h 
-  path: ./infra/namespaces/base
+  interval: 30m
+  path: ./infra/kyverno/base
   prune: true
   sourceRef:
     kind: GitRepository
     name: gitops
-    namespace: flux-system
   dependsOn:
-    - name: kyverno-policies
+    - name: meta-infra-namespaces   # pour que ns-kyverno existe si tu le gères ici

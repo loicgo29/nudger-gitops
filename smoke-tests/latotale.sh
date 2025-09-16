@@ -1,4 +1,5 @@
-./grafana/smoke-curl.sh
-./longhorn/longhorn-smoke.sh 
+DIR=$HOME/nudger-gitops/smoke-tests
+$DIR/grafana/smoke-curl.sh
+$DIR/longhorn/longhorn-smoke.sh 
 echo "je clean les pods"
-./longhorn/longhorn-smoke.sh --cleanup
+$DIR/longhorn/longhorn-smoke.sh --cleanup

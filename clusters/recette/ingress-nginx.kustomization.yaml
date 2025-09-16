@@ -1,0 +1,19 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: meta-ingress-nginx
+  namespace: flux-system
+spec:
+  interval: 1h
+  timeout: 5m
+  wait: true
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: gitops
+  path: apps/ingress-nginx/overlays/recette
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: DaemonSet
+      name: helm-ingress-nginx-controller
+      namespace: ns-ingress-nginx
