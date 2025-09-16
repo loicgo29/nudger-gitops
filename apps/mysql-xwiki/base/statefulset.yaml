@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-xwiki
+  namespace: xwiki
+  labels:
+    app: mysql-xwiki
+spec:
+  serviceName: mysql-xwiki
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-xwiki
+  template:
+    metadata:
+      labels:
+        app: mysql-xwiki
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0.39
+          ports:
+            - containerPort: 3306
+              name: mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-xwiki-secret
+                  key: MYSQL_ROOT_PASSWORD
+          volumeMounts:
+            - name: mysql-xwiki-persistent-storage
+              mountPath: /var/lib/mysql
+          readinessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - "-h"
+                - "127.0.0.1"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-xwiki-persistent-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: longhorn-db
+        resources:
+          requests:
+            storage: 50Gi
