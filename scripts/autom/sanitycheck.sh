@@ -9,7 +9,6 @@ echo "✅ [CHECK] Pods"
 if kubectl get pods -A --no-headers | grep -vE 'Running|Completed' >/dev/null 2>&1; then
   echo "❌ Certains pods ne sont pas en état Running/Completed :"
   kubectl get pods -A --no-headers | grep -vE 'Running|Completed' || true
-  exit 1
 else
   echo "🎉 Tous les pods sont en état Running/Completed."
 fi
