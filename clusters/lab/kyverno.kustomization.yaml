@@ -11,4 +11,4 @@ spec:
     kind: GitRepository
     name: gitops
   dependsOn:
-    - name: infra-namespaces   # pour que ns-kyverno existe si tu le gères ici
+    - name: meta-infra-namespaces   # pour que ns-kyverno existe si tu le gères ici
