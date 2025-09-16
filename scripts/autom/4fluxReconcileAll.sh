@@ -25,12 +25,3 @@ echo "🚀 [STEP 2] Reconcile Sources (2fluxReconcileSources.sh)"
 echo
 echo "🚀 [STEP 3] Reconcile Kustomizations (3fluxReconcileKustomizations.sh)"
 ./scripts/autom/3fluxReconcileKustomizations.sh
-
-echo
-echo "🚀 [STEP 4] Reconcile HelmReleases (--with-source)"
-for hr in $(kubectl get helmrelease -A -o jsonpath='{range .items[*]}{.metadata.namespace}/{.metadata.name}{"\n"}{end}'); do
-  ns="${hr%%/*}"
-  name="${hr##*/}"
-  echo "🔄 flux reconcile helmrelease ${name} -n ${ns} --with-source"
-  flux reconcile helmrelease "${name}" -n "${ns}" --with-source || true
-done
