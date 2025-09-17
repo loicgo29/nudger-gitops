@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mysql-xwiki
+  namespace: ns-open4goods-recette
 spec:
   volumeClaimTemplates:
     - metadata:
@@ -10,3 +11,6 @@ spec:
         resources:
           requests:
             storage: 10Gi   # Réduction de 50Gi → 10Gi
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: longhorn-db
