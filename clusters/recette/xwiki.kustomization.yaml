@@ -9,7 +9,4 @@ spec:
   prune: true
   sourceRef:
     kind: GitRepository
-    name: nudger-gitops
-  validation: client   # <--- remplace "validation: server"
-  timeout: 2m
-  wait: true
+    name: gitops
