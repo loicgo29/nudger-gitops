@@ -1,0 +1,15 @@
+apiVersion: longhorn.io/v1beta2
+kind: Node
+metadata:
+  name: master1
+  namespace: longhorn-system
+spec:
+  allowScheduling: true
+  disks:
+    default-disk-1771824a9d2ca01c:
+      allowScheduling: true
+      path: /var/lib/longhorn/
+      storageReserved: 1073741824   # 1Gi réservé seulement
+      diskType: filesystem
+      evictionRequested: false
+      tags: []
