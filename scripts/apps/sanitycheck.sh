@@ -54,7 +54,7 @@ done
 # 5. Vérifier la connexion MySQL
 if [[ "$STATUS" == "Running" ]]; then
   echo "==> Test connexion MySQL"
-  PASS=$(kubectl -n $NS get secret ${MYSQL_APP}-secret -o jsonpath='{.data.MYSQL_ROOT_PASSWORD}' | base64 -d)
+  PASS=$(kubectl -n $NS get secret ${MYSQL_APP}-secret -o jsonpath='{.data.password}' | base64 -d)
   if kubectl -n $NS exec -i "$MYSQL_POD" -- \
     mysql -u root -p"$PASS" -e "SELECT VERSION();" >/dev/null 2>&1; then
     echo "✅ Connexion MySQL OK"
