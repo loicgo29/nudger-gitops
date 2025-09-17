@@ -25,6 +25,21 @@ spec:
           ports:
             - containerPort: 8080
               name: http
+          env:
+            - name: DB_HOST
+              value: mysql-xwiki   # nom de ton Service MySQL
+            - name: DB_DATABASE
+              value: xwiki
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-xwiki-secret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-xwiki-secret
+                  key: password
           volumeMounts:
             - name: xwiki-data
               mountPath: /usr/local/xwiki/data
@@ -32,14 +47,19 @@ spec:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 10
+            initialDelaySeconds: 120
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 12
           livenessProbe:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 60
-            periodSeconds: 20
+            initialDelaySeconds: 100
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+
       volumes:
         - name: xwiki-data
           persistentVolumeClaim:
