@@ -3,7 +3,7 @@ kind: StorageClass
 metadata:
   name: longhorn-db
 provisioner: driver.longhorn.io
-reclaimPolicy: Retain
+reclaimPolicy: Delete
 allowVolumeExpansion: true
 volumeBindingMode: WaitForFirstConsumer
 parameters:
