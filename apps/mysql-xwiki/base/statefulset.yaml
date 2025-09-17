@@ -27,7 +27,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: mysql-xwiki-secret
-                  key: MYSQL_ROOT_PASSWORD
+                  key: password
           volumeMounts:
             - name: mysql-xwiki-persistent-storage
               mountPath: /var/lib/mysql
