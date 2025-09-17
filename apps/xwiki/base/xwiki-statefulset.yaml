@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: xwiki
+  labels:
+    app: xwiki
+    tier: app
+    environment: recette
+spec:
+  serviceName: xwiki
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xwiki
+  template:
+    metadata:
+      labels:
+        app: xwiki
+        tier: app
+        environment: recette
+    spec:
+      containers:
+        - name: xwiki
+          image: xwiki:17.3.0-mysql-tomcat
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: DB_HOST
+              value: mysql-xwiki
+            - name: DB_DATABASE
+              value: xwiki
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-xwiki-secret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-xwiki-secret
+                  key: password
+          volumeMounts:
+            - name: xwiki-data
+              mountPath: /usr/local/xwiki/data
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 120
+            timeoutSeconds: 10
+            periodSeconds: 20
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 180
+            timeoutSeconds: 10
+            periodSeconds: 30
+            failureThreshold: 10
+  volumeClaimTemplates:
+    - metadata:
+        name: xwiki-data
+        labels:
+          app: xwiki
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: longhorn-db
