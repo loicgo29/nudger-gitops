@@ -31,6 +31,8 @@ spec:
               value: mysql-xwiki
             - name: DB_DATABASE
               value: xwiki
+            - name: JAVA_OPTS
+              value: "-Xmx512m -Xms256m"
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
@@ -44,6 +46,13 @@ spec:
           volumeMounts:
             - name: xwiki-data
               mountPath: /usr/local/xwiki/data
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1"
           readinessProbe:
             httpGet:
               path: /
