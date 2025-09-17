@@ -5,3 +5,5 @@ resources:
   - xwiki-pvc.yaml
   - xwiki-service.yaml
   - xwiki-statefulset.yaml 
+  - xwiki-ingress.yaml
+  - xwiki-svc.yaml
