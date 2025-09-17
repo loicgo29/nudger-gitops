@@ -38,16 +38,18 @@ else
 fi
 
 # 4. PV
-if [[ -n "$PVC" ]]; then
-  PV=$(kubectl get pv -o jsonpath="{.items[?(@.spec.claimRef.name=='$PVC')].metadata.name}" 2>/dev/null || echo "")
-  if [[ -n "$PV" ]]; then
-    kubectl get pv "$PV"
-    kubectl describe pv "$PV" | grep -E "Status:|StorageClass:|Capacity:"
-  else
-    echo "⚠️ Aucun PV lié au PVC $PVC"
-  fi
-fi
+# 4. PVs liés aux PVC
+PVC_LIST=$(kubectl -n $NS get pvc -o jsonpath='{.items[*].spec.volumeName}')
 
+for pv in $PVC_LIST; do
+  if [[ -n "$pv" ]]; then
+    echo "==> PV $pv"
+    kubectl get pv "$pv" 2>/dev/null || echo "⚠️ PV $pv introuvable (probablement supprimé)"
+    kubectl describe pv "$pv" 2>/dev/null | grep -E "Status:|StorageClass:|Capacity:" || true
+  else
+    echo "⚠️ Aucun PV trouvé pour ce PVC"
+  fi
+done
 # 5. Test connexion MySQL
 if [[ "$STATUS" == "Running" ]]; then
   echo "==> Test connexion MySQL"
