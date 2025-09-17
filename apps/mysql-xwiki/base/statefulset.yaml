@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mysql-xwiki
-  namespace: xwiki
+  namespace: ns-open4goods-recette
   labels:
     app: mysql-xwiki
 spec:

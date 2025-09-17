@@ -28,14 +28,16 @@ sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd6
   -O /usr/local/bin/yq
 sudo chmod +x /usr/local/bin/yq
 ==============
-# TRIAL without installation
+which mkfs.xfs
+dpkg -l | grep xfsprogs
+systemctl status iscsid
+systemctl status multipathdA
+which mkfs.xfs
+dpkg -l | grep xfsprogs
+systemctl status iscsid
+systemctl status multipathd
 
-git clone --recursive --depth 1 --shallow-submodules https://github.com/akinomyoga/ble.sh.git
-make -C ble.sh
-source ble.sh/out/ble.sh
+Le service iscsid (iSCSI initiator daemon) est indispensable à Longhorn.
+C’est lui qui permet à ton nœud (master1) de monter les volumes Longhorn via iSCSI.
+------------
 
-# Quick INSTALL to BASHRC (If this doesn't work, please follow Sec 1.3)
-
-git clone --recursive --depth 1 --shallow-submodules https://github.com/akinomyoga/ble.sh.git
-make -C ble.sh install PREFIX=~/.local
-echo 'source -- ~/.local/share/blesh/ble.sh' >> ~/.bashrc
