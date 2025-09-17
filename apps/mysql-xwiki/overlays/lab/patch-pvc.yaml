@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-xwiki
+spec:
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-xwiki-persistent-storage
+      spec:
+        resources:
+          requests:
+            storage: 10Gi   # réduction de 50Gi → 10Gi

@@ -11,3 +11,4 @@ patches:
       kind: StatefulSet
       name: mysql-xwiki
       namespace: ns-open4goods-recette
+  - path: patch-pvc.yaml
