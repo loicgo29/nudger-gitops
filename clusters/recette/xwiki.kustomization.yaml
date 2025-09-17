@@ -1,0 +1,15 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: xwiki
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: ./apps/xwiki/overlays/recette
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: nudger-gitops
+  validation: server
+  timeout: 2m
+  wait: true

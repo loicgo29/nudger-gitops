@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xwiki
+  labels:
+    app: xwiki
+    tier: app
+    environment: recette
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xwiki
+  template:
+    metadata:
+      labels:
+        app: xwiki
+        tier: app
+        environment: recette
+    spec:
+      containers:
+        - name: xwiki
+          image: xwiki:17.3.0-tomcat-mysql
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - name: xwiki-data
+              mountPath: /usr/local/xwiki/data
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 20
+      volumes:
+        - name: xwiki-data
+          persistentVolumeClaim:
+            claimName: xwiki-data

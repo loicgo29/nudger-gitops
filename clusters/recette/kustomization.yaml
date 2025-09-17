@@ -6,3 +6,4 @@ resources:
   - observability.kustomization.yaml
   - kyverno.kustomization.yaml
   - mysql-xwiki.kustomization.yaml 
+  - xwiki.kustomization.yaml
