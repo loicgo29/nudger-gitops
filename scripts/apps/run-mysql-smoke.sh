@@ -3,7 +3,7 @@ set -euo pipefail
 
 NS="ns-open4goods-recette"
 JOB_NAME="mysql-smoke"
-YAML="smoke-tests/yaml/job-mysql-smoke.yaml"
+YAML="tests/smoke-tests/yaml/job-mysql-smoke.yaml"
 
 echo "🧹 Suppression de l’ancien Job s’il existe..."
 kubectl -n "$NS" delete job "$JOB_NAME" --ignore-not-found
