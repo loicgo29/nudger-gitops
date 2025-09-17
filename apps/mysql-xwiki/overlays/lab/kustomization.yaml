@@ -7,4 +7,8 @@ resources:
   - ../../base
 patches:
   - path: patch-resources.yaml
+    target:
+      kind: StatefulSet
+      name: mysql-xwiki
+      namespace: ns-open4goods-recette
   - path: patch-pvc.yaml
