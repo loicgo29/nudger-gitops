@@ -4,7 +4,7 @@ set -euo pipefail
 NS="ns-open4goods-recette"
 APP="mysql-xwiki"
 JOB_NAME="mysql-bdd"
-YAML="$(git rev-parse --show-toplevel)/tests/bdd-tests/yaml/job-mysql-bdd.yaml"
+YAML="$(git rev-parse --show-toplevel)/tests/bdd/yaml/job-mysql-bdd.yaml"
 
 echo "🗑 Suppression du pod MySQL pour tester la persistance..."
 kubectl -n "$NS" delete pod -l app=$APP --ignore-not-found
