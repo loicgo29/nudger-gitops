@@ -5,6 +5,7 @@ metadata:
   name: helm-promtail
   namespace: ns-logging
 spec:
+  suspend: true
   interval: 5m
   chart:
     spec:

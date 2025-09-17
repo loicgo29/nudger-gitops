@@ -4,6 +4,7 @@ metadata:
   name: helm-victoria-metrics
   namespace: ns-logging
 spec:
+  suspend: true
   interval: 10m
   chart:
     spec:
