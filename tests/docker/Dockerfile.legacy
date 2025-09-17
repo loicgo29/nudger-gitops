@@ -1,0 +1,5 @@
+FROM python:3.11-slim
+WORKDIR /app
+RUN pip install pytest mysql-connector-python
+COPY test_mysql_smoke.py /tests/
+CMD ["pytest", "-q", "/tests/test_mysql_smoke.py"]

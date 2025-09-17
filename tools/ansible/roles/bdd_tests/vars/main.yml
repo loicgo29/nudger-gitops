@@ -1,0 +1,12 @@
+---
+python_deps:
+  - pytest-bdd
+  - mysql-connector-python
+
+go_deps:
+  - github.com/cucumber/godog@latest
+  - github.com/go-sql-driver/mysql@latest
+
+node_deps:
+  - cucumber
+  - mysql2

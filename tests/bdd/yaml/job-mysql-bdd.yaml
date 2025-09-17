@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mysql-bdd
+  namespace: ns-open4goods-recette
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: mysql-bdd
+          image: mysql-bdd:latest   # ton image qui embarque pytest-bdd / godog / cucumber-js
+          imagePullPolicy: Never
+          env:
+            - name: MYSQL_HOST
+              value: mysql-xwiki-clusterip.ns-open4goods-recette.svc.cluster.local
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-xwiki-secret
+                  key: MYSQL_ROOT_PASSWORD

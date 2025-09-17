@@ -1,0 +1,80 @@
+---
+# roles/bdd_tests/tasks/main.yml
+
+# ---------------------------
+# Python
+# ---------------------------
+- name: Vérifier si mysql-connector-python est déjà installé
+  command: pip3 show mysql-connector-python
+  register: py_check
+  failed_when: false
+  changed_when: false
+
+- name: Installer dépendances Python (si absent)
+  pip:
+    name:
+      - mysql-connector-python
+      - pytest-bdd
+    executable: pip3
+  when: py_check.rc != 0
+
+# ---------------------------
+# Go
+# ---------------------------
+- name: Vérifier que Go est installé
+  command: go version
+  register: go_check
+  failed_when: false
+  changed_when: false
+
+- name: Créer le répertoire pour les tests Go
+  file:
+    path: smoke-tests/go
+    state: directory
+  when: go_check.rc == 0
+
+- name: Vérifier si godog est déjà installé
+  command: go list -m github.com/cucumber/godog
+  args:
+    chdir: smoke-tests/go
+  register: godog_check
+  failed_when: false
+  changed_when: false
+  when: go_check.rc == 0
+
+- name: Init modules Go (si godog absent)
+  command: go mod tidy
+  args:
+    chdir: smoke-tests/go
+  when: go_check.rc == 0 and godog_check.rc != 0
+
+- name: Installer dépendances Go (si godog absent)
+  command: go install {{ item }}
+  loop:
+    - github.com/cucumber/godog@latest
+    - github.com/go-sql-driver/mysql@latest
+  when: go_check.rc == 0 and godog_check.rc != 0
+
+# ---------------------------
+# Node.js
+# ---------------------------
+- name: Vérifier que Node.js est installé
+  command: node --version
+  register: node_check
+  failed_when: false
+  changed_when: false
+
+- name: Vérifier si cucumber-js est déjà installé
+  command: npm list -g cucumber
+  register: cucumber_check
+  failed_when: false
+  changed_when: false
+  when: node_check.rc == 0
+- name: Installer dépendances Node.js (si cucumber-js absent)
+  npm:
+    name: "{{ item }}"
+    global: yes
+  loop:
+    - cucumber
+    - mysql2
+  when: node_check.rc == 0 and cucumber_check.rc != 0

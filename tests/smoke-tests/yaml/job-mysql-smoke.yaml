@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mysql-smoke
+  namespace: ns-open4goods-recette
+spec:
+  ttlSecondsAfterFinished: 300   # ← suppression 5 min après la fin
+  backoffLimit: 0                # pas de retries
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: mysql-smoke
+        image: mysql-smoke:latest
+        imagePullPolicy: Never
+        command: ["sh", "-c"]
+        args:
+          - pytest -q /tests/test_mysql_smoke.py
+        env:
+        - name: MYSQL_HOST
+          value: mysql-xwiki-clusterip.ns-open4goods-recette.svc.cluster.local
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-xwiki-secret
+              key: MYSQL_ROOT_PASSWORD

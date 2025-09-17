@@ -1,0 +1,6 @@
+---
+- name: Installer les dépendances pour les tests BDD MySQL
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - bdd_tests
