@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: xwiki
+  name: xwiki-svc
   namespace: ns-open4goods-recette
 
   labels:
@@ -11,6 +11,8 @@ metadata:
 spec:
   selector:
     app: xwiki
+    tier: app
+    environment: recette
   ports:
     - name: http
       protocol: TCP
