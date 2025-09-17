@@ -10,6 +10,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: nudger-gitops
-  validationStrategy: client   # <--- remplace "validation: server"
+  validation: client   # <--- remplace "validation: server"
   timeout: 2m
   wait: true
