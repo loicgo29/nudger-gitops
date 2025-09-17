@@ -26,10 +26,13 @@ Les tests sont organisés dans `tests/` :
 -   `scripts/apps/load-local-image.sh` → Charge une image Docker locale
     dans containerd
 
-## Exemple : lancer un smoke test MySQL
+## 
 
-``` bash
-./scripts/apps/run-mysql-smoke.sh
+``` bash générer une image puis push sur le noeud
+cd $HOME/nudger-gitops/tests
+sudo docker build -t mysql-bdd:latest -f ./docker/Dockerfile .
+docker images | grep mysql-bdd
+$HOME/nudger-gitops/scripts/apps/load-local-image.sh mysql-bdd:latest
 ```
 
 ## Exemple : lancer un test BDD MySQL
