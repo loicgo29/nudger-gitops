@@ -1,0 +1,224 @@
+NAMESPACE                NAME                                                                 READY   STATUS             RESTARTS          AGE
+flux-system              pod/helm-controller-75c5fcd6b9-bwrp6                                 1/1     Running            13 (15h ago)      18h
+flux-system              pod/image-automation-controller-555c69c788-zw64k                     1/1     Running            28 (15h ago)      8d
+flux-system              pod/image-reflector-controller-7fd4d8f54c-v49x9                      1/1     Running            28 (15h ago)      8d
+flux-system              pod/kustomize-controller-6664ccf445-s9fng                            1/1     Running            13 (15h ago)      18h
+flux-system              pod/notification-controller-d58966fff-d8jtm                          1/1     Running            12 (15h ago)      18h
+flux-system              pod/source-controller-686b6b9d99-qgb4p                               1/1     Running            13 (15h ago)      18h
+kube-flannel             pod/kube-flannel-ds-kcjh5                                            1/1     Running            13 (15h ago)      10d
+kube-system              pod/coredns-7c65d6cfc9-bblr4                                         1/1     Running            14 (15h ago)      15d
+kube-system              pod/coredns-7c65d6cfc9-v84n8                                         1/1     Running            14 (15h ago)      15d
+kube-system              pod/etcd-master1                                                     1/1     Running            15 (15h ago)      15d
+kube-system              pod/kube-apiserver-master1                                           1/1     Running            16 (15h ago)      15d
+kube-system              pod/kube-controller-manager-master1                                  0/1     CrashLoopBackOff   123 (2m28s ago)   5d18h
+kube-system              pod/kube-proxy-pgfrc                                                 1/1     Running            13 (15h ago)      10d
+kube-system              pod/kube-scheduler-master1                                           1/1     Running            125 (7m53s ago)   5d18h
+kyverno                  pod/kyverno-admission-controller-9d6d745bd-8nn8n                     1/1     Running            31 (7m55s ago)    15h
+kyverno                  pod/kyverno-background-controller-59c797b65b-fk2cm                   1/1     Running            34 (13m ago)      15h
+kyverno                  pod/kyverno-cleanup-admission-reports-29301300-kvjf5                 0/1     Completed          0                 17m
+kyverno                  pod/kyverno-cleanup-admission-reports-29301310-ntv6t                 0/1     Completed          0                 7m49s
+kyverno                  pod/kyverno-cleanup-cluster-admission-reports-29301300-f5jql         0/1     Completed          0                 17m
+kyverno                  pod/kyverno-cleanup-cluster-admission-reports-29301310-zgzkp         0/1     Completed          0                 7m49s
+kyverno                  pod/kyverno-cleanup-cluster-ephemeral-reports-29301300-dplrw         0/1     Completed          0                 17m
+kyverno                  pod/kyverno-cleanup-cluster-ephemeral-reports-29301310-mc2j6         0/1     Completed          0                 7m49s
+kyverno                  pod/kyverno-cleanup-controller-976b44d49-k9xtk                       0/1     CrashLoopBackOff   33 (2m30s ago)    15h
+kyverno                  pod/kyverno-cleanup-ephemeral-reports-29301300-wtxlw                 0/1     Completed          0                 17m
+kyverno                  pod/kyverno-cleanup-ephemeral-reports-29301310-nt86g                 0/1     Completed          0                 7m49s
+kyverno                  pod/kyverno-reports-controller-5f6cdffc8c-txwrs                      1/1     Running            37 (7m55s ago)    15h
+logging                  pod/victorialogs-victoria-logs-single-server-0                       1/1     Running            9 (15h ago)       3d17h
+longhorn-system          pod/csi-attacher-6b97d84b55-7c29c                                    1/1     Running            67 (7m56s ago)    6d14h
+longhorn-system          pod/csi-attacher-6b97d84b55-glg2t                                    1/1     Running            80 (16m ago)      6d14h
+longhorn-system          pod/csi-attacher-6b97d84b55-vl7kk                                    1/1     Running            76 (2m28s ago)    6d14h
+longhorn-system          pod/csi-provisioner-54f74d664f-dbbwn                                 1/1     Running            71 (17m ago)      6d14h
+longhorn-system          pod/csi-provisioner-54f74d664f-f5r7f                                 1/1     Running            57 (2m28s ago)    6d14h
+longhorn-system          pod/csi-provisioner-54f74d664f-gdp4k                                 1/1     Running            60 (7m55s ago)    6d14h
+longhorn-system          pod/csi-resizer-5d645c6858-59jb4                                     1/1     Running            61 (15h ago)      6d14h
+longhorn-system          pod/csi-resizer-5d645c6858-jfz8k                                     1/1     Running            75 (23m ago)      6d14h
+longhorn-system          pod/csi-resizer-5d645c6858-kddx4                                     1/1     Running            64 (2m28s ago)    6d14h
+longhorn-system          pod/csi-snapshotter-7dbb7d48c6-j6pch                                 1/1     Running            57 (15h ago)      6d14h
+longhorn-system          pod/csi-snapshotter-7dbb7d48c6-lsn9k                                 1/1     Running            59 (13m ago)      6d14h
+longhorn-system          pod/csi-snapshotter-7dbb7d48c6-tcgqg                                 1/1     Running            76 (2m28s ago)    6d14h
+longhorn-system          pod/engine-image-ei-b4bcf0a5-h5vld                                   1/1     Running            14 (15h ago)      6d18h
+longhorn-system          pod/instance-manager-8177b09faceccbbe26be1eed859b75cc                1/1     Running            0                 15h
+longhorn-system          pod/longhorn-csi-plugin-flzl8                                        3/3     Running            101 (17m ago)     6d14h
+longhorn-system          pod/longhorn-driver-deployer-6795fd59d9-95lc7                        1/1     Running            11 (15h ago)      6d18h
+longhorn-system          pod/longhorn-manager-m7h89                                           2/2     Running            38 (15h ago)      6d18h
+longhorn-system          pod/longhorn-ui-6857cc56b-cldpw                                      1/1     Running            31 (15h ago)      6d7h
+longhorn-system          pod/longhorn-ui-6857cc56b-shfcv                                      1/1     Running            31 (15h ago)      6d7h
+longhorn-system          pod/netcheck                                                         0/1     Completed          0                 6d15h
+ns-ingress-nginx         pod/helm-ingress-nginx-controller-d7zc5                              1/1     Running            12 (15h ago)      23h
+ns-logging               pod/promtail-6m9sh                                                   1/1     Running            5 (15h ago)       24h
+ns-logging               pod/victoria-metrics-server-0                                        1/1     Running            4 (15h ago)       23h
+ns-observability         pod/alertmanager-helm-kube-prometheus-stack-alertmanager-0           2/2     Running            10 (15h ago)      24h
+ns-observability         pod/helm-grafana-5bdd4ccb-t9qt4                                      2/2     Running            10 (15h ago)      23h
+ns-observability         pod/helm-kube-prometheus-stack-kube-state-metrics-6d955cd4b5-4lrwm   1/1     Running            7 (15h ago)       24h
+ns-observability         pod/helm-kube-prometheus-stack-operator-5dd468c9f4-twd8x             1/1     Running            5 (15h ago)       24h
+ns-observability         pod/helm-kube-prometheus-stack-prometheus-node-exporter-qfr7h        1/1     Running            11 (15h ago)      24h
+ns-observability         pod/helm-policy-reporter-85b88c5f8-gg84b                             1/1     Running            13 (15h ago)      24h
+ns-observability         pod/prometheus-helm-kube-prometheus-stack-prometheus-0               2/2     Running            14 (15h ago)      24h
+ns-whoami                pod/whoami-765dbfc67d-mw8z5                                          1/1     Running            8 (15h ago)       39h
+ns-whoami                pod/whoami-765dbfc67d-qnsnv                                          1/1     Running            9 (15h ago)       39h
+ns-whoami                pod/whoami-765dbfc67d-tw6mt                                          1/1     Running            8 (15h ago)       39h
+open4goods-integration   pod/smoke-int-ok                                                     1/1     Running            181 (44m ago)     7d8h
+
+NAMESPACE               NAME                                                          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                        AGE
+default                 service/kubernetes                                            ClusterIP   10.96.0.1        <none>        443/TCP                        15d
+flux-system             service/notification-controller                               ClusterIP   10.105.203.251   <none>        80/TCP                         15d
+flux-system             service/source-controller                                     ClusterIP   10.111.109.215   <none>        80/TCP                         15d
+flux-system             service/webhook-receiver                                      ClusterIP   10.108.169.136   <none>        80/TCP                         15d
+kube-system             service/etcd                                                  ClusterIP   10.96.105.103    <none>        2381/TCP                       24h
+kube-system             service/helm-kube-prometheus-stack-coredns                    ClusterIP   None             <none>        9153/TCP                       24h
+kube-system             service/helm-kube-prometheus-stack-kube-controller-manager    ClusterIP   None             <none>        10257/TCP                      24h
+kube-system             service/helm-kube-prometheus-stack-kube-etcd                  ClusterIP   None             <none>        2381/TCP                       24h
+kube-system             service/helm-kube-prometheus-stack-kube-proxy                 ClusterIP   None             <none>        10249/TCP                      24h
+kube-system             service/helm-kube-prometheus-stack-kube-scheduler             ClusterIP   None             <none>        10259/TCP                      24h
+kube-system             service/helm-kube-prometheus-stack-kubelet                    ClusterIP   None             <none>        10250/TCP,10255/TCP,4194/TCP   24h
+kube-system             service/kube-controller-manager                               ClusterIP   None             <none>        10257/TCP                      24h
+kube-system             service/kube-dns                                              ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP,9153/TCP         15d
+kube-system             service/kube-prometheus-stack-kubelet                         ClusterIP   None             <none>        10250/TCP,10255/TCP,4194/TCP   10d
+kube-system             service/kube-scheduler                                        ClusterIP   None             <none>        10259/TCP                      24h
+kyverno                 service/helm-kyverno-svc                                      ClusterIP   10.111.142.251   <none>        443/TCP                        15h
+kyverno                 service/helm-kyverno-svc-metrics                              ClusterIP   10.110.90.224    <none>        8000/TCP                       15h
+kyverno                 service/kyverno-background-controller-metrics                 ClusterIP   10.97.125.1      <none>        8000/TCP                       15h
+kyverno                 service/kyverno-cleanup-controller                            ClusterIP   10.99.69.23      <none>        443/TCP                        15h
+kyverno                 service/kyverno-cleanup-controller-metrics                    ClusterIP   10.96.244.89     <none>        8000/TCP                       15h
+kyverno                 service/kyverno-reports-controller-metrics                    ClusterIP   10.108.218.34    <none>        8000/TCP                       15h
+logging                 service/victorialogs                                          ClusterIP   10.111.241.46    <none>        9428/TCP                       2d22h
+logging                 service/victorialogs-victoria-logs-single-server              ClusterIP   None             <none>        9428/TCP                       3d17h
+longhorn-system         service/longhorn-admission-webhook                            ClusterIP   10.104.142.0     <none>        9502/TCP                       6d18h
+longhorn-system         service/longhorn-backend                                      ClusterIP   10.103.184.219   <none>        9500/TCP                       6d18h
+longhorn-system         service/longhorn-conversion-webhook                           ClusterIP   10.104.108.78    <none>        9501/TCP                       6d18h
+longhorn-system         service/longhorn-frontend                                     ClusterIP   10.96.1.38       <none>        80/TCP                         6d18h
+longhorn-system         service/longhorn-recovery-backend                             ClusterIP   10.104.176.238   <none>        9503/TCP                       6d18h
+ns-ingress-nginx        service/helm-ingress-nginx-controller                         ClusterIP   10.104.108.14    <none>        80/TCP,443/TCP                 23h
+ns-ingress-nginx        service/helm-ingress-nginx-controller-admission               ClusterIP   10.104.124.172   <none>        443/TCP                        23h
+ns-logging              service/victoria-metrics-server                               ClusterIP   None             <none>        8428/TCP                       23h
+ns-observability        service/alertmanager-operated                                 ClusterIP   None             <none>        9093/TCP,9094/TCP,9094/UDP     24h
+ns-observability        service/helm-grafana                                          NodePort    10.108.25.253    <none>        80:30080/TCP                   23h
+ns-observability        service/helm-kube-prometheus-stack-alertmanager               ClusterIP   10.104.237.189   <none>        9093/TCP,8080/TCP              24h
+ns-observability        service/helm-kube-prometheus-stack-kube-state-metrics         ClusterIP   10.108.183.44    <none>        8080/TCP                       24h
+ns-observability        service/helm-kube-prometheus-stack-operator                   ClusterIP   10.101.233.25    <none>        443/TCP                        24h
+ns-observability        service/helm-kube-prometheus-stack-prometheus                 ClusterIP   10.96.212.43     <none>        9090/TCP,8080/TCP              24h
+ns-observability        service/helm-kube-prometheus-stack-prometheus-node-exporter   ClusterIP   10.102.19.251    <none>        9100/TCP                       24h
+ns-observability        service/helm-policy-reporter                                  ClusterIP   10.101.117.82    <none>        8080/TCP                       24h
+ns-observability        service/prometheus-operated                                   ClusterIP   None             <none>        9090/TCP                       24h
+ns-open4goods-recette   service/mysql-xwiki                                           ClusterIP   None             <none>        3306/TCP                       8h
+ns-whoami               service/whoami                                                ClusterIP   10.102.143.180   <none>        80/TCP                         39h
+
+NAMESPACE          NAME                                                                 DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+kube-flannel       daemonset.apps/kube-flannel-ds                                       1         1         1       1            1           <none>                   15d
+kube-system        daemonset.apps/kube-proxy                                            1         1         1       1            1           kubernetes.io/os=linux   15d
+longhorn-system    daemonset.apps/engine-image-ei-b4bcf0a5                              1         1         1       1            1           <none>                   6d18h
+longhorn-system    daemonset.apps/longhorn-csi-plugin                                   1         1         1       1            1           <none>                   6d18h
+longhorn-system    daemonset.apps/longhorn-manager                                      1         1         1       1            1           <none>                   6d18h
+ns-ingress-nginx   daemonset.apps/helm-ingress-nginx-controller                         1         1         1       1            1           kubernetes.io/os=linux   23h
+ns-logging         daemonset.apps/promtail                                              1         1         1       1            1           <none>                   24h
+ns-observability   daemonset.apps/helm-kube-prometheus-stack-prometheus-node-exporter   1         1         1       1            1           kubernetes.io/os=linux   24h
+
+NAMESPACE          NAME                                                            READY   UP-TO-DATE   AVAILABLE   AGE
+flux-system        deployment.apps/helm-controller                                 1/1     1            1           15d
+flux-system        deployment.apps/image-automation-controller                     1/1     1            1           15d
+flux-system        deployment.apps/image-reflector-controller                      1/1     1            1           15d
+flux-system        deployment.apps/kustomize-controller                            1/1     1            1           15d
+flux-system        deployment.apps/notification-controller                         1/1     1            1           15d
+flux-system        deployment.apps/source-controller                               1/1     1            1           15d
+kube-system        deployment.apps/coredns                                         2/2     2            2           15d
+kyverno            deployment.apps/kyverno-admission-controller                    1/1     1            1           15h
+kyverno            deployment.apps/kyverno-background-controller                   1/1     1            1           15h
+kyverno            deployment.apps/kyverno-cleanup-controller                      0/1     1            0           15h
+kyverno            deployment.apps/kyverno-reports-controller                      1/1     1            1           15h
+longhorn-system    deployment.apps/csi-attacher                                    3/3     3            3           6d18h
+longhorn-system    deployment.apps/csi-provisioner                                 3/3     3            3           6d18h
+longhorn-system    deployment.apps/csi-resizer                                     3/3     3            3           6d18h
+longhorn-system    deployment.apps/csi-snapshotter                                 3/3     3            3           6d18h
+longhorn-system    deployment.apps/longhorn-driver-deployer                        1/1     1            1           6d18h
+longhorn-system    deployment.apps/longhorn-ui                                     2/2     2            2           6d18h
+ns-observability   deployment.apps/helm-grafana                                    1/1     1            1           23h
+ns-observability   deployment.apps/helm-kube-prometheus-stack-kube-state-metrics   1/1     1            1           24h
+ns-observability   deployment.apps/helm-kube-prometheus-stack-operator             1/1     1            1           24h
+ns-observability   deployment.apps/helm-policy-reporter                            1/1     1            1           24h
+ns-whoami          deployment.apps/whoami                                          3/3     3            3           39h
+
+NAMESPACE          NAME                                                                       DESIRED   CURRENT   READY   AGE
+flux-system        replicaset.apps/helm-controller-6996c8ffcc                                 0         0         0       15d
+flux-system        replicaset.apps/helm-controller-75c5fcd6b9                                 1         1         1       18h
+flux-system        replicaset.apps/helm-controller-79468ddcff                                 0         0         0       8d
+flux-system        replicaset.apps/helm-controller-799c7d9494                                 0         0         0       8d
+flux-system        replicaset.apps/helm-controller-84bc9fd48                                  0         0         0       8d
+flux-system        replicaset.apps/helm-controller-8576fdb64f                                 0         0         0       8d
+flux-system        replicaset.apps/helm-controller-86d45979df                                 0         0         0       10d
+flux-system        replicaset.apps/image-automation-controller-555c69c788                     1         1         1       8d
+flux-system        replicaset.apps/image-automation-controller-5578b56597                     0         0         0       15d
+flux-system        replicaset.apps/image-automation-controller-56b79b9965                     0         0         0       8d
+flux-system        replicaset.apps/image-automation-controller-57f7764dd4                     0         0         0       13d
+flux-system        replicaset.apps/image-automation-controller-866f987987                     0         0         0       8d
+flux-system        replicaset.apps/image-reflector-controller-5d557c4cd9                      0         0         0       13d
+flux-system        replicaset.apps/image-reflector-controller-78f998757d                      0         0         0       15d
+flux-system        replicaset.apps/image-reflector-controller-7fd4d8f54c                      1         1         1       8d
+flux-system        replicaset.apps/image-reflector-controller-86f4bd6cd4                      0         0         0       8d
+flux-system        replicaset.apps/image-reflector-controller-d6554c6fd                       0         0         0       8d
+flux-system        replicaset.apps/kustomize-controller-5844ddb4d4                            0         0         0       8d
+flux-system        replicaset.apps/kustomize-controller-5cfc68bf6b                            0         0         0       8d
+flux-system        replicaset.apps/kustomize-controller-6664ccf445                            1         1         1       18h
+flux-system        replicaset.apps/kustomize-controller-6c6b47dc57                            0         0         0       8d
+flux-system        replicaset.apps/kustomize-controller-798546dcbf                            0         0         0       15d
+flux-system        replicaset.apps/notification-controller-5687c8bc5b                         0         0         0       8d
+flux-system        replicaset.apps/notification-controller-689c4b77                           0         0         0       8d
+flux-system        replicaset.apps/notification-controller-7d84f68c88                         0         0         0       8d
+flux-system        replicaset.apps/notification-controller-9cdc79f5f                          0         0         0       15d
+flux-system        replicaset.apps/notification-controller-d58966fff                          1         1         1       18h
+flux-system        replicaset.apps/source-controller-5fc9d76594                               0         0         0       8d
+flux-system        replicaset.apps/source-controller-686b6b9d99                               1         1         1       18h
+flux-system        replicaset.apps/source-controller-7899584455                               0         0         0       8d
+flux-system        replicaset.apps/source-controller-79648bc5bb                               0         0         0       10d
+flux-system        replicaset.apps/source-controller-849b4b6797                               0         0         0       15d
+flux-system        replicaset.apps/source-controller-d5db6484c                                0         0         0       8d
+kube-system        replicaset.apps/coredns-7c65d6cfc9                                         2         2         2       15d
+kyverno            replicaset.apps/kyverno-admission-controller-9d6d745bd                     1         1         1       15h
+kyverno            replicaset.apps/kyverno-background-controller-59c797b65b                   1         1         1       15h
+kyverno            replicaset.apps/kyverno-cleanup-controller-976b44d49                       1         1         0       15h
+kyverno            replicaset.apps/kyverno-reports-controller-5f6cdffc8c                      1         1         1       15h
+longhorn-system    replicaset.apps/csi-attacher-5cfcfffdf                                     0         0         0       6d18h
+longhorn-system    replicaset.apps/csi-attacher-6b97d84b55                                    3         3         3       6d14h
+longhorn-system    replicaset.apps/csi-attacher-946b465d5                                     0         0         0       6d15h
+longhorn-system    replicaset.apps/csi-provisioner-54f74d664f                                 3         3         3       6d14h
+longhorn-system    replicaset.apps/csi-provisioner-57fd78c47                                  0         0         0       6d15h
+longhorn-system    replicaset.apps/csi-provisioner-76bf7c68ff                                 0         0         0       6d18h
+longhorn-system    replicaset.apps/csi-resizer-5d645c6858                                     3         3         3       6d14h
+longhorn-system    replicaset.apps/csi-resizer-75c4685b5b                                     0         0         0       6d18h
+longhorn-system    replicaset.apps/csi-snapshotter-769588d6bb                                 0         0         0       6d18h
+longhorn-system    replicaset.apps/csi-snapshotter-7dbb7d48c6                                 3         3         3       6d14h
+longhorn-system    replicaset.apps/longhorn-driver-deployer-6795fd59d9                        1         1         1       6d18h
+longhorn-system    replicaset.apps/longhorn-ui-644f4c477c                                     0         0         0       6d18h
+longhorn-system    replicaset.apps/longhorn-ui-6857cc56b                                      2         2         2       6d7h
+longhorn-system    replicaset.apps/longhorn-ui-78854d8cdf                                     0         0         0       6d16h
+longhorn-system    replicaset.apps/longhorn-ui-86d669b6bf                                     0         0         0       6d16h
+longhorn-system    replicaset.apps/longhorn-ui-99db59bc7                                      0         0         0       6d16h
+ns-observability   replicaset.apps/helm-grafana-5bdd4ccb                                      1         1         1       23h
+ns-observability   replicaset.apps/helm-kube-prometheus-stack-kube-state-metrics-6d955cd4b5   1         1         1       24h
+ns-observability   replicaset.apps/helm-kube-prometheus-stack-operator-5dd468c9f4             1         1         1       24h
+ns-observability   replicaset.apps/helm-policy-reporter-85b88c5f8                             1         1         1       24h
+ns-whoami          replicaset.apps/whoami-765dbfc67d                                          3         3         3       39h
+
+NAMESPACE               NAME                                                                    READY   AGE
+logging                 statefulset.apps/victorialogs-victoria-logs-single-server               1/1     3d17h
+ns-logging              statefulset.apps/victoria-metrics-server                                1/1     23h
+ns-observability        statefulset.apps/alertmanager-helm-kube-prometheus-stack-alertmanager   1/1     24h
+ns-observability        statefulset.apps/prometheus-helm-kube-prometheus-stack-prometheus       1/1     24h
+ns-open4goods-recette   statefulset.apps/mysql-xwiki                                            0/1     8h
+
+NAMESPACE   NAME                                                      SCHEDULE       TIMEZONE   SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+kyverno     cronjob.batch/kyverno-cleanup-admission-reports           */10 * * * *   <none>     False     1        7m56s           15h
+kyverno     cronjob.batch/kyverno-cleanup-cluster-admission-reports   */10 * * * *   <none>     False     1        7m56s           15h
+kyverno     cronjob.batch/kyverno-cleanup-cluster-ephemeral-reports   */10 * * * *   <none>     False     1        7m56s           15h
+kyverno     cronjob.batch/kyverno-cleanup-ephemeral-reports           */10 * * * *   <none>     False     1        7m56s           15h
+
+NAMESPACE   NAME                                                           STATUS     COMPLETIONS   DURATION   AGE
+kyverno     job.batch/kyverno-cleanup-admission-reports-29301300           Complete   1/1           3m27s      17m
+kyverno     job.batch/kyverno-cleanup-admission-reports-29301310           Running    0/1           7m49s      7m49s
+kyverno     job.batch/kyverno-cleanup-cluster-admission-reports-29301300   Complete   1/1           3m27s      17m
+kyverno     job.batch/kyverno-cleanup-cluster-admission-reports-29301310   Running    0/1           7m49s      7m49s
+kyverno     job.batch/kyverno-cleanup-cluster-ephemeral-reports-29301300   Complete   1/1           3m27s      17m
+kyverno     job.batch/kyverno-cleanup-cluster-ephemeral-reports-29301310   Running    0/1           7m49s      7m49s
+kyverno     job.batch/kyverno-cleanup-ephemeral-reports-29301300           Complete   1/1           3m27s      17m
+kyverno     job.batch/kyverno-cleanup-ephemeral-reports-29301310           Running    0/1           7m49s      7m49s

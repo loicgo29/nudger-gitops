@@ -46,5 +46,14 @@ spec:
         podMonitorSelectorNilUsesHelmValues: false
         ruleSelectorNilUsesHelmValues: false
         serviceMonitorSelector: {}
+        retention: 24h                # Garde seulement 1 jour d’historique
+        retentionSize: 512MB          # Ou max 512 Mo de données
+        resources:                    # Limite mémoire et CPU
+          requests:
+            memory: 256Mi
+            cpu: 100m
+          limits:
+            memory: 512Mi
+            cpu: 500m
     prometheusOperator:
       enabled: true
