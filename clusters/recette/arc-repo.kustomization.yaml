@@ -5,7 +5,7 @@ metadata:
   name: arc-repo
   namespace: flux-system
 spec:
-  path: ./infra/action-runner-controller/base/repo
+  path: ./infra/action-runner-controller/base
   prune: true
   interval: 10m
   sourceRef:
