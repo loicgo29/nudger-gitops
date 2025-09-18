@@ -11,7 +11,7 @@ spec:
       version: 1.15.x
       sourceRef:
         kind: HelmRepository
-        name: helm-cert-manager
+        name: helmrepo-cert-manager
         namespace: flux-system
   install:
     createNamespace: false
