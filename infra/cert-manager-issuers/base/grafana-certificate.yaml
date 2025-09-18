@@ -8,6 +8,6 @@ spec:
   secretName: grafana-tls
   issuerRef:
     kind: ClusterIssuer
-    name: letsencrypt-prod-dns   # <= DNS-01
+    name: letsencrypt-prod   # <= DNS-01
   dnsNames:
   - grafana.nudger.logo-solutions.fr
