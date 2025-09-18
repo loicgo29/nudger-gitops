@@ -24,3 +24,4 @@ spec:
     webhook:
       enabled: true
       createCert: true
+      secretName: actions-runner-controller-serving-cert
