@@ -8,3 +8,4 @@ resources:
   - ns-observability.yaml
   - ns-kyverno.yaml
   - ns-cert-manager.yaml
+  - ns-cert-manager-issuers.yaml
