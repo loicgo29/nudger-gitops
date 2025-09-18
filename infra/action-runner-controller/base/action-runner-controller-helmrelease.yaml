@@ -25,3 +25,5 @@ spec:
       enabled: true
       createCert: true
       secretName: actions-runner-controller-serving-cert
+    controllerManager:
+      secretName: actions-runner-controller-serving-cert
