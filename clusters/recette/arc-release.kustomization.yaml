@@ -5,7 +5,7 @@ metadata:
   name: arc-release
   namespace: flux-system
 spec:
-  path: ./infra/action-runner-controller/base/release
+  path: ./infra/action-runner-controller/base
   prune: true
   interval: 10m
   dependsOn:
