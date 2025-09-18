@@ -22,6 +22,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: xwiki
+                name: xwiki-svc
                 port:
                   number: 8080
