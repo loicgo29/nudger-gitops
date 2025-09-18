@@ -7,3 +7,4 @@ resources:
   - kyverno.kustomization.yaml
   - mysql-xwiki.kustomization.yaml 
   - xwiki.kustomization.yaml
+  - cert-manager.kustomization.yaml
