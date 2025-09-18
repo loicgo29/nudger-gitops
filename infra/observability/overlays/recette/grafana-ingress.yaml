@@ -20,6 +20,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: grafana
+                name: helm-grafana
                 port:
                   number: 80
