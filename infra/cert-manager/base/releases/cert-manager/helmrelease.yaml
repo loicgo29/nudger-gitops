@@ -1,7 +1,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: helmrepo-cert-manager
+  name: helm-cert-manager
   namespace: ns-cert-manager
 spec:
   interval: 10m

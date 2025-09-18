@@ -8,6 +8,16 @@ for kind in helmreleases.helm.toolkit.fluxcd.io helmcharts.source.toolkit.fluxcd
     kubectl patch $res --type merge -p '{"metadata":{"finalizers":[]}}' || true
   done
 done
+# 1. Supprimer l’ancien HelmRelease (s’il existe)
+kubectl -n ns-cert-manager delete helmrelease helm-cert-manager --ignore-not-found
+
+# 2. Supprimer le HelmChart généré par Flux
+kubectl -n flux-system delete helmchart ns-cert-manager-helmrepo-cert-manager --ignore-not-found
+
+echo "🧹 [CLEANUP] Suppression cert-manager"
+kubectl delete helmrelease helm-cert-manager -n ns-cert-manager --ignore-not-found --wait=false || true
+kubectl delete helmchart ns-cert-manager-helmrepo-cert-manager -n flux-system --ignore-not-found --wait=false || true
+kubectl delete helmrepository helmrepo-cert-manager -n flux-system --ignore-not-found --wait=false || true
 
 echo "🧹 [CLEANUP] Suppression des anciens HelmRelease/Kustomization spécifiques"
 kubectl delete helmrelease promtail -n ns-logging --ignore-not-found --wait=false || true
