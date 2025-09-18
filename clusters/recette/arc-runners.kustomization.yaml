@@ -11,6 +11,5 @@ spec:
     kind: GitRepository
     name: gitops
   targetNamespace: ns-open4goods-recette
-  validation: client
   dependsOn:
     - name: arc-release
