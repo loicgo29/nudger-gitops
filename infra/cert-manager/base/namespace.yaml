@@ -1,9 +1,0 @@
-# base/namespace.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ns-cert-manager
-  labels:
-    pod-security.kubernetes.io/enforce: baseline
-    pod-security.kubernetes.io/audit: baseline
-    pod-security.kubernetes.io/warn: baseline
