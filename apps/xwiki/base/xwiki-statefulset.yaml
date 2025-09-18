@@ -58,7 +58,7 @@ spec:
               path: /bin/view/Main/WebHome
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 120
+            initialDelaySeconds: 1000
             timeoutSeconds: 10
             periodSeconds: 20
             successThreshold: 1
