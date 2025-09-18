@@ -3,17 +3,17 @@ set -euo pipefail
 
 expected_ns=("open4goods-prod" "open4goods-integration" "open4goods-recette" "observability")
 declare -A env_map=(
-  ["open4goods-prod"]="prod"
-  ["open4goods-integration"]="integration"
-  ["open4goods-recette"]="recette"
-  ["observability"]="observability"
+  ["ns-open4goods-prod"]="prod"
+  ["ns-open4goods-integration"]="integration"
+  ["ns-open4goods-recette"]="recette"
+  ["ns-observability"]="observability"
 )
 
 declare -A psa_map=(
-  ["open4goods-prod"]="restricted"
-  ["open4goods-integration"]="baseline"
-  ["open4goods-recette"]="baseline"
-  ["observability"]="baseline"
+  ["ns-open4goods-prod"]="restricted"
+  ["ns-open4goods-integration"]="baseline"
+  ["ns-open4goods-recette"]="baseline"
+  ["ns-observability"]="baseline"
 )
 
 echo "==> Vérification des namespaces et labels"
