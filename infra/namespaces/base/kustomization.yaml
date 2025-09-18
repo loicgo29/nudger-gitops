@@ -9,3 +9,4 @@ resources:
   - ns-kyverno.yaml
   - ns-cert-manager.yaml
   - ns-cert-manager-issuers.yaml
+  - ns-arc-systems.yaml   
