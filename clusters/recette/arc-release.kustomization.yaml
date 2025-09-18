@@ -1,0 +1,16 @@
+# clusters/lab/arc-release.kustomization.yaml
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: arc-release
+  namespace: flux-system
+spec:
+  path: ./infra/action-runner-controller/base/release
+  prune: true
+  interval: 10m
+  dependsOn:
+    - name: arc-repo
+  sourceRef:
+    kind: GitRepository
+    name: gitops
+    namespace: flux-system

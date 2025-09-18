@@ -9,4 +9,5 @@ resources:
   - xwiki.kustomization.yaml
   - cert-manager.kustomization.yaml
   - cert-manager-issuers.kustomization.yaml
-  - infra-action-runner-controller.kustomization.yaml
+  - arc-release.kustomization.yaml
+  - arc-repo.kustomization.yaml
