@@ -9,6 +9,7 @@ spec:
   ingressClassName: nginx
   rules:
     - host: grafana.nudger.logo-solutions.fr
+      secretName: grafana-tls
       http:
         paths:
           - path: /
