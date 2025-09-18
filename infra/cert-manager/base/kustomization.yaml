@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - ../../observability/base/helmrepository-prometheus-community.yaml   # ✅ bon chemin
+  - helmrepository-cert-manager.yaml
