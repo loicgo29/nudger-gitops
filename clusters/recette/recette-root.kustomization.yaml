@@ -4,11 +4,9 @@ metadata:
   name: recette-root
   namespace: flux-system
 spec:
-  validation: client
   interval: 10m
   path: ./clusters/recette
   prune: true
-  validation: server
   sourceRef:
     kind: GitRepository
     name: flux-system
