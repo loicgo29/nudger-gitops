@@ -21,3 +21,6 @@ spec:
       create: false
     githubWebhookServer:
       enabled: false
+    webhook:
+      enabled: true
+      createCert: true
