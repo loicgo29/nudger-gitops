@@ -1,0 +1,17 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: nudger-gitops-prod-runner
+  namespace: ns-open4goods-prod
+spec:
+  replicas: 1
+  template:
+    spec:
+      repository: loicgo29/nudger-gitops
+      labels:
+        - self-hosted
+        - nudger
+        - prod
+      envFrom:
+        - secretRef:
+            name: controller-manager

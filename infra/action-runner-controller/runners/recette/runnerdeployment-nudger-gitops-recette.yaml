@@ -1,0 +1,17 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: nudger-gitops-recette-runner
+  namespace: ns-open4goods-recette
+spec:
+  replicas: 1
+  template:
+    spec:
+      repository: loicgo29/nudger-gitops
+      labels:
+        - self-hosted
+        - nudger
+        - recette
+      envFrom:
+        - secretRef:
+            name: controller-manager
