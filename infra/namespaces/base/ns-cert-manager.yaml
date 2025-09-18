@@ -1,0 +1,16 @@
+# infra/namespaces/base/ns-logging.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ns-cert-manager
+  labels:
+    environment: cert-manager
+    app.kubernetes.io/part-of: open4goods
+    # PSA en labels (efficace)
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: privileged
+    pod-security.kubernetes.io/audit: privileged
+    # ⚠️ pas d'enforce ici pour éviter de bloquer un futur rollout
+  annotations:
+    nudger.logo-solutions.fr/managed-by: gitops
+

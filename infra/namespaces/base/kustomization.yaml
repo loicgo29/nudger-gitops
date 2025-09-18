@@ -7,3 +7,4 @@ resources:
   - ns-logging.yaml
   - ns-observability.yaml
   - ns-kyverno.yaml
+  - ns-cert-manager.yaml
