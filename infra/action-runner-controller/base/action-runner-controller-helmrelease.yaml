@@ -26,5 +26,7 @@ spec:
       enabled: true
       createCert: true
       secretName: actions-runner-controller-serving-cert
+        namespace: arc-system
+        name: actions-runner-controller-webhook
     controllerManager:
       secretName: controller-manager 
