@@ -19,7 +19,7 @@ spec:
     # Namespace où seront déployés les runners par défaut
     authSecret:
       create: false
-      name: ""
+      name: controller-manager 
     githubWebhookServer:
       enabled: false
     webhook:
@@ -27,4 +27,4 @@ spec:
       createCert: true
       secretName: actions-runner-controller-serving-cert
     controllerManager:
-      secretName: actions-runner-controller-serving-cert
+      secretName: controller-manager 
