@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: arc-system
+  name: actions-runner-system
   labels:
     app.kubernetes.io/part-of: nudger
     environment: shared
