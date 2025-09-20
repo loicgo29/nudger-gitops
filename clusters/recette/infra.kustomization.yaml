@@ -6,8 +6,8 @@ metadata:
 spec:
   interval: 1h 
   prune: false
+  wait: false
   sourceRef:
     kind: GitRepository
     name: flux-system
   path: ./infra/namespaces
-  wait: true
