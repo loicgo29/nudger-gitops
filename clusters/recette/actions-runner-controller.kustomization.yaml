@@ -15,4 +15,5 @@ spec:
   targetNamespace: actions-runner-system
   dependsOn:
     - name: meta-infra-namespaces
+      namespace: flux-system
 
