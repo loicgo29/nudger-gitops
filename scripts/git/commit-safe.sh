@@ -11,16 +11,13 @@ Usage:
 
 Règles:
   - Vérifie qu'il y a bien des modifications à committer
-  - Valide le format de message: 
+  - Valide le format de message:
       (BREAKING|feat|fix|chore|docs|refactor|test|perf)(optional-scope): message
 
 Exemples:
   scripts/git/commit-safe.sh "feat(whoami): expose ingress nodeport"
   scripts/git/commit-safe.sh "fix: corrige readiness probe"
   scripts/git/commit-safe.sh "docs: ajoute README Commandes"
-
-Astuce:
-  Scope valide: lettres/chiffres/_/-
 EOF
 }
 
@@ -57,14 +54,30 @@ if ! [[ "$msg" =~ ^(BREAKING|feat|fix|chore|docs|refactor|test|perf)(\([a-z0-9_-
   exit 1
 fi
 
-# Commit et push
-echo "➡️ Commit sur '$branch' avec : \"$msg\""
-git add -A
-git commit -m "$msg" -n
-# ... après le commit, juste avant le push :
-echo "🔄 Sync avec origin/main (fetch + rebase autostash)"
-git fetch origin
-git rebase --autostash origin/main
+# Etape importante : propose de sélectionner les fichiers
+echo "➡️ Fichiers modifiés :"
+git status -s
 
+echo
+echo "👉 Sélectionne les fichiers à ajouter (ou 'a' pour tous) :"
+read -r -p "> " files
+
+if [[ "$files" == "a" ]]; then
+  git add -p
+else
+  git add $files
+fi
+
+# Vérifie qu’il y a bien des fichiers stagés
+if git diff --cached --quiet; then
+  echo "❌ Aucun fichier stagé. Abort."
+  exit 1
+fi
+
+# Commit
+echo "➡️ Commit sur '$branch' avec : \"$msg\""
+git commit -m "$msg"
+
+# Push (sans rebase forcé)
 echo "🚀 Push"
-git push -u origin "$branch"
+git push origin "$branch"
