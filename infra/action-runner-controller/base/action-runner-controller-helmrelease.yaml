@@ -29,3 +29,5 @@ spec:
       service:
         namespace: arc-system
         name: actions-runner-controller-webhook  
+    certManager:
+      enabled: true
