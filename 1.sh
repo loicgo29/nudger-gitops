@@ -1,99 +1,15 @@
-#!/usr/bin/env bash
-set -euo pipefail
+# 1. Supprimer le HelmChart en cache
+kubectl -n flux-system delete helmchart arc-system-actions-runner-controller --ignore-not-found
 
-BASE_DIR="infra/action-runner-controller/runners"
-REPO="loicgo29/nudger-gitops"
+# 2. Supprimer le HelmRelease (au cas où l’ancien état reste collé)
+kubectl -n arc-system delete helmrelease actions-runner-controller --ignore-not-found
 
-mkdir -p ${BASE_DIR}/{integration,recette,prod}
+# 3. Re-synchroniser la source Helm
+flux reconcile source helm actions-runner-controller -n flux-system
 
-##############################################
-# Integration
-##############################################
-cat <<'EOF' > ${BASE_DIR}/integration/runnerdeployment-nudger-gitops-integration.yaml
-apiVersion: actions.summerwind.dev/v1alpha1
-kind: RunnerDeployment
-metadata:
-  name: nudger-gitops-integration-runner
-  namespace: ns-open4goods-integration
-spec:
-  replicas: 1
-  template:
-    spec:
-      repository: loicgo29/nudger-gitops
-      labels:
-        - self-hosted
-        - nudger
-        - integration
-      envFrom:
-        - secretRef:
-            name: controller-manager
-EOF
+# 4. Re-synchroniser le HelmRelease
+flux reconcile helmrelease actions-runner-controller -n arc-system
 
-cat <<'EOF' > ${BASE_DIR}/integration/kustomization.yaml
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - runnerdeployment-nudger-gitops-integration.yaml
-EOF
-
-##############################################
-# Recette
-##############################################
-cat <<'EOF' > ${BASE_DIR}/recette/runnerdeployment-nudger-gitops-recette.yaml
-apiVersion: actions.summerwind.dev/v1alpha1
-kind: RunnerDeployment
-metadata:
-  name: nudger-gitops-recette-runner
-  namespace: ns-open4goods-recette
-spec:
-  replicas: 1
-  template:
-    spec:
-      repository: loicgo29/nudger-gitops
-      labels:
-        - self-hosted
-        - nudger
-        - recette
-      envFrom:
-        - secretRef:
-            name: controller-manager
-EOF
-
-cat <<'EOF' > ${BASE_DIR}/recette/kustomization.yaml
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - runnerdeployment-nudger-gitops-recette.yaml
-EOF
-
-##############################################
-# Production
-##############################################
-cat <<'EOF' > ${BASE_DIR}/prod/runnerdeployment-nudger-gitops-prod.yaml
-apiVersion: actions.summerwind.dev/v1alpha1
-kind: RunnerDeployment
-metadata:
-  name: nudger-gitops-prod-runner
-  namespace: ns-open4goods-prod
-spec:
-  replicas: 1
-  template:
-    spec:
-      repository: loicgo29/nudger-gitops
-      labels:
-        - self-hosted
-        - nudger
-        - prod
-      envFrom:
-        - secretRef:
-            name: controller-manager
-EOF
-
-cat <<'EOF' > ${BASE_DIR}/prod/kustomization.yaml
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - runnerdeployment-nudger-gitops-prod.yaml
-EOF
-
-echo "✅ RunnerDeployments et Kustomizations générés dans ${BASE_DIR}/{integration,recette,prod}"
+# 5. Vérifier l’état
+kubectl -n flux-system get helmcharts | grep arc-system-actions-runner-controller || true
+kubectl -n arc-system get helmreleases | grep actions-runner-controller || true
