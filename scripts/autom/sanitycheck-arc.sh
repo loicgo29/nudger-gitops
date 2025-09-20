@@ -17,7 +17,7 @@ kubectl -n arc-system get deploy,pods -o wide
 
 # Vérifie que le secret GitHub App existe
 echo "[4] Vérification du Secret GitHub App..."
-kubectl -n arc-system get secret controller-manager || echo "❌ Secret manquant"
+kubectl -n arc-system get secret actions-runner-controller || echo "❌ Secret manquant"
 
 # Vérifie le certificat TLS du webhook ARC
 echo "[5] Vérification du certificat TLS du webhook..."
