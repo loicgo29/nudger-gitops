@@ -52,7 +52,7 @@ MI...
 On génère un secret **non-appliqué** en YAML :
 
 ```bash
-kubectl -n arc-system create secret generic controller-manager   --from-literal=github_app_id=1977125   --from-literal=github_app_installation_id=86589867   --from-file=github_app_private_key=./gh-app.pem   --dry-run=client -o yaml > app.yaml
+kubectl -n actions-runner-system create secret generic controller-manager   --from-literal=github_app_id=1977125   --from-literal=github_app_installation_id=86589867   --from-file=github_app_private_key=./gh-app.pem   --dry-run=client -o yaml > app.yaml
 ```
 
 Vérifier `app.yaml` contient bien :
@@ -78,7 +78,7 @@ kubectl -n kube-system get svc | grep sealed-secrets
 
 2. Transformer le Secret en **SealedSecret** :
 ```bash
-kubectl -n arc-system create secret generic controller-manager   --from-literal=github_app_id=1977125   --from-literal=github_app_installation_id=86589867   --from-file=github_app_private_key=./gh-app.pem   --dry-run=client -o yaml | kubeseal   --controller-name=sealed-secrets   --controller-namespace=kube-system   --format=yaml > infra/action-runner-controller/base/secret-controller-manager-sealed.yaml
+kubectl -n actions-runner-system create secret generic controller-manager   --from-literal=github_app_id=1977125   --from-literal=github_app_installation_id=86589867   --from-file=github_app_private_key=./gh-app.pem   --dry-run=client -o yaml | kubeseal   --controller-name=sealed-secrets   --controller-namespace=kube-system   --format=yaml > infra/action-runner-controller/base/secret-controller-manager-sealed.yaml
 ```
 
 3. Vérifier que le fichier n’est **pas vide** :
@@ -92,7 +92,7 @@ apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
   name: controller-manager
-  namespace: arc-system
+  namespace: actions-runner-system
 spec:
   encryptedData:
     github_app_id: Ag...
@@ -111,17 +111,17 @@ git commit -m "feat: add ARC sealed secret for GitHub App"
 git push
 ```
 
-Flux appliquera automatiquement le `SealedSecret`, qui générera le `Secret` déchiffré dans `arc-system`.
+Flux appliquera automatiquement le `SealedSecret`, qui générera le `Secret` déchiffré dans `actions-runner-system`.
 
 ---
 
 ## 6. Vérifications
 
 ```bash
-kubectl -n arc-system get sealedsecrets
-kubectl -n arc-system get secret controller-manager -o yaml
-kubectl -n arc-system get pods
-kubectl -n arc-system logs deploy/actions-runner-controller -c manager --tail=50
+kubectl -n actions-runner-system get sealedsecrets
+kubectl -n actions-runner-system get secret controller-manager -o yaml
+kubectl -n actions-runner-system get pods
+kubectl -n actions-runner-system logs deploy/actions-runner-controller -c manager --tail=50
 ```
 
 ✅ Tu dois voir un pod `actions-runner-controller` en **Running (2/2)**, sans erreur `dummy`.
