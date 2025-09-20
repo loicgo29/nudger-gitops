@@ -10,4 +10,4 @@ spec:
   path: ./infra/observability/overlays/recette
   sourceRef:
     kind: GitRepository
-    name: gitops
+    name: flux-system

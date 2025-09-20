@@ -9,7 +9,7 @@ spec:
   prune: true
   sourceRef:
     kind: GitRepository
-    name: gitops
+    name: flux-system
   targetNamespace: ns-open4goods-recette
   dependsOn:
     - name: arc-release

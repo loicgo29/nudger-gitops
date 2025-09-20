@@ -12,5 +12,5 @@ spec:
     - name: arc-repo
   sourceRef:
     kind: GitRepository
-    name: gitops
+    name: flux-system
     namespace: flux-system

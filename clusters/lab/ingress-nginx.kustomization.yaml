@@ -10,7 +10,7 @@ spec:
   prune: true
   sourceRef:
     kind: GitRepository
-    name: gitops
+    name: flux-system
   path: apps/ingress-nginx/overlays/lab
   healthChecks:
     - apiVersion: apps/v1

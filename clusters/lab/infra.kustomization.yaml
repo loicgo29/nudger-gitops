@@ -8,6 +8,6 @@ spec:
   prune: false
   sourceRef:
     kind: GitRepository
-    name: gitops
+    name: flux-system
   path: ./infra/namespaces
   wait: true
