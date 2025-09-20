@@ -26,7 +26,7 @@ spec:
       createCert: true
       secretName: actions-runner-controller-serving-cert
       service:
-        namespace: arc-system
+        namespace: flux-system
         name: actions-runner-controller-webhook  
     certManager:
       enabled: true
