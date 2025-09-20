@@ -4,3 +4,4 @@ resources:
   - action-runner-controller-helmrelease.yaml
   - action-runner-controller-helmrepository.yaml
   - secret-controller-manager-sealed.yaml 
+  - actions-runner-controller-repo.yaml
