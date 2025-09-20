@@ -1,43 +1,30 @@
-#!/usr/bin/env bash
+#!/bin/bash
 set -euo pipefail
 
-echo "=== Purge complète Actions Runner Controller ==="
+echo "=== Purge ARC (Actions Runner Controller) ==="
 
-# 1. Supprimer les anciens webhooks qui pointent vers actions-runner-system/webhook-service
-echo "[1] Suppression des WebhookConfigurations obsolètes..."
-kubectl get validatingwebhookconfigurations.admissionregistration.k8s.io -o name | grep runner || true
-kubectl get mutatingwebhookconfigurations.admissionregistration.k8s.io -o name | grep runner || true
+# 1. Supprimer les pods ARC
+kubectl -n arc-system delete pod -l app.kubernetes.io/name=actions-runner-controller --ignore-not-found
 
-kubectl delete validatingwebhookconfigurations.admissionregistration.k8s.io \
-  $(kubectl get validatingwebhookconfigurations.admissionregistration.k8s.io -o name | grep runner | awk -F/ '{print $2}') 2>/dev/null || true
+# 2. Supprimer les secrets ARC (sealed et déchiffrés)
+kubectl -n arc-system delete secret actions-runner-controller --ignore-not-found
+kubectl -n arc-system delete secret controller-manager --ignore-not-found
+kubectl -n arc-system delete sealedsecret actions-runner-controller --ignore-not-found
+kubectl -n arc-system delete sealedsecret controller-manager --ignore-not-found
 
-kubectl delete mutatingwebhookconfigurations.admissionregistration.k8s.io \
-  $(kubectl get mutatingwebhookconfigurations.admissionregistration.k8s.io -o name | grep runner | awk -F/ '{print $2}') 2>/dev/null || true
+# 3. Supprimer les CRDs runners (si déjà créés mais bloqués)
+kubectl delete runnerdeployments.actions.summerwind.dev --all --ignore-not-found
+kubectl delete runners.actions.summerwind.dev --all --ignore-not-found
+kubectl delete runnersets.actions.summerwind.dev --all --ignore-not-found
 
-# 2. Supprimer l’ancien namespace actions-runner-system (si présent)
-echo "[2] Suppression ancien namespace actions-runner-system..."
-kubectl delete ns actions-runner-system --ignore-not-found=true
+# 4. Supprimer le HelmRelease bloqué
+kubectl -n arc-system delete helmrelease actions-runner-controller --ignore-not-found
 
-# 3. Supprimer tous les secrets liés à ARC dans arc-system
-echo "[3] Purge des secrets dans arc-system..."
-kubectl -n arc-system delete secret controller-manager --ignore-not-found=true
-kubectl -n arc-system delete secret actions-runner-controller --ignore-not-found=true
+echo "=== Purge terminée. Forcer reconcile ==="
 
-# 4. Supprimer les anciens sealedsecrets liés à ARC
-echo "[4] Purge des SealedSecrets ARC..."
-kubectl -n arc-system delete sealedsecret actions-runner-controller --ignore-not-found=true
+# 5. Reconcile pour recréer
+flux reconcile kustomization arc-repo -n flux-system --with-source
+flux reconcile kustomization arc-release -n flux-system --with-source
 
-# 5. Supprimer l’ancien HelmRelease (si existait ailleurs)
-echo "[5] Purge des HelmReleases ARC fantômes..."
-kubectl get helmreleases -A | grep actions-runner-controller || true
-
-# 6. Reconcilier les sources et HelmRelease propres
-echo "[6] Relance reconcile HelmRelease ARC..."
-flux reconcile source helm actions-runner-controller -n flux-system --with-source || true
-flux reconcile helmrelease actions-runner-controller -n arc-system --with-source || true
-
-# 7. Reconcilier les runners
-echo "[7] Relance reconcile runners recette..."
-flux reconcile kustomization arc-runners-recette -n flux-system --with-source || true
-
-echo "=== Purge terminée ==="
+# 6. Vérification rapide
+kubectl -n arc-system get pods
