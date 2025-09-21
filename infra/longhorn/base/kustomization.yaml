@@ -7,3 +7,4 @@ resources:
   - storageclass-longhorn.yaml
   - storageclass-longhorn-delete.yaml
   - patch-node.yaml 
+  - storageclass-longhorn-runner.yaml
