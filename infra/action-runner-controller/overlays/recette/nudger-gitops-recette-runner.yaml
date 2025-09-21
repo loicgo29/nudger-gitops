@@ -8,11 +8,11 @@ spec:
   template:
     spec:
       repository: loicgo29/nudger-gitops
-      image: ghcr.io/actions/actions-runner:2.311.0   # runner "sec", pas de docker
+      image: ghcr.io/actions/actions-runner:2.311.0   # runner sans docker
       dockerdWithinRunnerContainer: false             # désactivé
       containerMode: kubernetes
-      workVolumeClaimTemplate:        # 👈 requis en mode kubernetes
-        storageClassName: longhorn-1r
+      workVolumeClaimTemplate:        # SC 1 replica (longhorn-1r)
+        storageClassName: longhorn-runner
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
