@@ -7,7 +7,7 @@ spec:
   replicas: 1
   template:
     spec:
-      organization: loicgo29
+      repository: loicgo29/nudger-gitops
       labels:
         - self-hosted
         - nudger-gitops
