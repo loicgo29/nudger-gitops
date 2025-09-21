@@ -8,6 +8,7 @@ spec:
   template:
     spec:
       repository: loicgo29/nudger-gitops
+      image: ghcr.io/actions/actions-runner:latest
       labels:
         - self-hosted
         - nudger-gitops
