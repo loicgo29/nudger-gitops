@@ -1,0 +1,94 @@
+# 🚑 Recette anti-blocage FluxCD
+
+## 1. Respecter l’ordre de déploiement
+Toujours séparer les `Kustomization` avec des dépendances explicites :
+
+1. **Namespaces** (`infra/namespaces`)  
+   - Chaque namespace doit exister **avant** d’y créer des ressources (Secrets, HelmRelease, etc.).  
+   - Solution : un `meta-infra-namespaces` appliqué en premier.  
+
+2. **CRDs & Operators**  
+   - Ex : SealedSecrets, Cert-Manager, Kyverno.  
+   - ⚠️ Les CRDs doivent être présentes **avant** d’appliquer des objets qui les utilisent (ex : `SealedSecret`).  
+
+3. **Repositories (sources)**  
+   - HelmRepository (charts), GitRepository (autres repos).  
+   - Ils doivent être `Ready` avant que les HelmRelease qui s’y réfèrent démarrent.  
+
+4. **HelmRelease / Apps**  
+   - Installations d’applications (ARC, Prometheus, etc.).  
+
+5. **SealedSecrets dépendants**  
+   - Les secrets scellés doivent attendre que le namespace ET le controller soient prêts.
+
+---
+
+## 2. Structurer les `Kustomization`
+Dans tes manifests Flux (`clusters/*`), ajoute **`dependsOn`** pour forcer l’ordre :  
+
+```yaml
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: actions-runner-controller
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: meta-infra-namespaces       # les namespaces existent
+    - name: cert-manager                # cert-manager prêt pour gérer les certifs
+  path: ./infra/action-runner-controller/base
+  prune: true
+  wait: true
+  interval: 10m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+```
+
+---
+
+## 3. Vérifications avant `flux reconcile`
+Checklist :
+```bash
+# Vérifier que le namespace cible existe
+kubectl get ns actions-runner-system
+
+# Vérifier que les CRDs nécessaires sont bien installées
+kubectl get crd | grep sealedsecrets
+kubectl get crd | grep helmrepositories
+
+# Vérifier que les sources sont prêtes
+kubectl -n flux-system get helmrepositories
+```
+
+---
+
+## 4. Utiliser `flux reconcile` dans le bon ordre
+Quand tu veux débloquer manuellement :
+```bash
+flux reconcile kustomization meta-infra-namespaces -n flux-system --with-source
+flux reconcile kustomization cert-manager -n flux-system --with-source
+flux reconcile kustomization actions-runner-controller -n flux-system --with-source
+```
+
+⚠️ Toujours commencer par **namespaces → CRDs → HelmRepository → HelmRelease**.  
+
+---
+
+## 5. Cas particulier : SealedSecrets
+- La première fois, il faut récupérer la clé publique :  
+  ```bash
+  kubeseal --controller-namespace=kube-system \
+           --controller-name=sealed-secrets \
+           --fetch-cert > pub-cert.pem
+  ```
+- Ensuite sceller tes secrets avec **le bon namespace et nom**.  
+- Si un SealedSecret échoue (`not found: namespace ...`), c’est que le namespace n’était pas créé → dépendance manquante.
+
+---
+
+## 6. ⚡ Conclusion
+- **Flux est strict** : il refuse de déployer tant que les dépendances ne sont pas “Ready”.  
+- **kubectl apply est bourrin** : il balance tout et ça finit par marcher.  
+- La clé → **bien chaîner les Kustomizations avec `dependsOn`** pour que Flux sache attendre.  
+
