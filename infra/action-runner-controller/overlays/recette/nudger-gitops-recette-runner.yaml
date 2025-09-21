@@ -8,7 +8,15 @@ spec:
   template:
     spec:
       repository: loicgo29/nudger-gitops
-      image: ghcr.io/actions/actions-runner:latest
+      image: ghcr.io/actions/actions-runner:2.311.0   # runner "sec", pas de docker
+      dockerdWithinRunnerContainer: false             # désactivé
+      containerMode: kubernetes
+      workVolumeClaimTemplate:        # 👈 requis en mode kubernetes
+        storageClassName: longhorn-1r
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
       labels:
         - self-hosted
         - nudger-gitops

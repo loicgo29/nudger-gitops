@@ -15,7 +15,7 @@ parameters:
   disableRevisionCounter: "true"
   fromBackup: ""
   fsType: ext4
-  numberOfReplicas: "3"
+  numberOfReplicas: "1"
   staleReplicaTimeout: "30"
   unmapMarkSnapChainRemoved: ignored
 provisioner: driver.longhorn.io
