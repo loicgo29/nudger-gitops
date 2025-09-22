@@ -1,0 +1,21 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: nudger-gitops-recette-runner-emptydir
+  namespace: ns-open4goods-recette
+spec:
+  replicas: 1
+  template:
+    spec:
+      dockerdWithinRunnerContainer: false
+      dockerEnabled: false
+      repository: loicgo29/nudger-gitops
+      image: ghcr.io/actions/actions-runner:2.311.0
+      ephemeral: true
+      labels:
+        - self-hosted
+        - nudger-gitops
+        - recette
+      # ⚠️ Pas de PVC ici, juste un emptyDir
+      workVolume:
+        emptyDir: {}
