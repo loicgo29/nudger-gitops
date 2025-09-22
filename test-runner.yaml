@@ -1,0 +1,11 @@
+# test-runner.yaml
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: Runner
+metadata:
+  name: test-runner
+  namespace: ns-open4goods-recette
+spec:
+  repository: loicgo29/nudger-gitops
+  labels:
+    - self-hosted
+    - test
