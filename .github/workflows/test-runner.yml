@@ -1,0 +1,11 @@
+name: Test Runner ARC
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  test:
+    runs-on: [self-hosted, nudger-gitops, recette]
+    steps:
+      - name: Hello
+        run: echo "Runner ARC OK ✅ sur $(hostname)"

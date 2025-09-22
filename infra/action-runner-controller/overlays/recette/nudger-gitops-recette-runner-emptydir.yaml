@@ -16,6 +16,9 @@ spec:
         - self-hosted
         - nudger-gitops
         - recette
-      # ⚠️ Pas de PVC ici, juste un emptyDir
-      workVolume:
-        emptyDir: {}
+      volumes:
+        - name: work
+          emptyDir: {}
+      volumeMounts:
+        - name: work
+          mountPath: /runner/_work
