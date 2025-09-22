@@ -1,0 +1,19 @@
+allowVolumeExpansion: true
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"allowVolumeExpansion":true,"apiVersion":"storage.k8s.io/v1","kind":"StorageClass","metadata":{"annotations":{},"name":"longhorn-runner"},"parameters":{"dataLocality":"disabled","diskSelector":"runner-disk","fsType":"ext4","numberOfReplicas":"1"},"provisioner":"driver.longhorn.io","reclaimPolicy":"Delete","volumeBindingMode":"Immediate"}
+  creationTimestamp: "2025-09-21T14:08:53Z"
+  name: longhorn-runner
+  resourceVersion: "7928573"
+  uid: 3133a80b-221a-420a-8c23-73b58661b90a
+parameters:
+  dataLocality: disabled
+  diskSelector: runner-disk
+  fsType: ext4
+  numberOfReplicas: "1"
+provisioner: driver.longhorn.io
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer

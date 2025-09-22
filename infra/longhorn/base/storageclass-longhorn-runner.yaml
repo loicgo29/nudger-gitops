@@ -5,9 +5,9 @@ metadata:
 provisioner: driver.longhorn.io
 reclaimPolicy: Delete
 allowVolumeExpansion: true
-volumeBindingMode: Immediate
+volumeBindingMode: WaitForFirstConsumer
 parameters:
   numberOfReplicas: "1"
   dataLocality: "disabled"
   fsType: ext4
-  diskSelector: '[ "runner-disk" ]'
+  diskSelector: runner-disk

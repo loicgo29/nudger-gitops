@@ -1,0 +1,288 @@
+apiVersion: longhorn.io/v1beta2
+kind: Node
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"longhorn.io/v1beta2","kind":"Node","metadata":{"annotations":{},"name":"master1","namespace":"longhorn-system"},"spec":{"allowScheduling":true,"disks":{"default-disk-1771824a9d2ca01c":{"allowScheduling":true,"diskType":"filesystem","evictionRequested":false,"path":"/var/lib/longhorn/","storageReserved":1073741824,"tags":[]}}}}
+  creationTimestamp: "2025-09-10T08:34:24Z"
+  finalizers:
+  - longhorn.io
+  generation: 11
+  name: master1
+  namespace: longhorn-system
+  resourceVersion: "8064023"
+  uid: 1ea3f250-3664-41fb-9dd1-e0b2feff0436
+spec:
+  allowScheduling: true
+  disks:
+    default-disk-1771824a9d2ca01c:
+      allowScheduling: true
+      diskDriver: ""
+      diskType: filesystem
+      evictionRequested: false
+      path: /var/lib/longhorn/
+      storageReserved: 1073741824
+      tags: []
+    disk-HC_Volume_103182775:
+      allowScheduling: true
+      diskType: filesystem
+      evictionRequested: false
+      path: /mnt/HC_Volume_103182775
+      storageReserved: 0
+      tags:
+      - db-disk
+    disk-HC_Volume_103501231:
+      allowScheduling: true
+      diskType: filesystem
+      evictionRequested: false
+      path: /mnt/HC_Volume_103501231
+      storageReserved: 0
+      tags:
+      - runner-disk
+    disk-extra-sdb:
+      allowScheduling: true
+      diskType: filesystem
+      evictionRequested: false
+      path: /var/lib/longhorn2/
+      storageReserved: 0
+      tags: []
+    disk-extra-sdf:
+      allowScheduling: true
+      diskType: filesystem
+      evictionRequested: false
+      path: /mnt/HC_Volume_103182775
+      storageReserved: 0
+      tags: []
+    extra-disk-1771824a9d2ca01c:
+      allowScheduling: true
+      diskType: filesystem
+      path: /var/lib/longhorn2/
+      tags: []
+  evictionRequested: false
+  instanceManagerCPURequest: 0
+  name: master1
+  tags: []
+status:
+  autoEvicting: false
+  conditions:
+  - lastProbeTime: ""
+    lastTransitionTime: "2025-09-18T06:36:11Z"
+    message: Node master1 is ready
+    reason: ""
+    status: "True"
+    type: Ready
+  - lastProbeTime: ""
+    lastTransitionTime: "2025-09-10T08:34:24Z"
+    message: ""
+    reason: ""
+    status: "True"
+    type: Schedulable
+  - lastProbeTime: ""
+    lastTransitionTime: "2025-09-10T08:34:24Z"
+    message: All required packages [open-iscsi cryptsetup dmsetup nfs-common] are
+      installed
+    reason: ""
+    status: "True"
+    type: RequiredPackages
+  - lastProbeTime: ""
+    lastTransitionTime: "2025-09-17T03:03:40Z"
+    message: multipathd is running with a known issue that affects Longhorn. See description
+      and solution at https://longhorn.io/kb/troubleshooting-volume-with-multipath
+    reason: MultipathdIsRunning
+    status: "False"
+    type: Multipathd
+  - lastProbeTime: ""
+    lastTransitionTime: "2025-09-10T08:34:24Z"
+    message: ""
+    reason: ""
+    status: "True"
+    type: NFSClientInstalled
+  - lastProbeTime: ""
+    lastTransitionTime: "2025-09-10T08:34:24Z"
+    message: Kernel modules [dm_crypt] are loaded
+    reason: ""
+    status: "True"
+    type: KernelModulesLoaded
+  - lastProbeTime: ""
+    lastTransitionTime: "2025-09-10T08:34:54Z"
+    message: ""
+    reason: ""
+    status: "True"
+    type: MountPropagation
+  diskStatus:
+    default-disk-1771824a9d2ca01c:
+      conditions:
+      - lastProbeTime: ""
+        lastTransitionTime: "2025-09-10T08:34:54Z"
+        message: Disk default-disk-1771824a9d2ca01c(/var/lib/longhorn/) on node master1
+          is ready
+        reason: ""
+        status: "True"
+        type: Ready
+      - lastProbeTime: ""
+        lastTransitionTime: "2025-09-17T03:44:18Z"
+        message: Disk default-disk-1771824a9d2ca01c(/var/lib/longhorn/) on node master1
+          is schedulable
+        reason: ""
+        status: "True"
+        type: Schedulable
+      diskDriver: ""
+      diskName: default-disk-1771824a9d2ca01c
+      diskPath: /var/lib/longhorn/
+      diskType: filesystem
+      diskUUID: 3fdd515c-af12-424f-9da5-1205eed85af8
+      filesystemType: ext2/ext3
+      instanceManagerName: instance-manager-8177b09faceccbbe26be1eed859b75cc
+      scheduledBackingImage: {}
+      scheduledReplica:
+        pvc-417c014e-d0ba-4c39-a3a2-79560f1b0827-r-dab21ddc: 5368709120
+        pvc-b715226b-2e05-4a9d-8752-d642d5f25433-r-95c3e177: 10737418240
+        pvc-d4577647-9106-4738-941a-f6b109ecccd1-r-91240f8b: 10737418240
+      storageAvailable: 23907532800
+      storageMaximum: 80307429376
+      storageScheduled: 26843545600
+    disk-HC_Volume_103182775:
+      conditions:
+      - lastProbeTime: ""
+        lastTransitionTime: "2025-09-21T14:05:10Z"
+        message: 'Disk disk-HC_Volume_103182775(/mnt/HC_Volume_103182775) on node
+          master1 is not ready: disk has same file system ID 5f0e9a216b558ca2 as other
+          disks [disk-HC_Volume_103182775 disk-extra-sdf]'
+        reason: DiskFilesystemChanged
+        status: "False"
+        type: Ready
+      - lastProbeTime: ""
+        lastTransitionTime: "2025-09-21T14:05:10Z"
+        message: Disk disk-HC_Volume_103182775 (/mnt/HC_Volume_103182775) on the node
+          master1 is not ready
+        reason: DiskNotReady
+        status: "False"
+        type: Schedulable
+      diskDriver: ""
+      diskName: ""
+      diskPath: ""
+      diskType: filesystem
+      diskUUID: ""
+      filesystemType: ""
+      instanceManagerName: ""
+      scheduledBackingImage: {}
+      scheduledReplica: {}
+      storageAvailable: 0
+      storageMaximum: 0
+      storageScheduled: 0
+    disk-HC_Volume_103501231:
+      conditions:
+      - lastProbeTime: ""
+        lastTransitionTime: "2025-09-21T19:24:40Z"
+        message: Disk disk-HC_Volume_103501231(/mnt/HC_Volume_103501231) on node master1
+          is ready
+        reason: ""
+        status: "True"
+        type: Ready
+      - lastProbeTime: ""
+        lastTransitionTime: "2025-09-21T19:24:40Z"
+        message: Disk disk-HC_Volume_103501231(/mnt/HC_Volume_103501231) on node master1
+          is schedulable
+        reason: ""
+        status: "True"
+        type: Schedulable
+      diskDriver: ""
+      diskName: disk-extra-sdc
+      diskPath: /mnt/HC_Volume_103501231
+      diskType: filesystem
+      diskUUID: 7e7950f0-ddf2-4aae-b978-fa077be0076e
+      filesystemType: ext2/ext3
+      instanceManagerName: instance-manager-8177b09faceccbbe26be1eed859b75cc
+      scheduledBackingImage: {}
+      scheduledReplica: {}
+      storageAvailable: 52428800000
+      storageMaximum: 52521566208
+      storageScheduled: 0
+    disk-extra-sdb:
+      conditions:
+      - lastProbeTime: ""
+        lastTransitionTime: "2025-09-21T06:04:10Z"
+        message: 'Disk disk-extra-sdb(/var/lib/longhorn2/) on node master1 is not
+          ready: disk has same file system ID 081000000000 as other disks [disk-extra-sdb
+          extra-disk-1771824a9d2ca01c]'
+        reason: DiskFilesystemChanged
+        status: "False"
+        type: Ready
+      - lastProbeTime: ""
+        lastTransitionTime: "2025-09-21T06:04:10Z"
+        message: Disk disk-extra-sdb (/var/lib/longhorn2/) on the node master1 is
+          not ready
+        reason: DiskNotReady
+        status: "False"
+        type: Schedulable
+      diskDriver: ""
+      diskName: ""
+      diskPath: ""
+      diskType: filesystem
+      diskUUID: ""
+      filesystemType: ""
+      instanceManagerName: ""
+      scheduledBackingImage: {}
+      scheduledReplica: {}
+      storageAvailable: 0
+      storageMaximum: 0
+      storageScheduled: 0
+    disk-extra-sdf:
+      conditions:
+      - lastProbeTime: ""
+        lastTransitionTime: "2025-09-21T06:04:10Z"
+        message: Disk disk-extra-sdf(/mnt/HC_Volume_103182775) on node master1 is
+          ready
+        reason: ""
+        status: "True"
+        type: Ready
+      - lastProbeTime: ""
+        lastTransitionTime: "2025-09-21T06:04:10Z"
+        message: Disk disk-extra-sdf(/mnt/HC_Volume_103182775) on node master1 is
+          schedulable
+        reason: ""
+        status: "True"
+        type: Schedulable
+      diskDriver: ""
+      diskName: disk-extra-sdf
+      diskPath: /mnt/HC_Volume_103182775
+      diskType: filesystem
+      diskUUID: d0a3f238-0e8b-4f38-9521-9848a66cfdd1
+      filesystemType: ext2/ext3
+      instanceManagerName: instance-manager-8177b09faceccbbe26be1eed859b75cc
+      scheduledBackingImage: {}
+      scheduledReplica: {}
+      storageAvailable: 83886080000
+      storageMaximum: 83955703808
+      storageScheduled: 0
+    extra-disk-1771824a9d2ca01c:
+      conditions:
+      - lastProbeTime: ""
+        lastTransitionTime: "2025-09-21T06:02:40Z"
+        message: Disk extra-disk-1771824a9d2ca01c(/var/lib/longhorn2/) on node master1
+          is ready
+        reason: ""
+        status: "True"
+        type: Ready
+      - lastProbeTime: ""
+        lastTransitionTime: "2025-09-21T06:02:40Z"
+        message: Disk extra-disk-1771824a9d2ca01c(/var/lib/longhorn2/) on node master1
+          is schedulable
+        reason: ""
+        status: "True"
+        type: Schedulable
+      diskDriver: ""
+      diskName: extra-disk-1771824a9d2ca01c
+      diskPath: /var/lib/longhorn2/
+      diskType: filesystem
+      diskUUID: c8f11da6-1898-45bb-bab8-98670b221fea
+      filesystemType: xfs
+      instanceManagerName: instance-manager-8177b09faceccbbe26be1eed859b75cc
+      scheduledBackingImage: {}
+      scheduledReplica: {}
+      storageAvailable: 10171187200
+      storageMaximum: 10670309376
+      storageScheduled: 0
+  region: ""
+  snapshotCheckStatus: {}
+  zone: ""
