@@ -12,6 +12,3 @@ spec:
         - self-hosted
         - nudger
         - recette
-      envFrom:
-        - secretRef:
-            name: controller-manager
