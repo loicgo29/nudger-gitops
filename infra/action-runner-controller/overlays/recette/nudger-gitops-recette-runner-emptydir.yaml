@@ -16,7 +16,7 @@ spec:
       # Injection des credentials via le secret resealé
       envFrom:
         - secretRef:
-            name: actions-runner-controller
+            name: controller-manager
       # Montage d'un volume éphémère pour le workdir
       volumes:
         - name: work
