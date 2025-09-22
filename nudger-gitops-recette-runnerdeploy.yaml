@@ -9,7 +9,7 @@ spec:
     spec:
       repository: loicgo29/nudger-gitops
       image: ghcr.io/actions/actions-runner:2.311.0
-      ephemeral: false        # 👈 runner persistant
+      ephemeral: false
       dockerEnabled: false
       dockerdWithinRunnerContainer: false
       labels:
@@ -18,6 +18,6 @@ spec:
         - recette
       env:
         - name: RUNNER_MODE
-          value: "listener"   # 👈 force le runner à rester en mode "écoute"
+          value: "listener"
         - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
           value: "false"
