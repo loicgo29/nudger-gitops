@@ -9,7 +9,7 @@ run() {
 echo "🔄 Reconciling all Kustomizations (namespaces first)"
 
 # Récupération des Kustomizations
-kustomizations=$(flux get kustomizations -A | tail -n +2 | awk '{print $1 "/" $2}')
+kustomizations=$(flux get kustomizations -A | tail -n +2 | awk '{print $1 "/" $2}' | sed '/^$/d')
 
 # 1. Forcer l’ordre : namespaces d’abord
 for item in $(echo "$kustomizations" | grep "infra-namespaces"); do

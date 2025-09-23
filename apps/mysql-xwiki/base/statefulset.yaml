@@ -23,11 +23,13 @@ spec:
             - containerPort: 3306
               name: mysql
           env:
-            - name: MYSQL_ROOT_PASSWORD
+            - name: DB_USER
+              value: xwiki
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mysql-xwiki-secret
-                  key: password
+                  name: mysql-xwiki
+                  key: mysql-password
           volumeMounts:
             - name: mysql-xwiki-persistent-storage
               mountPath: /var/lib/mysql
