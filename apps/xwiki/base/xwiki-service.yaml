@@ -7,7 +7,6 @@ metadata:
   labels:
     app: xwiki
     tier: app
-    environment: recette
 spec:
   selector:
     app: xwiki
