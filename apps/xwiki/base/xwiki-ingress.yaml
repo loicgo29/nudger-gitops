@@ -5,4 +5,3 @@ metadata:
   labels:
     app: xwiki
 spec:
-  rules: []   # les overlays vont remplir ça

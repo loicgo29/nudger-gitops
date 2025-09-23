@@ -5,3 +5,5 @@ namespace: ns-open4goods-recette
 
 resources:
   - ../../base
+patchesStrategicMerge:
+  - patch-ingress.yaml
