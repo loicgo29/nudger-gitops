@@ -3,28 +3,35 @@ set -euo pipefail
 
 TARGET_DIR="${1:-.}"
 
-echo "▶️  Running Trivy on $TARGET_DIR"
+echo "▶️ Running Trivy on $TARGET_DIR"
 
-# Install Trivy si absent
+# Install Trivy if missing
 if ! command -v trivy >/dev/null 2>&1; then
   echo "📦 Installing Trivy..."
-  curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-  sudo mv ./bin/trivy /usr/local/bin/trivy
-  rm -rf ./bin
+  # On installe dans /usr/local/bin
+  curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+
+  # Vérifier que ça a bien été déplacé
+  if [[ ! -x /usr/local/bin/trivy ]]; then
+    echo "❌ /usr/local/bin/trivy non trouvé ou pas exécutable"
+    exit 1
+  fi
 fi
 
-# Scan config
+echo "✅ Trivy version : $(trivy --version)"
+
+# Scan des manifests
 trivy config "$TARGET_DIR" \
   --severity CRITICAL,HIGH \
   --exit-code 1 \
   --skip-dirs "smoke-tests" \
   --ignorefile .trivyignore || true
 
-# Rapport SARIF (optionnel)
+# Génération du rapport SARIF quel que soit le résultat
 trivy config "$TARGET_DIR" \
   --format sarif \
   --output trivy-k8s.sarif \
-  --exit-code 0 \
+  --severity CRITICAL,HIGH \
   --skip-dirs "smoke-tests" \
   --ignorefile .trivyignore || true
 
