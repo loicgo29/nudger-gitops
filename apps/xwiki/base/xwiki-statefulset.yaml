@@ -12,6 +12,8 @@ spec:
   selector:
     matchLabels:
       app: xwiki
+      tier: app
+      environment: recette
   template:
     metadata:
       labels:
@@ -58,7 +60,7 @@ spec:
               path: /bin/view/Main/WebHome
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 1000
+            initialDelaySeconds: 120 
             timeoutSeconds: 10
             periodSeconds: 20
             successThreshold: 1
