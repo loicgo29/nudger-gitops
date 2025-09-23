@@ -3,6 +3,11 @@ kind: StatefulSet
 metadata:
   name: xwiki
 spec:
+  selector:
+    matchLabels:
+      app: xwiki
+      tier: app
+      environment: integration
   template:
     metadata:
       labels:

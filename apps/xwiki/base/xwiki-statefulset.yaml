@@ -5,7 +5,7 @@ metadata:
   labels:
     app: xwiki
     tier: app
-    environment: recette
+    environment: ""
 spec:
   serviceName: xwiki
   replicas: 1
