@@ -4,6 +4,7 @@ metadata:
   name: mysql-xwiki-grants
   namespace: ns-open4goods-integration
 spec:
+  ttlSecondsAfterFinished: 60
   template:
     spec:
       restartPolicy: OnFailure
