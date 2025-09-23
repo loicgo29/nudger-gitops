@@ -1,0 +1,78 @@
+# .github/workflows/gitops-ci.yaml
+name: GitOps CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  sanitycheck:
+    name: Sanitycheck ARC
+    runs-on: [self-hosted, nudger-gitops]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache binaries
+        id: cache-bin
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/bin
+          key: ${{ runner.os }}-gitops-tools-v1
+
+      - name: Install tools (kubectl, kustomize, kubeconform)
+        if: steps.cache-bin.outputs.cache-hit != 'true'
+        run: |
+          set -eux
+          mkdir -p ~/.local/bin
+          export PATH=$HOME/.local/bin:$PATH
+
+          # kubectl
+          curl -sLo ~/.local/bin/kubectl https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl
+          chmod +x ~/.local/bin/kubectl
+
+          # kustomize
+          curl -sLo kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/latest/download/kustomize_linux_amd64.tar.gz
+          tar -xzf kustomize.tar.gz -C ~/.local/bin
+          rm kustomize.tar.gz
+
+          # kubeconform
+          curl -sLo kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz
+          tar -xzf kubeconform.tar.gz -C ~/.local/bin kubeconform
+          rm kubeconform.tar.gz
+
+      - name: Add ~/.local/bin to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Check kustomizations (build only)
+        run: |
+          set -eux
+          for cluster in clusters/*; do
+            echo "🔧 Checking $cluster"
+            kustomize build "$cluster" >/dev/null
+          done
+
+      - name: Validate manifests with kubeconform
+        run: |
+          set -eux
+          for cluster in clusters/*; do
+            echo "🔍 Validating $cluster"
+            kustomize build "$cluster" | kubeconform \
+              -strict \
+              -ignore-missing-schemas \
+              -summary
+          done
+
+      - name: Dry-run apply manifests
+        run: |
+          set -eux
+          KUBECONFIG=${KUBECONFIG:-$HOME/.kube/config}
+          for cluster in clusters/*; do
+            echo "🚀 Dry-run for $cluster"
+            kubectl apply --dry-run=server -f <(kustomize build "$cluster")
+          done
