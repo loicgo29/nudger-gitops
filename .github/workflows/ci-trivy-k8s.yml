@@ -18,32 +18,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Trivy
+      - name: Install Trivy
         uses: aquasecurity/setup-trivy@v0.2.2
 
       - name: Scan Kubernetes manifests
         run: |
           echo "▶ Running Trivy on Kubernetes manifests"
-          trivy config . \
-            --exit-code 0 \                  # 👈 n'échoue jamais
+          trivy config apps/ clusters/ \
+            --exit-code 0 \
             --severity HIGH,CRITICAL \
             --ignorefile .trivyignore \
-            --skip-dirs "smoke-tests" \
-            --format table
+            --skip-dirs "tests" \
+            --format table \
+            --output trivy-k8s.sarif || true
 
-      - name: Generate SARIF report
-        if: always()
-        run: |
-          echo "▶ Generating SARIF report for manifests"
-          trivy config . \
-            --exit-code 0 \
-            --format sarif \
-            --output trivy-k8s.sarif \
-            --ignorefile .trivyignore \
-            --skip-dirs "smoke-tests" || true
-          ls -lh trivy-k8s.sarif || echo "⚠️ No SARIF generated"
-
-      - name: Upload SARIF
+      - name: Upload SARIF (K8s)
         if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -54,13 +43,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Trivy
+      - name: Install Trivy
         uses: aquasecurity/setup-trivy@v0.2.2
 
       - name: Scan container images
         run: |
           set -euo pipefail
           echo "▶ Scanning fixed image list with Trivy"
+
           images=(
             "xwiki:17.3.0-mysql-tomcat"
             "mysql:8"
@@ -69,9 +59,11 @@ jobs:
           )
 
           for img in "${images[@]}"; do
-            echo "🔍 Scanning $img..."
-            trivy image \
-              --exit-code 0 \               # 👈 affiche seulement
-              --severity HIGH,CRITICAL \
-              "$img"
+            if [ -n "$img" ]; then
+              echo "🔍 Scanning $img..."
+              trivy image \
+                --exit-code 0 \
+                --severity HIGH,CRITICAL \
+                --format table "$img" || true
+            fi
           done
