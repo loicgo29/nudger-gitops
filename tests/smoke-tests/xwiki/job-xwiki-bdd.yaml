@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: xwiki-bdd
+  namespace: ns-open4goods-recette
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: xwiki-bdd
+          image: curlimages/curl:8.10.1
+          command: ["sh", "-c"]
+          args:
+            - |
+              set -eux
+              BASE_URL="http://xwiki-svc:8080/xwiki"
+
+              echo "🌐 Vérification XWiki disponible..."
+              curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/bin/view/Main/" | grep 200
+
+              echo "📝 Création page de test via API REST..."
+              curl -u "Admin:${XWIKI_ADMIN_PASS}" \
+                -X PUT \
+                -H "Content-Type: application/xml" \
+                -d '<page><title>PageBDDTest</title><content>Hello Persistence</content></page>' \
+                "$BASE_URL/rest/wikis/xwiki/spaces/Main/pages/PageBDDTest"
+
+              echo "🧹 Suppression Pod XWiki pour tester la persistance..."
+              kubectl -n ns-open4goods-recette delete pod -l app=xwiki --wait=false
+
+              echo "⏳ Attente que le Pod redémarre..."
+              sleep 120
+
+              echo "🔍 Vérification que la page existe encore..."
+              curl -u "Admin:${XWIKI_ADMIN_PASS}" \
+                -s "$BASE_URL/rest/wikis/xwiki/spaces/Main/pages/PageBDDTest" | grep "Hello Persistence"
+
+              echo "✅ Test de persistance XWiki PASSED"
+          env:
+            - name: XWIKI_ADMIN_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: xwiki-admin-secret
+                  key: password
