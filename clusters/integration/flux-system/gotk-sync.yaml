@@ -20,7 +20,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
-  path: ./clusters/integration/integration-root.kustomization.yaml
+  path: ./clusters/integration/
   prune: true
   sourceRef:
     kind: GitRepository
