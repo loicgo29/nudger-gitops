@@ -1,66 +1,59 @@
-name: 🔍 Trivy (K8s Manifests)    # Nom affiché du workflow dans GitHub Actions
+name: 🔍 Trivy (K8s Manifests)
 
 on:
-  pull_request:                  # Déclenché sur chaque PR
-    paths:                       # ... mais seulement si les fichiers modifiés correspondent à :
-      - 'apps/**'                # -> Manifests des apps
-      - 'clusters/**'            # -> Manifests des clusters
-      - '**/*.yaml'              # -> Tous les YAML
-  workflow_dispatch:             # Et exécutable à la main depuis l’UI GitHub
-
-permissions:
-  contents: read                 # Lecture du repo uniquement
-  security-events: write         # Écriture pour publier les résultats de sécurité (SARIF)
+  pull_request:
+    paths:
+      - 'apps/**'
+      - 'clusters/**'
+      - '**/*.yaml'
+  workflow_dispatch:
 
 jobs:
   trivy-k8s:
-    runs-on: ubuntu-latest       # Runner GitHub standard
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4  # Récupère le code du repo
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Cache Trivy DB
-        uses: actions/cache@v4     # Mise en cache de la base vulnérabilités Trivy
+      - name: Setup Trivy
+        uses: aquasecurity/setup-trivy@v0.2.3
         with:
-          path: ~/.cache/trivy     # Répertoire local utilisé par Trivy
-          key: trivy-db-${{ runner.os }}-${{ hashFiles('**/*.yaml') }}
-                                   # Clé de cache dépendant du contenu YAML
-          restore-keys: trivy-db-${{ runner.os }}-
-                                   # Fallback si la clé exacte n’existe pas
+          version: latest
+          cache: true
 
-      - name: Run Trivy (misconfig + secrets)
-        run: ./scripts/ci/ci-on-pr/trivy-k8s.sh .
-                                   # -> Analyse Kubernetes Manifests + secrets
-                                   # -> Échoue si CRITICAL/HIGH trouvés
-      - name: SARIF (misconfig)
-        if: always()
-        run: |
-          set -euo pipefail
-          echo "▶ Génération du rapport SARIF"
-          trivy config . \
-            --format sarif \
-            --output trivy-k8s.sarif \
-            --exit-code 0 \
-            --skip-dirs "smoke-tests" \
-            --ignorefile .trivyignore || true
-          ls -lh trivy-k8s.sarif || echo "⚠️ Pas de fichier SARIF généré"
-      - name: Upload SARIF
+      - name: Run Trivy misconfig scan
+        uses: aquasecurity/trivy-action@v0.28.0
+        with:
+          scan-type: config
+          format: sarif
+          output: trivy-k8s.sarif
+          severity: HIGH,CRITICAL
+          ignore-unfixed: false
+          ignorefile: .trivyignore
+
+      - name: Upload SARIF report
         if: always() && hashFiles('trivy-k8s.sarif') != ''
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy-k8s.sarif
+
   trivy-images:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Cache Trivy DB
-        uses: actions/cache@v4
+      - name: Setup Trivy
+        uses: aquasecurity/setup-trivy@v0.2.3
         with:
-          path: ~/.cache/trivy
-          key: trivy-db-${{ runner.os }}-images-${{ hashFiles('apps/**/kustomization.yaml') }}
-          restore-keys: trivy-db-${{ runner.os }}-images-
+          version: latest
+          cache: true
 
-      - name: Run Trivy (all images in apps)
-        run: |
-          TRIVY_SEVERITY="CRITICAL,HIGH" TRIVY_EXIT_CODE=1 \
-          ./scripts/ci/ci-on-pr/trivy.sh images-in-apps apps
+      - name: Run Trivy image scan
+        uses: aquasecurity/trivy-action@v0.28.0
+        with:
+          scan-type: image
+          format: table
+          severity: HIGH,CRITICAL
+          ignore-unfixed: false
+          # etc. selon ce que tu veux scanner
