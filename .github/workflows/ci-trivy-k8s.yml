@@ -63,4 +63,4 @@ jobs:
       - name: Run Trivy (all images in apps)
         run: |
           TRIVY_SEVERITY="CRITICAL,HIGH" TRIVY_EXIT_CODE=1 \
-          ./scripts/ci-on-pr/trivy.sh images-in-apps apps
+          ./scripts/ci/ci-on-pr/trivy.sh images-in-apps apps
