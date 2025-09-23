@@ -22,7 +22,7 @@ jobs:
           cache: true
 
       - name: Run Trivy misconfig scan
-        uses: aquasecurity/trivy-action@v0.24.0
+        uses: aquasecurity/trivy-action@v0.33.1
         with:
           scan-type: config
           format: sarif
