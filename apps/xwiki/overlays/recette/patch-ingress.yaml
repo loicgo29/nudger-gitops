@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: xwiki
+spec:
+  tls:
+    - hosts:
+        - xwiki.recette.nudger.logo-solutions.fr
+      secretName: xwiki-tls
+  rules:
+    - host: xwiki.recette.nudger.logo-solutions.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: xwiki-svc
+                port:
+                  number: 8080
+
