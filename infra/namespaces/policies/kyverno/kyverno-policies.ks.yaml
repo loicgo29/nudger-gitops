@@ -13,4 +13,4 @@ spec:
     namespace: flux-system
   dependsOn:
     - name: meta-kyverno
-  validation: client
+  validation: server
