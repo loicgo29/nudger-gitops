@@ -1,0 +1,11 @@
+name: Runner Test
+
+on:
+  workflow_dispatch: # déclenchable à la main dans l’UI GitHub
+
+jobs:
+  hello-runner:
+    runs-on: [self-hosted, nudger-gitops]  # 👈 cible ton runner recette
+    steps:
+      - name: Vérif runner
+        run: echo "Hello depuis le runner recette - $(hostname)"
