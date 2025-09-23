@@ -8,16 +8,11 @@ echo "▶️ Running Trivy on $TARGET_DIR"
 # Install Trivy if missing
 if ! command -v trivy >/dev/null 2>&1; then
   echo "📦 Installing Trivy..."
-  # On installe dans /usr/local/bin
-  curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-
-  # Vérifier que ça a bien été déplacé
-  if [[ ! -x /usr/local/bin/trivy ]]; then
-    echo "❌ /usr/local/bin/trivy non trouvé ou pas exécutable"
-    exit 1
-  fi
+  curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
+    | sh -s -- -b /usr/local/bin
 fi
 
+trivy --version
 echo "✅ Trivy version : $(trivy --version)"
 
 # Scan des manifests
