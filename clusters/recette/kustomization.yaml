@@ -11,5 +11,5 @@ resources:
   - cert-manager-issuers.kustomization.yaml
   - actions-runner-controller.kustomization.yaml
   - ../../infra/action-runner-controller/overlays/recette
-  - rbac/ci-runner.yaml  
+  - ci-runner-sa.yaml
 

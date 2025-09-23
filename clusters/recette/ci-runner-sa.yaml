@@ -1,0 +1,19 @@
+# clusters/recette/ci-runner-sa.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ci-runner
+  namespace: flux-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ci-runner-flux
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin   # simplifié pour test (tu pourras réduire après)
+subjects:
+- kind: ServiceAccount
+  name: ci-runner
+  namespace: flux-system
