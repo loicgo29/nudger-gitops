@@ -34,15 +34,13 @@ jobs:
 
       - name: SARIF (misconfig)
         if: always()               # Exécuté même si l’étape précédente échoue
-          run: |
-            trivy config . \
-              --format sarif \
-              --output trivy-k8s.sarif \
-              --exit-code 0 \
-              --skip-dirs "smoke-tests" \
-              --ignorefile .trivyignore
-          # Génère un rapport SARIF (format sécurité GitHub)
-                                   # basé sur l’analyse "config" (misconfigs YAML)
+        run: |
+          trivy config . \
+            --format sarif \
+            --output trivy-k8s.sarif \
+            --exit-code 0 \
+            --skip-dirs "smoke-tests" \
+            --ignorefile .trivyignore
 
       - name: Upload SARIF
         if: always()
