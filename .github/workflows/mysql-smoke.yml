@@ -16,6 +16,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Debug kubectl
+        run: |
+          kubectl cluster-info
+          kubectl get ns
+          kubectl get pods -n ns-open4goods-recette
 
       - name: Configure kubeconfig
         run: |
