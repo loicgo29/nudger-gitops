@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-xwiki
+spec:
+  template:
+    spec:
+      containers:
+        - name: mysql
+          resources:
+            requests:
+              cpu: "100m"        # réserve 0.2 vCPU
+              memory: "256Mi"    # réserve 512 Mo RAM
+            limits:
+              cpu: "200m"        # max 1 vCPU
+              memory: "512Mi"    # max 1 Go RAM
