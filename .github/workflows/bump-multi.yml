@@ -9,11 +9,11 @@ on:
         type: choice
         options: [helm, kustomize]
       paths:
-        description: "Fichiers séparés par virgules (ex: apps/a/values.yaml, apps/b/kustomization.yaml)"
+        description: "Fichiers séparés par virgules"
         required: true
         type: string
       image_repo:
-        description: "Repo d'image publique (ex: traefik/whoami)"
+        description: "Repo d'image publique"
         required: true
         type: string
       image_tag:
@@ -21,7 +21,7 @@ on:
         required: true
         type: string
       name:
-        description: "images[].name si kind=kustomize (ex: whoami)"
+        description: "images[].name si kind=kustomize"
         required: false
         type: string
 
@@ -44,36 +44,20 @@ jobs:
       NAME:  ${{ inputs.name }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
 
-      - name: Install deps (yq + kustomize + kubeconform si besoin)
-        shell: bash
+      - name: Install tools
         run: |
-          set -euo pipefail
-          # yq
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
-          sudo chmod +x /usr/local/bin/yq
-          yq --version
-          # kustomize + kubeconform uniquement si kind=kustomize
           if [[ "${KIND}" == "kustomize" ]]; then
-            KVER=5.4.2
-            curl -fsSL -o /tmp/kustomize.tgz "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KVER}/kustomize_v${KVER}_linux_amd64.tar.gz"
-            tar -xzf /tmp/kustomize.tgz -C /tmp kustomize && sudo mv /tmp/kustomize /usr/local/bin/kustomize
-            kustomize version
-            KCF=0.6.7
-            curl -fsSL -o /tmp/kc.tgz "https://github.com/yannh/kubeconform/releases/download/v${KCF}/kubeconform-linux-amd64.tar.gz"
-            tar -xzf /tmp/kc.tgz -C /tmp kubeconform && sudo mv /tmp/kubeconform /usr/local/bin/kubeconform
-            kubeconform -v
+            INSTALL_KUSTOMIZE=1 INSTALL_KUBECONFORM=1 bash scripts/github_workflows/install-tools.sh
+          else
+            bash scripts/github_workflows/install-tools.sh
           fi
 
-      - name: Patch files (script source de vérité)
+      - name: Patch files
         id: bump
-        shell: bash
         run: |
-          set -euo pipefail
           chmod +x scripts/kustomize/bump-multi.sh
           scripts/kustomize/bump-multi.sh \
             --kind  "${KIND}" \
@@ -95,9 +79,7 @@ jobs:
             name:  `${{ inputs.name }}`
             files: `${{ steps.bump.outputs.files }}`
           branch: chore/bump-multi-${{ inputs.kind }}-${{ github.run_id }}
-          labels: |
-            auto
-            bump
+          labels: auto, bump
 
       - name: No changes
         if: steps.bump.outputs.changed != 'true'

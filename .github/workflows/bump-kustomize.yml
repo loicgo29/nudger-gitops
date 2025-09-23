@@ -6,30 +6,23 @@ on:
       path:
         description: "Chemin du kustomization.yaml"
         required: true
-        default: "apps/whoami/kustomization.yaml"
         type: string
       name:
         description: "images[].name à modifier"
         required: true
-        default: "whoami"
         type: string
       image_repo:
-        description: "Repo d'image (ex: ghcr.io/loicgo29/nudger-ui)"
+        description: "Repo d'image"
         required: true
         type: string
       image_tag:
-        description: "Tag (ex: 2025.09.01-a1b2c3d ou v1.2.3)"
+        description: "Tag d'image"
         required: true
         type: string
 
 permissions:
   contents: write
   pull-requests: write
-
-# Évite les doublons si on spam le dispatch
-concurrency:
-  group: bump-kustomize-${{ github.event.inputs.path }}-${{ github.event.inputs.name }}
-  cancel-in-progress: true
 
 jobs:
   bump:
@@ -41,27 +34,14 @@ jobs:
       TAG:  ${{ inputs.image_tag }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
 
-      - name: Install kustomize, yq, kubeconform
-        run: |
-          set -euo pipefail
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
-          sudo chmod +x /usr/local/bin/yq
-          KVER=5.4.2
-          curl -fsSL -o /tmp/kustomize.tgz "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KVER}/kustomize_v${KVER}_linux_amd64.tar.gz"
-          tar -xzf /tmp/kustomize.tgz -C /tmp kustomize && sudo mv /tmp/kustomize /usr/local/bin/kustomize
-          KCF=0.6.7
-          curl -fsSL -o /tmp/kc.tgz "https://github.com/yannh/kubeconform/releases/download/v${KCF}/kubeconform-linux-amd64.tar.gz"
-          tar -xzf /tmp/kc.tgz -C /tmp kubeconform && sudo mv /tmp/kubeconform /usr/local/bin/kubeconform
+      - name: Install tools
+        run: INSTALL_KUSTOMIZE=1 INSTALL_KUBECONFORM=1 bash scripts/github_workflows/install-tools.sh
 
       - name: Patch + validate (script)
         id: bump
-        env:
-          # Permet au script d'écrire des outputs GitHub s'il le souhaite
-          GITHUB_OUTPUT: ${{ github.step_summary }} # fallback si non défini par runner
         run: |
           set -euo pipefail
           bash scripts/kustomize/bump-image.sh \
@@ -74,14 +54,8 @@ jobs:
         if: steps.bump.outputs.noop != 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          commit-message: "chore(kustomize): ${{ inputs.image_repo }}:${{ inputs.image_tag }} (name=${{ inputs.name }})"
-          title: "chore(kustomize): bump to ${{ inputs.image_repo }}:${{ inputs.image_tag }} (name=${{ inputs.name }})"
+          commit-message: "chore(kustomize): ${{ inputs.image_repo }}:${{ inputs.image_tag }}"
+          title: "chore(kustomize): bump to ${{ inputs.image_repo }}:${{ inputs.image_tag }}"
           body: "Path: `${{ steps.bump.outputs.file }}`"
           branch: chore/kustomize-bump-${{ inputs.name }}-${{ github.run_id }}
-          labels: |
-            auto
-            kustomize
-
-      - name: No-op
-        if: steps.bump.outputs.noop == 'true'
-        run: echo "Aucun changement (déjà ${REPO}:${TAG}). Pas de PR."
+          labels: auto, kustomize
