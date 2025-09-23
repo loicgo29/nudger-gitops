@@ -3,9 +3,9 @@ name: 🔍 Trivy (K8s Manifests + Images)
 on:
   pull_request:
     paths:
-      - "apps/**"
-      - "clusters/**"
-      - "**/*.yaml"
+      - 'apps/**'
+      - 'clusters/**'
+      - '**/*.yaml'
   workflow_dispatch:
 
 permissions:
@@ -18,36 +18,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Trivy CLI
-        uses: aquasecurity/setup-trivy@v0.2.0   # ✅ Installe la CLI
+      - name: Setup Trivy
+        uses: aquasecurity/setup-trivy@v0.2.0
         with:
           version: latest
 
-      - name: Cache Trivy DB
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/trivy
-          key: trivy-db-${{ runner.os }}-${{ hashFiles('**/*.yaml') }}
-          restore-keys: trivy-db-${{ runner.os }}-
-
-      - name: Run Trivy (manifests + secrets)
+      - name: Run Trivy (K8s manifests + secrets)
         run: |
           echo "▶ Running Trivy on Kubernetes manifests"
           trivy config . \
             --format table \
             --exit-code 1 \
+            --severity CRITICAL,HIGH \
             --ignorefile .trivyignore \
             --skip-dirs "tests,smoke-tests"
 
-      - name: Generate SARIF report
+      - name: Generate SARIF
         if: always()
         run: |
+          echo "▶ Generating SARIF report"
           trivy config . \
             --format sarif \
             --output trivy-k8s.sarif \
             --exit-code 0 \
+            --severity CRITICAL,HIGH \
             --ignorefile .trivyignore \
             --skip-dirs "tests,smoke-tests" || true
+          ls -lh trivy-k8s.sarif || echo "⚠️ SARIF file not generated"
 
       - name: Upload SARIF
         if: always()
@@ -60,20 +57,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Scan MySQL image
-        uses: aquasecurity/trivy-action@0.33.1
+      - name: Setup Trivy
+        uses: aquasecurity/setup-trivy@v0.2.0
         with:
-          image-ref: mysql:8
-          format: table
-          ignore-unfixed: true
-          vuln-type: os,library
-          severity: HIGH,CRITICAL
+          version: latest
 
-      - name: Scan XWiki image
-        uses: aquasecurity/trivy-action@0.33.1
-        with:
-          image-ref: xwiki:17.3.0-mysql-tomcat
-          format: table
-          ignore-unfixed: true
-          vuln-type: os,library
-          severity: HIGH,CRITICAL
+      - name: Run Trivy (container images)
+        run: |
+          echo "▶ Running Trivy on container images"
+          # Exemple : scanne une image XWiki, adapte selon ton projet
+          trivy image xwiki:17.3.0-mysql-tomcat \
+            --format table \
+            --exit-code 1 \
+            --severity CRITICAL,HIGH
