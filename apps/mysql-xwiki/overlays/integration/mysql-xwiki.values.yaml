@@ -1,0 +1,10 @@
+auth:
+  rootPassword: rootpassword        # à mettre dans un Secret idéalement
+  database: xwiki
+  username: xwiki
+  password: xwikiPass123!           # idem, à gérer via Secret si possible
+
+primary:
+  persistence:
+    enabled: true
+    size: 5Gi

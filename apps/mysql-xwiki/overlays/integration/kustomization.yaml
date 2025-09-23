@@ -4,12 +4,4 @@ kind: Kustomization
 namespace: ns-open4goods-integration
 
 resources:
-  - ../../base
-patches:
-  - path: patch-resources.yaml
-    target:
-      kind: StatefulSet
-      name: mysql-xwiki
-      namespace: ns-open4goods-integration
-  - path: patch-pvc.yaml
-  - path: patch-readiness.yaml
+  - helmrelease-mysql-xwiki.yaml

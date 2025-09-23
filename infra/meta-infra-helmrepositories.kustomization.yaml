@@ -4,11 +4,10 @@ metadata:
   name: meta-infra-helmrepositories
   namespace: flux-system
 spec:
-  interval: 1h 
-  prune: false
-  wait: false
+  interval: 10m
+  path: ./infra/helmrepositories
+  prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  path: ./infra/helmrepositories
