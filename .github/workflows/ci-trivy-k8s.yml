@@ -33,14 +33,17 @@ jobs:
                                    # -> Échoue si CRITICAL/HIGH trouvés
 
       - name: SARIF (misconfig)
-        if: always()               # Exécuté même si l’étape précédente échoue
+        if: always()
         run: |
+          set -euo pipefail
+          echo "▶ Génération du rapport SARIF"
           trivy config . \
             --format sarif \
             --output trivy-k8s.sarif \
             --exit-code 0 \
             --skip-dirs "smoke-tests" \
-            --ignorefile .trivyignore
+            --ignorefile .trivyignore || true
+         ls -lh trivy-k8s.sarif || echo "⚠️ Pas de fichier SARIF généré"
 
       - name: Upload SARIF
         if: always()
