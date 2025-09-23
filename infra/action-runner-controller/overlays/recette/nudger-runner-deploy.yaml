@@ -1,0 +1,25 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: nudger-gitops-recette-runner
+  namespace: ns-open4goods-recette
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nudger-gitops-recette-runner
+    spec:
+      repository: loicgo29/nudger-gitops
+      envFrom:
+        - secretRef:
+            name: actions-runner-controller
+      containers:
+        - name: runner
+          image: ghcr.io/actions/actions-runner:2.311.0
+          volumeMounts:
+            - name: work
+              mountPath: /runner/_work
+      volumes:
+        - name: work
+          emptyDir: {}
