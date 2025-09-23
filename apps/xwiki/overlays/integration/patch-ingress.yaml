@@ -11,10 +11,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: xwiki
+                name: xwiki-svc
                 port:
                   number: 8080
-  tls:
-    - hosts:
-        - xwiki.integration.nudger.logo-solutions.fr
-      secretName: xwiki-tls-integration

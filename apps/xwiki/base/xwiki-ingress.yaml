@@ -12,10 +12,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - xwiki.nudger.logo-solutions.fr
+        - xwiki.recette.nudger.logo-solutions.fr
       secretName: xwiki-tls
   rules:
-    - host: xwiki.nudger.logo-solutions.fr
+    - host: xwiki.recette.nudger.logo-solutions.fr
       http:
         paths:
           - path: /
