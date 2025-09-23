@@ -1,38 +1,51 @@
-name: 🔍 Trivy (K8s Manifests)
+name: 🔍 Trivy (K8s Manifests + Images)
 
 on:
   pull_request:
     paths:
-      - 'apps/**'
-      - 'clusters/**'
-      - '**/*.yaml'
+      - "apps/**"
+      - "clusters/**"
+      - "**/*.yaml"
   workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
 
 jobs:
   trivy-k8s:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Trivy
-        uses: aquasecurity/setup-trivy@v0.2.3
+      - name: Cache Trivy DB
+        uses: actions/cache@v4
         with:
-          version: latest
-          cache: true
+          path: ~/.cache/trivy
+          key: trivy-db-${{ runner.os }}-${{ hashFiles('**/*.yaml') }}
+          restore-keys: trivy-db-${{ runner.os }}-
 
-      - name: Run Trivy misconfig scan
-        uses: aquasecurity/trivy-action@0.33.1
-        with:
-          scan-type: config
-          format: sarif
-          output: trivy-k8s.sarif
-          severity: HIGH,CRITICAL
-          ignore-unfixed: false
-          ignorefile: .trivyignore
+      - name: Run Trivy (manifests + secrets)
+        run: |
+          echo "▶ Running Trivy on Kubernetes manifests"
+          trivy config . \
+            --format table \
+            --exit-code 1 \
+            --ignorefile .trivyignore \
+            --skip-dirs "tests,smoke-tests"
 
-      - name: Upload SARIF report
-        if: always() && hashFiles('trivy-k8s.sarif') != ''
+      - name: Generate SARIF report
+        if: always()
+        run: |
+          trivy config . \
+            --format sarif \
+            --output trivy-k8s.sarif \
+            --exit-code 0 \
+            --ignorefile .trivyignore \
+            --skip-dirs "tests,smoke-tests" || true
+
+      - name: Upload SARIF
+        if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy-k8s.sarif
@@ -40,20 +53,22 @@ jobs:
   trivy-images:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Trivy
-        uses: aquasecurity/setup-trivy@v0.2.3
-        with:
-          version: latest
-          cache: true
-
-      - name: Run Trivy image scan
+      - name: Scan MySQL image
         uses: aquasecurity/trivy-action@0.33.1
         with:
-          scan-type: image
+          image-ref: mysql:8
           format: table
+          ignore-unfixed: true
+          vuln-type: os,library
           severity: HIGH,CRITICAL
-          ignore-unfixed: false
-          # etc. selon ce que tu veux scanner
+
+      - name: Scan XWiki image
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: xwiki:17.3.0-mysql-tomcat
+          format: table
+          ignore-unfixed: true
+          vuln-type: os,library
+          severity: HIGH,CRITICAL
