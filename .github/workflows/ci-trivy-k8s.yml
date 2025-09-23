@@ -31,7 +31,6 @@ jobs:
         run: ./scripts/ci-on-pr/trivy-k8s.sh .
                                    # -> Analyse Kubernetes Manifests + secrets
                                    # -> Échoue si CRITICAL/HIGH trouvés
-
       - name: SARIF (misconfig)
         if: always()
         run: |
@@ -43,14 +42,12 @@ jobs:
             --exit-code 0 \
             --skip-dirs "smoke-tests" \
             --ignorefile .trivyignore || true
-         ls -lh trivy-k8s.sarif || echo "⚠️ Pas de fichier SARIF généré"
-
+          ls -lh trivy-k8s.sarif || echo "⚠️ Pas de fichier SARIF généré"
       - name: Upload SARIF
-        if: always()
+        if: always() && hashFiles('trivy-k8s.sarif') != ''
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy-k8s.sarif
-                                   # Envoie le rapport SARIF dans l’onglet "Security" de GitHub
   trivy-images:
     runs-on: ubuntu-latest
     steps:
