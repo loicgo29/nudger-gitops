@@ -6,7 +6,7 @@
             "kind": "GitRepository",
             "metadata": {
                 "annotations": {
-                    "reconcile.fluxcd.io/requestedAt": "2025-09-23T10:45:56.688161838Z"
+                    "reconcile.fluxcd.io/requestedAt": "2025-09-23T10:48:33.150410967Z"
                 },
                 "creationTimestamp": "2025-09-16T08:52:26Z",
                 "finalizers": [
@@ -15,7 +15,7 @@
                 "generation": 1,
                 "name": "flux-system",
                 "namespace": "flux-system",
-                "resourceVersion": "9674908",
+                "resourceVersion": "9678464",
                 "uid": "af88c92f-c5fc-4fdf-b44b-c7e0f63af82a"
             },
             "spec": {
@@ -31,32 +31,32 @@
             },
             "status": {
                 "artifact": {
-                    "digest": "sha256:1ac66c3a633a297475ef6daf05dea3d174dd75e7f04c8e4c9112d8900441f6dd",
-                    "lastUpdateTime": "2025-09-23T10:34:18Z",
-                    "path": "gitrepository/flux-system/flux-system/8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1.tar.gz",
-                    "revision": "main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
-                    "size": 22197951,
-                    "url": "http://source-controller.flux-system.svc.cluster.local./gitrepository/flux-system/flux-system/8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1.tar.gz"
+                    "digest": "sha256:406a6e8e0b330ff5c4736dae465f6009139828fc795c5b8aad7a62f4ea04fa54",
+                    "lastUpdateTime": "2025-09-23T10:48:41Z",
+                    "path": "gitrepository/flux-system/flux-system/7613f0592dec0e87713b8667a7941756653dbfb9.tar.gz",
+                    "revision": "main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
+                    "size": 22204542,
+                    "url": "http://source-controller.flux-system.svc.cluster.local./gitrepository/flux-system/flux-system/7613f0592dec0e87713b8667a7941756653dbfb9.tar.gz"
                 },
                 "conditions": [
                     {
-                        "lastTransitionTime": "2025-09-23T10:34:18Z",
-                        "message": "stored artifact for revision 'main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1'",
+                        "lastTransitionTime": "2025-09-23T10:48:41Z",
+                        "message": "stored artifact for revision 'main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9'",
                         "observedGeneration": 1,
                         "reason": "Succeeded",
                         "status": "True",
                         "type": "Ready"
                     },
                     {
-                        "lastTransitionTime": "2025-09-23T10:34:18Z",
-                        "message": "stored artifact for revision 'main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1'",
+                        "lastTransitionTime": "2025-09-23T10:48:41Z",
+                        "message": "stored artifact for revision 'main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9'",
                         "observedGeneration": 1,
                         "reason": "Succeeded",
                         "status": "True",
                         "type": "ArtifactInStorage"
                     }
                 ],
-                "lastHandledReconcileAt": "2025-09-23T10:45:56.688161838Z",
+                "lastHandledReconcileAt": "2025-09-23T10:48:33.150410967Z",
                 "observedGeneration": 1
             }
         },
@@ -1456,7 +1456,7 @@
                 },
                 "name": "helm-kyverno",
                 "namespace": "kyverno",
-                "resourceVersion": "9638146",
+                "resourceVersion": "9678712",
                 "uid": "08ae8ea9-f415-4de0-9489-cd3f02c8362d"
             },
             "spec": {
@@ -2073,7 +2073,7 @@
                 },
                 "name": "helm-victoria-metrics",
                 "namespace": "ns-logging",
-                "resourceVersion": "9664096",
+                "resourceVersion": "9677417",
                 "uid": "d2f3b709-9a77-4a42-97a4-0de6b492621f"
             },
             "spec": {
@@ -2691,7 +2691,7 @@
                 },
                 "name": "actions-runner-controller",
                 "namespace": "flux-system",
-                "resourceVersion": "9674651",
+                "resourceVersion": "9678537",
                 "uid": "231eb1fd-d93a-4183-b90e-6382198cd1f7"
             },
             "spec": {
@@ -2715,11 +2715,11 @@
             "status": {
                 "conditions": [
                     {
-                        "lastTransitionTime": "2025-09-23T10:45:46Z",
-                        "message": "Applied revision: main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                        "lastTransitionTime": "2025-09-23T10:48:43Z",
+                        "message": "dependency 'flux-system/meta-infra-namespaces' is not ready",
                         "observedGeneration": 2,
-                        "reason": "ReconciliationSucceeded",
-                        "status": "True",
+                        "reason": "DependencyNotReady",
+                        "status": "False",
                         "type": "Ready"
                     }
                 ],
@@ -2759,7 +2759,7 @@
                 },
                 "name": "cert-manager",
                 "namespace": "flux-system",
-                "resourceVersion": "9674755",
+                "resourceVersion": "9678468",
                 "uid": "a16a110d-37ac-4163-becb-87810b011781"
             },
             "spec": {
@@ -2782,11 +2782,11 @@
             "status": {
                 "conditions": [
                     {
-                        "lastTransitionTime": "2025-09-23T10:45:51Z",
-                        "message": "Applied revision: main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                        "lastTransitionTime": "2025-09-23T10:48:41Z",
+                        "message": "dependency 'flux-system/meta-infra-namespaces' revision is not up to date",
                         "observedGeneration": 5,
-                        "reason": "ReconciliationSucceeded",
-                        "status": "True",
+                        "reason": "DependencyNotReady",
+                        "status": "False",
                         "type": "Ready"
                     },
                     {
@@ -2842,7 +2842,7 @@
                 },
                 "name": "cert-manager-issuers",
                 "namespace": "flux-system",
-                "resourceVersion": "9674854",
+                "resourceVersion": "9678469",
                 "uid": "38ea7aa3-d89b-4f99-aa17-d7a94a39901e"
             },
             "spec": {
@@ -2865,11 +2865,11 @@
             "status": {
                 "conditions": [
                     {
-                        "lastTransitionTime": "2025-09-23T10:45:55Z",
-                        "message": "Applied revision: main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                        "lastTransitionTime": "2025-09-23T10:48:41Z",
+                        "message": "dependency 'flux-system/meta-infra-namespaces' is not ready",
                         "observedGeneration": 2,
-                        "reason": "ReconciliationSucceeded",
-                        "status": "True",
+                        "reason": "DependencyNotReady",
+                        "status": "False",
                         "type": "Ready"
                     },
                     {
@@ -2912,7 +2912,7 @@
             "kind": "Kustomization",
             "metadata": {
                 "annotations": {
-                    "reconcile.fluxcd.io/requestedAt": "2025-09-23T10:45:58.707239889Z"
+                    "reconcile.fluxcd.io/requestedAt": "2025-09-23T10:48:43.213240934Z"
                 },
                 "creationTimestamp": "2025-09-16T08:52:26Z",
                 "finalizers": [
@@ -2921,7 +2921,7 @@
                 "generation": 1,
                 "name": "flux-system",
                 "namespace": "flux-system",
-                "resourceVersion": "9674951",
+                "resourceVersion": "9678614",
                 "uid": "fd64a968-7377-4751-af08-d5c839e7dcff"
             },
             "spec": {
@@ -2937,15 +2937,15 @@
             "status": {
                 "conditions": [
                     {
-                        "lastTransitionTime": "2025-09-23T10:45:59Z",
-                        "message": "Detecting drift for revision main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1 with a timeout of 9m30s",
+                        "lastTransitionTime": "2025-09-23T10:48:46Z",
+                        "message": "Detecting drift for revision main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9 with a timeout of 9m30s",
                         "observedGeneration": 1,
                         "reason": "ProgressingWithRetry",
                         "status": "True",
                         "type": "Reconciling"
                     },
                     {
-                        "lastTransitionTime": "2025-09-23T10:45:59Z",
+                        "lastTransitionTime": "2025-09-23T10:48:46Z",
                         "message": "Kustomization/flux-system/kyverno-policies dry-run failed: failed to create typed patch object (flux-system/kyverno-policies; kustomize.toolkit.fluxcd.io/v1, Kind=Kustomization): .spec.validation: field not declared in schema\n",
                         "observedGeneration": 1,
                         "reason": "ReconciliationFailed",
@@ -3026,8 +3026,8 @@
                     ]
                 },
                 "lastAppliedRevision": "main@sha1:1e4a034a953c23645b8dafa19312d1c357ee1cde",
-                "lastAttemptedRevision": "main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
-                "lastHandledReconcileAt": "2025-09-23T10:45:58.707239889Z",
+                "lastAttemptedRevision": "main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
+                "lastHandledReconcileAt": "2025-09-23T10:48:43.213240934Z",
                 "observedGeneration": 1
             }
         },
@@ -3049,7 +3049,7 @@
                 },
                 "name": "meta-infra-namespaces",
                 "namespace": "flux-system",
-                "resourceVersion": "9674550",
+                "resourceVersion": "9678542",
                 "uid": "3535221c-e5d5-4ad0-b5a0-3945907b987a"
             },
             "spec": {
@@ -3066,8 +3066,8 @@
             "status": {
                 "conditions": [
                     {
-                        "lastTransitionTime": "2025-09-23T10:45:42Z",
-                        "message": "Applied revision: main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                        "lastTransitionTime": "2025-09-23T10:48:44Z",
+                        "message": "Applied revision: main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
                         "observedGeneration": 3,
                         "reason": "ReconciliationSucceeded",
                         "status": "True",
@@ -3114,8 +3114,8 @@
                         }
                     ]
                 },
-                "lastAppliedRevision": "main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
-                "lastAttemptedRevision": "main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                "lastAppliedRevision": "main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
+                "lastAttemptedRevision": "main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
                 "lastHandledReconcileAt": "2025-09-23T10:45:42.055136724Z",
                 "observedGeneration": 3
             }
@@ -3138,7 +3138,7 @@
                 },
                 "name": "meta-ingress-nginx",
                 "namespace": "flux-system",
-                "resourceVersion": "9659801",
+                "resourceVersion": "9678704",
                 "uid": "bb0feb64-0da8-49c1-be2e-7349f486bb92"
             },
             "spec": {
@@ -3164,16 +3164,16 @@
             "status": {
                 "conditions": [
                     {
-                        "lastTransitionTime": "2025-09-23T10:34:23Z",
-                        "message": "Applied revision: main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                        "lastTransitionTime": "2025-09-23T10:48:49Z",
+                        "message": "Applied revision: main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
                         "observedGeneration": 38,
                         "reason": "ReconciliationSucceeded",
                         "status": "True",
                         "type": "Ready"
                     },
                     {
-                        "lastTransitionTime": "2025-09-23T10:34:23Z",
-                        "message": "Health check passed in 42.909718ms",
+                        "lastTransitionTime": "2025-09-23T10:48:49Z",
+                        "message": "Health check passed in 24.800294ms",
                         "observedGeneration": 38,
                         "reason": "Succeeded",
                         "status": "True",
@@ -3196,8 +3196,8 @@
                         }
                     ]
                 },
-                "lastAppliedRevision": "main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
-                "lastAttemptedRevision": "main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                "lastAppliedRevision": "main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
+                "lastAttemptedRevision": "main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
                 "lastHandledReconcileAt": "2025-09-16T11:02:20.192332118Z",
                 "observedGeneration": 38
             }
@@ -3220,7 +3220,7 @@
                 },
                 "name": "meta-kyverno",
                 "namespace": "flux-system",
-                "resourceVersion": "9660549",
+                "resourceVersion": "9678473",
                 "uid": "68b05a8b-aa8f-44dd-9fde-65406b3eb1a3"
             },
             "spec": {
@@ -3242,11 +3242,11 @@
             "status": {
                 "conditions": [
                     {
-                        "lastTransitionTime": "2025-09-23T10:34:53Z",
-                        "message": "Applied revision: main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                        "lastTransitionTime": "2025-09-23T10:48:41Z",
+                        "message": "dependency 'flux-system/meta-infra-namespaces' is not ready",
                         "observedGeneration": 5,
-                        "reason": "ReconciliationSucceeded",
-                        "status": "True",
+                        "reason": "DependencyNotReady",
+                        "status": "False",
                         "type": "Ready"
                     }
                 ],
@@ -3286,7 +3286,7 @@
                 },
                 "name": "meta-observability",
                 "namespace": "flux-system",
-                "resourceVersion": "9659806",
+                "resourceVersion": "9678617",
                 "uid": "a0189347-aea3-4d44-b710-0fa39a6a26b1"
             },
             "spec": {
@@ -3303,16 +3303,16 @@
             "status": {
                 "conditions": [
                     {
-                        "lastTransitionTime": "2025-09-23T10:34:23Z",
-                        "message": "Applied revision: main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                        "lastTransitionTime": "2025-09-23T10:48:46Z",
+                        "message": "Applied revision: main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
                         "observedGeneration": 37,
                         "reason": "ReconciliationSucceeded",
                         "status": "True",
                         "type": "Ready"
                     },
                     {
-                        "lastTransitionTime": "2025-09-23T10:34:23Z",
-                        "message": "Health check passed in 1.572870905s",
+                        "lastTransitionTime": "2025-09-23T10:48:46Z",
+                        "message": "Health check passed in 276.262153ms",
                         "observedGeneration": 37,
                         "reason": "Succeeded",
                         "status": "True",
@@ -3451,8 +3451,8 @@
                         }
                     ]
                 },
-                "lastAppliedRevision": "main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
-                "lastAttemptedRevision": "main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                "lastAppliedRevision": "main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
+                "lastAttemptedRevision": "main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
                 "lastHandledReconcileAt": "2025-09-18T08:55:30.32793056Z",
                 "observedGeneration": 37
             }
@@ -3475,7 +3475,7 @@
                 },
                 "name": "mysql-xwiki",
                 "namespace": "flux-system",
-                "resourceVersion": "9667824",
+                "resourceVersion": "9678604",
                 "uid": "b61970ee-7eb1-4b24-ae3a-73181c9e83e8"
             },
             "spec": {
@@ -3491,8 +3491,8 @@
             "status": {
                 "conditions": [
                     {
-                        "lastTransitionTime": "2025-09-23T10:40:34Z",
-                        "message": "Applied revision: main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                        "lastTransitionTime": "2025-09-23T10:48:46Z",
+                        "message": "Applied revision: main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
                         "observedGeneration": 3,
                         "reason": "ReconciliationSucceeded",
                         "status": "True",
@@ -3519,8 +3519,8 @@
                         }
                     ]
                 },
-                "lastAppliedRevision": "main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
-                "lastAttemptedRevision": "main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                "lastAppliedRevision": "main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
+                "lastAttemptedRevision": "main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
                 "lastHandledReconcileAt": "2025-09-17T04:41:20.453302412Z",
                 "observedGeneration": 3
             }
@@ -3540,7 +3540,7 @@
                 "generation": 1,
                 "name": "recette-root",
                 "namespace": "flux-system",
-                "resourceVersion": "9668977",
+                "resourceVersion": "9678521",
                 "uid": "577bedfd-0c7e-4518-b888-2453ed197493"
             },
             "spec": {
@@ -3556,15 +3556,15 @@
             "status": {
                 "conditions": [
                     {
-                        "lastTransitionTime": "2025-09-23T10:41:26Z",
-                        "message": "Detecting drift for revision main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1 with a timeout of 9m30s",
+                        "lastTransitionTime": "2025-09-23T10:48:43Z",
+                        "message": "Detecting drift for revision main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9 with a timeout of 9m30s",
                         "observedGeneration": 1,
                         "reason": "ProgressingWithRetry",
                         "status": "True",
                         "type": "Reconciling"
                     },
                     {
-                        "lastTransitionTime": "2025-09-23T10:41:26Z",
+                        "lastTransitionTime": "2025-09-23T10:48:43Z",
                         "message": "Kustomization/flux-system/kyverno-policies dry-run failed: failed to create typed patch object (flux-system/kyverno-policies; kustomize.toolkit.fluxcd.io/v1, Kind=Kustomization): .spec.validation: field not declared in schema\n",
                         "observedGeneration": 1,
                         "reason": "ReconciliationFailed",
@@ -3645,7 +3645,7 @@
                     ]
                 },
                 "lastAppliedRevision": "main@sha1:1e4a034a953c23645b8dafa19312d1c357ee1cde",
-                "lastAttemptedRevision": "main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                "lastAttemptedRevision": "main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
                 "lastHandledReconcileAt": "2025-09-23T10:03:39.684195453Z",
                 "observedGeneration": 1
             }
@@ -3668,7 +3668,7 @@
                 },
                 "name": "xwiki",
                 "namespace": "flux-system",
-                "resourceVersion": "9666807",
+                "resourceVersion": "9678611",
                 "uid": "c8418cdf-57e3-4fb2-9538-ab07bf5ba392"
             },
             "spec": {
@@ -3684,8 +3684,8 @@
             "status": {
                 "conditions": [
                     {
-                        "lastTransitionTime": "2025-09-23T10:39:50Z",
-                        "message": "Applied revision: main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                        "lastTransitionTime": "2025-09-23T10:48:46Z",
+                        "message": "Applied revision: main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
                         "observedGeneration": 2,
                         "reason": "ReconciliationSucceeded",
                         "status": "True",
@@ -3708,8 +3708,8 @@
                         }
                     ]
                 },
-                "lastAppliedRevision": "main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
-                "lastAttemptedRevision": "main@sha1:8ce551109b2ebc0198c7e0793d0de8ed2dd71fe1",
+                "lastAppliedRevision": "main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
+                "lastAttemptedRevision": "main@sha1:7613f0592dec0e87713b8667a7941756653dbfb9",
                 "lastHandledReconcileAt": "2025-09-23T09:58:47.784486499Z",
                 "observedGeneration": 2
             }
