@@ -12,3 +12,4 @@ patches:
       name: mysql-xwiki
       namespace: ns-open4goods-integration
   - path: patch-pvc.yaml
+  - path: patch-readiness.yaml
