@@ -1,11 +1,8 @@
 name: Sanitycheck ARC
-
-on:
-  workflow_dispatch:
-
+on: workflow_dispatch
 jobs:
   test-runner:
-    runs-on: self-hosted
+    runs-on: [self-hosted, nudger-gitops, recette]
     steps:
       - run: echo "✅ Runner ARC fonctionne ! $(date)"
       - run: uname -a

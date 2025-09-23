@@ -36,51 +36,36 @@ concurrency:
 jobs:
   bump:
     runs-on: ubuntu-latest
-    env:
-      KIND:  ${{ inputs.kind }}
-      FILES: ${{ inputs.paths }}
-      REPO:  ${{ inputs.image_repo }}
-      TAG:   ${{ inputs.image_tag }}
-      NAME:  ${{ inputs.name }}
-
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
+        with:
+          fetch-depth: 0
 
-      - name: Install tools
+      - name: Install deps
         run: |
-          if [[ "${KIND}" == "kustomize" ]]; then
-            INSTALL_KUSTOMIZE=1 INSTALL_KUBECONFORM=1 bash scripts/github_workflows/install-tools.sh
-          else
-            bash scripts/github_workflows/install-tools.sh
+          set -euo pipefail
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          if [[ "${{ inputs.kind }}" == "kustomize" ]]; then
+            KVER=5.4.2
+            curl -fsSL -o /tmp/kustomize.tgz "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KVER}/kustomize_v${KVER}_linux_amd64.tar.gz"
+            tar -xzf /tmp/kustomize.tgz -C /tmp kustomize && sudo mv /tmp/kustomize /usr/local/bin/kustomize
+            KCF=0.6.7
+            curl -fsSL -o /tmp/kc.tgz "https://github.com/yannh/kubeconform/releases/download/v${KCF}/kubeconform-linux-amd64.tar.gz"
+            tar -xzf /tmp/kc.tgz -C /tmp kubeconform && sudo mv /tmp/kubeconform /usr/local/bin/kubeconform
           fi
 
       - name: Patch files
-        id: bump
         run: |
           chmod +x scripts/kustomize/bump-multi.sh
-          scripts/kustomize/bump-multi.sh \
-            --kind  "${KIND}" \
-            --paths "${FILES}" \
-            --image-repo "${REPO}" \
-            --image-tag  "${TAG}" \
-            ${NAME:+--name "${NAME}"}
+          scripts/kustomize/bump-multi.sh             --kind "${{ inputs.kind }}"             --paths "${{ inputs.paths }}"             --image-repo "${{ inputs.image_repo }}"             --image-tag "${{ inputs.image_tag }}"             ${{ inputs.name && format('--name {0}', inputs.name) }}
 
       - name: Create PR
-        if: steps.bump.outputs.changed == 'true'
+        if: success()
         uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "chore(multi): ${{ inputs.image_repo }}:${{ inputs.image_tag }}"
           title: "chore(multi): bump to ${{ inputs.image_repo }}:${{ inputs.image_tag }}"
-          body: |
-            kind:  `${{ inputs.kind }}`
-            repo:  `${{ inputs.image_repo }}`
-            tag:   `${{ inputs.image_tag }}`
-            name:  `${{ inputs.name }}`
-            files: `${{ steps.bump.outputs.files }}`
+          body: "Automated bump"
           branch: chore/bump-multi-${{ inputs.kind }}-${{ github.run_id }}
           labels: auto, bump
-
-      - name: No changes
-        if: steps.bump.outputs.changed != 'true'
-        run: echo "Aucun fichier patché (déjà à jour ou fichiers manquants)."
