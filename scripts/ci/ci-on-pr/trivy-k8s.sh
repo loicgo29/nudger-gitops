@@ -10,6 +10,8 @@ if ! command -v trivy >/dev/null 2>&1; then
   echo "📦 Installing Trivy..."
   curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
     | sh -s -- -b ./bin
+  export PATH="$PWD/bin:$PATH"
+
   echo "$PWD/bin" >> "$GITHUB_PATH"
 fi
 
