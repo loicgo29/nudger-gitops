@@ -65,6 +65,8 @@ jobs:
         run: |
           set -eux
           for cluster in clusters/*; do
-            echo "🚀 Dry-run for $cluster"
-            kustomize build "$cluster" | kubectl apply --dry-run=client -f -
+            kustomize build "$cluster" | kubeconform \
+              -strict \
+              -ignore-missing-schemas \
+              -summary
           done
