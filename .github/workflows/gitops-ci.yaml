@@ -33,9 +33,11 @@ jobs:
           export PATH=$HOME/.local/bin:$PATH
 
           # kubectl
-          curl -sLo ~/.local/bin/kubectl https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl
+          # kubectl (fix: suivre la redirection avec -L)
+          KVER=$(curl -sL https://dl.k8s.io/release/stable.txt)
+          curl -sLo ~/.local/bin/kubectl "https://dl.k8s.io/release/${KVER}/bin/linux/amd64/kubectl"
           chmod +x ~/.local/bin/kubectl
-
+          kubectl version --client
           # kustomize
           curl -sLo kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/latest/download/kustomize_linux_amd64.tar.gz
           tar -xzf kustomize.tar.gz -C ~/.local/bin

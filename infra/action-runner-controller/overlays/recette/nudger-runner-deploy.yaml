@@ -13,3 +13,4 @@ spec:
       labels:             # 👈 obligatoire
         - self-hosted
         - nudger-gitops
+        - recette  
