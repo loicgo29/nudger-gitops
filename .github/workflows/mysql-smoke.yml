@@ -12,26 +12,13 @@ jobs:
   mysql-smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Configure kubeconfig from secret
-        run: |
-          echo "$KUBECONFIG_B64" | base64 -d > kubeconfig
-          echo "✅ kubeconfig écrit"
-          chmod 600 kubeconfig
+      - uses: actions/checkout@v4
+      - name: Setup kubeconfig
+        run: echo "$KUBECONFIG_B64" | base64 -d > "$GITHUB_WORKSPACE/kubeconfig"
         env:
           KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
 
-      - name: Debug kubectl
+      - name: Run smoke test
         run: |
-          export KUBECONFIG=$PWD/kubeconfig
-          kubectl config view --minify
-          kubectl cluster-info
-          kubectl get ns
-
-      - name: Run MySQL smoke test
-        run: |
-          export KUBECONFIG=$PWD/kubeconfig
           chmod +x scripts/ci/mysql-smoke.sh
-          scripts/ci/mysql-smoke.sh
+          KUBECONFIG=$GITHUB_WORKSPACE/kubeconfig scripts/ci/mysql-smoke.sh
