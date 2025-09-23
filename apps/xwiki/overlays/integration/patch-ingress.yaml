@@ -3,6 +3,7 @@ kind: Ingress
 metadata:
   name: xwiki
 spec:
+  ingressClassName: nginx   
   rules:
     - host: xwiki.integration.nudger.logo-solutions.fr   # 👈 différent
       http:
