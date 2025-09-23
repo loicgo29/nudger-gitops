@@ -10,3 +10,6 @@ spec:
       repository: loicgo29/nudger-gitops
       dockerdWithinRunnerContainer: false
       ephemeral: false
+      labels:             # 👈 obligatoire
+        - self-hosted
+        - nudger-gitops
