@@ -11,6 +11,8 @@ on:
 jobs:
   mysql-smoke:
     runs-on: ubuntu-latest
+    env:
+      KUBECONFIG: ${{ github.workspace }}/kubeconfig   # 👈 injection globale
     steps:
       - name: Checkout
         uses: actions/checkout@v4
