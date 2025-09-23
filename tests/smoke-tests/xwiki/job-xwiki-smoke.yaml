@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: xwiki-smoke
+  namespace: ns-open4goods-recette
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: curl
+        image: curlimages/curl:latest
+        command: ["sh", "-c"]
+        args:
+          - |
+            echo "🌐 Test accès XWiki..."
+            curl -s -o /dev/null -w "%{http_code}" http://xwiki-svc:8080/bin/view/Main/WebHome | grep 200
