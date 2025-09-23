@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: xwiki-smoke-py
+  namespace: ns-open4goods-recette
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: pytest
+        image: python:3.11-slim
+        command: ["pytest", "-q", "/tests/test_xwiki_smoke.py"]
+        volumeMounts:
+        - name: tests
+          mountPath: /tests
+      volumes:
+      - name: tests
+        configMap:
+          name: xwiki-smoke-tests
