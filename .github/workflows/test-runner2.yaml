@@ -1,8 +1,0 @@
-name: Test ARC 2
-on: workflow_dispatch
-
-jobs:
-  arc-test:
-    runs-on: [self-hosted, nudger-gitops, recette]
-    steps:
-      - run: echo "Runner ARC OK 🎉"
