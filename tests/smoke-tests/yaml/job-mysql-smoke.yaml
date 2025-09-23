@@ -18,7 +18,7 @@ spec:
           - pytest -q /tests/test_mysql_smoke.py
         env:
         - name: MYSQL_HOST
-          value: mysql-xwiki-clusterip.ns-open4goods-recette.svc.cluster.local
+          value: mysql-xwiki.ns-open4goods-recette.svc.cluster.local
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
