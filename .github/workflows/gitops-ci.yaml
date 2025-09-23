@@ -1,72 +1,58 @@
-# .github/workflows/gitops-ci.yaml
 name: GitOps CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
-
-permissions:
-  contents: read
 
 jobs:
   sanitycheck:
     name: Sanitycheck ARC
-    runs-on: [self-hosted, nudger-gitops, recette] # 👈 exécute sur ton runner ARC
-    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    env:
+      KUBECONFIG: ${{ github.workspace }}/kubeconfig
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Cache binaries
-        id: cache-bin
-        uses: actions/cache@v4
-        with:
-          path: ~/.local/bin
-          key: ${{ runner.os }}-gitops-tools-v2
+      - name: Restore kubeconfig
+        run: |
+          echo "$KUBECONFIG_B64" | base64 -d > "$KUBECONFIG"
+          echo "✅ Kubeconfig restauré dans $KUBECONFIG"
+        env:
+          KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
 
-      - name: Install tools (kubectl, kustomize, kubeconform)
-        if: steps.cache-bin.outputs.cache-hit != 'true'
+      - name: Install tools
         run: |
           set -eux
-          chmod +x scripts/ci/install-tools.sh
-          scripts/ci/install-tools.sh
+          mkdir -p ~/.local/bin
+          curl -sLo ~/.local/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.2/kustomize_v5.4.2_linux_amd64.tar.gz
+          tar -xzf ~/.local/bin/kustomize -C ~/.local/bin || true
+          curl -sLo ~/.local/bin/kubeconform https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz
+          tar -xzf ~/.local/bin/kubeconform -C ~/.local/bin || true
+          chmod +x ~/.local/bin/*
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Add ~/.local/bin to PATH
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Check kustomizations (build only)
+      - name: Check kustomizations
         run: |
-          set -eux
           for cluster in clusters/*; do
-            echo "🔧 Checking $cluster"
+            echo "🔧 Building $cluster"
             kustomize build "$cluster" >/dev/null
           done
 
       - name: Validate manifests with kubeconform
         run: |
-          set -eux
           for cluster in clusters/*; do
             echo "🔍 Validating $cluster"
-            kustomize build "$cluster" | kubeconform \
-              -strict \
-              -ignore-missing-schemas \
-              -summary
+            kustomize build "$cluster" | kubeconform -strict -ignore-missing-schemas -summary
           done
 
       - name: Dry-run apply manifests
         run: |
-          set -eux
           for cluster in clusters/*; do
-            kustomize build "$cluster" | kubeconform \
-              -strict \
-              -ignore-missing-schemas \
-              -summary
+            echo "🚀 Dry-run for $cluster"
+            kubectl apply --dry-run=server -f <(kustomize build "$cluster")
           done

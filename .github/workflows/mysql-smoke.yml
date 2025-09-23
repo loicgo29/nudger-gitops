@@ -11,14 +11,21 @@ on:
 jobs:
   mysql-smoke:
     runs-on: ubuntu-latest
+    env:
+      KUBECONFIG: ${{ github.workspace }}/kubeconfig
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup kubeconfig
-        run: echo "$KUBECONFIG_B64" | base64 -d > "$GITHUB_WORKSPACE/kubeconfig"
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Restore kubeconfig
+        run: |
+          echo "$KUBECONFIG_B64" | base64 -d > "$KUBECONFIG"
+          echo "✅ Kubeconfig restauré dans $KUBECONFIG"
         env:
           KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
 
-      - name: Run smoke test
+      - name: Run MySQL smoke test (source of truth script)
         run: |
           chmod +x scripts/ci/mysql-smoke.sh
-          KUBECONFIG=$GITHUB_WORKSPACE/kubeconfig scripts/ci/mysql-smoke.sh
+          scripts/ci/mysql-smoke.sh
