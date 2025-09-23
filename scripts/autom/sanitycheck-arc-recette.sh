@@ -2,32 +2,85 @@
 set -euo pipefail
 
 NS="ns-open4goods-recette"
-APP="nudger-gitops-recette-runner"
+RD_NAME="nudger-gitops-recette-runner"
+EXPECTED_LABELS=("self-hosted" "nudger-gitops")
 
-echo "=== [1] Vérification du secret GitHub App dans $NS ==="
-if kubectl -n "$NS" get secret actions-runner-controller &>/dev/null; then
-  echo "✅ Secret trouvé"
+echo "🔍 Sanity check ARC (namespace=$NS, RunnerDeployment=$RD_NAME)"
+echo "------------------------------------------------------------"
+echo ""
+
+# --- 1. Vérifier RunnerDeployment
+if ! kubectl -n "$NS" get runnerdeployment "$RD_NAME" &>/dev/null; then
+  echo "❌ RunnerDeployment '$RD_NAME' introuvable dans $NS"
+  exit 1
+fi
+echo "✅ RunnerDeployment '$RD_NAME' trouvé"
+
+RD_LABELS=$(kubectl -n "$NS" get runnerdeployment "$RD_NAME" -o jsonpath='{.spec.template.spec.labels[*]}')
+echo "   Labels déclarés : [$RD_LABELS]"
+for lbl in "${EXPECTED_LABELS[@]}"; do
+  if echo "$RD_LABELS" | grep -qw "$lbl"; then
+    echo "   ✅ Label '$lbl' présent"
+  else
+    echo "   ❌ Label '$lbl' manquant"
+    exit 1
+  fi
+done
+
+EPHEMERAL=$(kubectl -n "$NS" get runnerdeployment "$RD_NAME" -o jsonpath='{.spec.template.spec.ephemeral}')
+if [[ "$EPHEMERAL" == "false" ]]; then
+  echo "   ✅ Mode ephemeral=false (persistant)"
 else
-  echo "❌ Secret manquant"
+  echo "   ❌ Mauvaise config ephemeral=$EPHEMERAL"
   exit 1
 fi
 
-echo -e "\n=== [2] Vérification RunnerDeployment $APP ==="
-if kubectl -n "$NS" get runnerdeployment "$APP" &>/dev/null; then
-  echo "✅ RunnerDeployment présent"
-else
-  echo "❌ RunnerDeployment manquant"
+# --- 2. Vérifier Runners générés
+echo ""
+echo "🔍 Vérification des Runners générés..."
+RUNNERS=$(kubectl -n "$NS" get runners -l runner-deployment-name="$RD_NAME" -o json | \
+  jq -r '.items[] | "\(.metadata.name)\t\(.spec.labels | join(","))\t\(.spec.ephemeral)\t\(.status.phase)"')
+if [ -z "$RUNNERS" ]; then
+  echo "❌ Aucun Runner généré pour $RD_NAME"
   exit 1
 fi
 
-echo -e "\n=== [3] Vérification Pods ==="
-kubectl -n "$NS" get pods -l runner-deployment-name=$APP -o wide || true
+echo "$RUNNERS" | while read -r name labels ephemeral phase; do
+  echo "   Runner $name → labels=[$labels], ephemeral=$ephemeral, phase=$phase"
 
-echo -e "\n=== [4] Logs du runner (tail -50) ==="
-kubectl -n "$NS" logs -l runner-deployment-name=$APP -c runner --tail=50 || true
+  for lbl in "${EXPECTED_LABELS[@]}"; do
+    if echo "$labels" | grep -qw "$lbl"; then
+      echo "      ✅ $lbl présent"
+    else
+      echo "      ❌ $lbl manquant"
+      exit 1
+    fi
+  done
 
-echo -e "\n=== [5] Logs du docker:dind (tail -20) ==="
-kubectl -n "$NS" logs -l runner-deployment-name=$APP -c docker --tail=20 || true
+  if [[ "$ephemeral" == "false" ]]; then
+    echo "      ✅ ephemeral=false"
+  else
+    echo "      ❌ Mauvais mode ephemeral=$ephemeral"
+    exit 1
+  fi
+done
 
-echo -e "\n=== [6] Events namespace $NS (dernier 1m) ==="
-kubectl -n "$NS" get events --sort-by=.metadata.creationTimestamp --field-selector type=Warning | tail -n 20
+# --- 3. Vérifier Pods associés
+echo ""
+echo "🔍 Vérification des Pods..."
+kubectl -n "$NS" get pods -l runner-deployment-name="$RD_NAME" -o wide
+
+# --- 4. Vérifier statut GitHub côté ARC
+echo ""
+echo "🔍 Vérification côté GitHub (STATUS=Running attendu)..."
+kubectl -n "$NS" get runners -l runner-deployment-name="$RD_NAME" -o wide
+
+if kubectl -n "$NS" get runners -l runner-deployment-name="$RD_NAME" -o jsonpath='{.items[*].status.phase}' | grep -qw "Running"; then
+  echo "✅ Au moins un runner est Running côté GitHub"
+else
+  echo "❌ Aucun runner Running côté GitHub"
+  exit 1
+fi
+
+echo ""
+echo "🎉 Sanity check ARC terminé : tout est OK ✅"
