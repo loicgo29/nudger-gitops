@@ -9,9 +9,8 @@ echo "▶️  Running Trivy on $TARGET_DIR"
 if ! command -v trivy >/dev/null 2>&1; then
   echo "📦 Installing Trivy..."
   curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-  sudo mv trivy /usr/local/bin/
+  sudo mv ./bin/trivy /usr/local/bin/trivy
 fi
-
 # Scan config
 trivy config "$TARGET_DIR" \
   --severity CRITICAL,HIGH \
