@@ -12,4 +12,4 @@ spec:
             storage: 5Gi   # Réduction de 50Gi → 10Gi
         accessModes:
           - ReadWriteOnce
-        storageClassName: longhorn-db
+        storageClassName: longhorn-db-integration
