@@ -12,6 +12,7 @@ if ! command -v trivy >/dev/null 2>&1; then
   sudo mv ./bin/trivy /usr/local/bin/trivy
   rm -rf ./bin
 fi
+
 # Scan config
 trivy config "$TARGET_DIR" \
   --severity CRITICAL,HIGH \
