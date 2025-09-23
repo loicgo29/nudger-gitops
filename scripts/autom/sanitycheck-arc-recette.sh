@@ -30,4 +30,4 @@ echo -e "\n=== [5] Logs du docker:dind (tail -20) ==="
 kubectl -n "$NS" logs -l runner-deployment-name=$APP -c docker --tail=20 || true
 
 echo -e "\n=== [6] Events namespace $NS (dernier 1m) ==="
-kubectl -n "$NS" get events --sort-by=.metadata.creationTimestamp --since=1m || true
+kubectl -n "$NS" get events --sort-by=.metadata.creationTimestamp --field-selector lastTimestamp>=$(date -u -d '1 minute ago' +%Y-%m-%dT%H:%M:%SZ)
