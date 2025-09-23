@@ -5,3 +5,6 @@ apps/.DS_Store
 
 kubeconfig-ci.yaml
 kubeconfig-ci.b64
+
+kubeconfig-ci.yaml
+kubeconfig-ci.b64

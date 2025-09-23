@@ -3,16 +3,14 @@ set -euo pipefail
 
 NS="flux-system"
 SA="ci-runner"
-SECRET="${SA}-token"
 
-# Récupération des infos cluster
+echo "🔑 Génération du kubeconfig CI pour ServiceAccount ${SA} (${NS})..."
+
 SERVER=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
 CA=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.certificate-authority-data}')
-TOKEN=$(kubectl -n "$NS" get secret "$SECRET" -o jsonpath='{.data.token}' | base64 -d)
+TOKEN=$(kubectl -n "$NS" get secret $(kubectl -n "$NS" get sa "$SA" -o jsonpath='{.secrets[0].name}') -o jsonpath='{.data.token}' | base64 -d)
 
-OUT="kubeconfig-ci.yaml"
-
-cat > "$OUT" <<EOF
+cat <<EOF > kubeconfig-ci.yaml
 apiVersion: v1
 kind: Config
 clusters:
@@ -33,9 +31,12 @@ users:
     token: ${TOKEN}
 EOF
 
-echo "✅ Kubeconfig écrit dans $OUT"
+echo "✅ kubeconfig écrit dans kubeconfig-ci.yaml"
 
-# Génère aussi la version base64 (pratique pour secrets GitHub)
-cat "$OUT" | base64 -w0 > kubeconfig-ci.b64
-echo
-echo "✅ Fichier base64 dispo dans kubeconfig-ci.b64"
+# Générer la version base64 directement pour GitHub Actions
+base64 -w0 kubeconfig-ci.yaml > kubeconfig-ci.b64
+echo "✅ kubeconfig-ci.b64 généré (prêt pour gh secret set KUBECONFIG_B64 < kubeconfig-ci.b64)"
+
+echo ""
+echo "👉 Étape suivante :"
+echo "   gh secret set KUBECONFIG_B64 < kubeconfig-ci.b64"
