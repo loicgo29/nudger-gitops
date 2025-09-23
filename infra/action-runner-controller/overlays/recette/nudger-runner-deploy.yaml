@@ -7,27 +7,15 @@ spec:
   replicas: 1
   template:
     spec:
-      organization: loicgo29
       repository: loicgo29/nudger-gitops
       dockerdWithinRunnerContainer: false
+      ephemeral: false   # 👈 désactive le mode éphémère côté CRD
       containers:
         - name: runner
           image: ghcr.io/actions/actions-runner:2.328.0
+          env:
+            - name: RUNNER_EPHEMERAL
+              value: "false"   # 👈 surcharge pour écraser le secret
           envFrom:
             - secretRef:
                 name: actions-runner-controller
-          env:
-            - name: RUNNER_EPHEMERAL
-              value: "true"
-            - name: RUNNER_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-          volumeMounts:
-            - name: docker-sock
-              mountPath: /var/run/docker.sock
-      volumes:
-        - name: docker-sock
-          hostPath:
-            path: /var/run/docker.sock
-            type: Socket
