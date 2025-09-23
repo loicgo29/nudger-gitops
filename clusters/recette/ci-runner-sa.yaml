@@ -17,3 +17,12 @@ subjects:
 - kind: ServiceAccount
   name: ci-runner
   namespace: flux-system
+i---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ci-runner-token
+  namespace: flux-system
+  annotations:
+    kubernetes.io/service-account.name: ci-runner
+type: kubernetes.io/service-account-token
