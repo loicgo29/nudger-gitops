@@ -4,3 +4,5 @@ resources:
   #  - ../../observability/base/helmrepository-prometheus-community.yaml   # ✅ bon chemin
   - helmrepository-cert-manager.yaml
   - releases/cert-manager/helmrelease.yaml
+  - clusterissuer-letsencrypt.yaml
+  - arc-ingress.yaml

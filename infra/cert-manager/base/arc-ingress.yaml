@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: arc-webhook
+  namespace: actions-runner-system
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - nudger.logo-solutions.fr
+      secretName: arc-webhook-tls
+  rules:
+    - host: nudger.logo-solutions.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: actions-runner-controller-webhook
+                port:
+                  number: 443
