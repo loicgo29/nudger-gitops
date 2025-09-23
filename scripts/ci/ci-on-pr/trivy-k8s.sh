@@ -10,6 +10,7 @@ if ! command -v trivy >/dev/null 2>&1; then
   echo "📦 Installing Trivy..."
   curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
   sudo mv ./bin/trivy /usr/local/bin/trivy
+  rm -rf ./bin
 fi
 # Scan config
 trivy config "$TARGET_DIR" \
