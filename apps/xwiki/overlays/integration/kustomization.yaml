@@ -8,3 +8,4 @@ resources:
 patchesStrategicMerge:
   - patch-ingress.yaml
   - patch-labels.yaml
+  - patch-probes.yaml   

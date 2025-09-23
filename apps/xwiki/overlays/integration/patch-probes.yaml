@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: xwiki
+spec:
+  template:
+    spec:
+      containers:
+        - name: xwiki
+          readinessProbe:
+            httpGet:
+              path: /bin/view/Main/
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 120
+            timeoutSeconds: 10
+            periodSeconds: 20
+            successThreshold: 1
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /bin/view/Main/
+              port: 8080
+            initialDelaySeconds: 180
+            timeoutSeconds: 10
+            periodSeconds: 30
+            failureThreshold: 10
