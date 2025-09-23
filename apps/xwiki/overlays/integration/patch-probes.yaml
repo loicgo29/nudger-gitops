@@ -11,17 +11,21 @@ spec:
             httpGet:
               path: /bin/view/Main/
               port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 120
+              httpHeaders:
+              - name: Host
+                value: xwiki.integration.nudger.logo-solutions.fr
+            initialDelaySeconds: 180
             timeoutSeconds: 10
             periodSeconds: 20
-            successThreshold: 1
-            failureThreshold: 12
+            failureThreshold: 30
           livenessProbe:
             httpGet:
               path: /bin/view/Main/
               port: 8080
-            initialDelaySeconds: 180
+              httpHeaders:
+              - name: Host
+                value: xwiki.integration.nudger.logo-solutions.fr
+            initialDelaySeconds: 240
             timeoutSeconds: 10
             periodSeconds: 30
             failureThreshold: 10
