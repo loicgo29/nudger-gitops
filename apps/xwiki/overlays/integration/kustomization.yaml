@@ -4,8 +4,10 @@ kind: Kustomization
 namespace: ns-open4goods-integration
 
 resources:
-  - ../../base
-patchesStrategicMerge:
-  - patch-ingress.yaml
-  - patch-labels.yaml
-  - patch-probes.yaml   
+- ../../base
+patches:
+- path: patch-ingress.yaml
+- path: patch-labels.yaml
+- path: patch-probes.yaml
+- path: patch-grants.yaml
+

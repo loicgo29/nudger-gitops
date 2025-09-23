@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mysql-xwiki-grants
+  namespace: ns-open4goods-integration
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: mysql-client
+          image: mysql:8.4
+          command: ["sh", "-c"]
+          args:
+            - |
+              mysql -h mysql-xwiki -uroot -p"$MYSQL_ROOT_PASSWORD" <<'EOSQL'
+              GRANT ALL PRIVILEGES ON xwiki.* TO 'xwiki'@'%';
+              FLUSH PRIVILEGES;
+              EOSQL
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-xwiki
+                  key: mysql-root-password
