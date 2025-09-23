@@ -7,6 +7,17 @@ spec:
     spec:
       containers:
         - name: xwiki
+          startupProbe:
+            httpGet:
+              path: /bin/view/Main/
+              port: 8080
+              httpHeaders:
+              - name: Host
+                value: xwiki.integration.nudger.logo-solutions.fr
+            initialDelaySeconds: 60   # attendre un peu plus avant la 1ʳᵉ tentative
+            timeoutSeconds: 10
+            periodSeconds: 20
+            failureThreshold: 30 
           readinessProbe:
             httpGet:
               path: /bin/view/Main/
