@@ -1,0 +1,32 @@
+name: 🚀 Flux reconcile (recette)
+
+on:
+  push:
+    paths:
+      - "clusters/recette/**"
+  workflow_dispatch: {}
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup flux CLI
+        run: |
+          curl -s https://fluxcd.io/install.sh | sudo bash
+          flux --version
+
+      - name: Configure kubeconfig
+        run: |
+          echo "${KUBECONFIG_B64}" | base64 -d > kubeconfig
+          echo "✅ Kubeconfig écrit"
+        env:
+          KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
+
+      - name: Flux reconcile recette-root
+        run: |
+          export KUBECONFIG=$PWD/kubeconfig
+          flux reconcile kustomization recette -n flux-system --with-source
