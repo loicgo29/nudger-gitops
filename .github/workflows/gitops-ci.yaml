@@ -64,8 +64,7 @@ jobs:
       - name: Dry-run apply manifests
         run: |
           set -eux
-          KUBECONFIG=${KUBECONFIG:-$HOME/.kube/config}
           for cluster in clusters/*; do
             echo "🚀 Dry-run for $cluster"
-            kubectl apply --dry-run=server -f <(kustomize build "$cluster")
+            kustomize build "$cluster" | kubectl apply --dry-run=client -f -
           done
