@@ -28,7 +28,7 @@ jobs:
                                    # Fallback si la clé exacte n’existe pas
 
       - name: Run Trivy (misconfig + secrets)
-        run: ./scripts/ci-on-pr/trivy-k8s.sh .
+        run: ./scripts/ci/ci-on-pr/trivy-k8s.sh .
                                    # -> Analyse Kubernetes Manifests + secrets
                                    # -> Échoue si CRITICAL/HIGH trouvés
       - name: SARIF (misconfig)
