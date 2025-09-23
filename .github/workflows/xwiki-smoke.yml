@@ -1,0 +1,30 @@
+name: Smoke Test XWiki
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "tests/smoke-tests/xwiki/**"
+      - "scripts/ci/xwiki-smoke.sh"
+      - ".github/workflows/xwiki-smoke.yml"
+
+jobs:
+  xwiki-smoke:
+    runs-on: ubuntu-latest
+    env:
+      KUBECONFIG: ${{ github.workspace }}/kubeconfig
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure kubeconfig
+        env:
+          KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
+        run: |
+          echo "$KUBECONFIG_B64" | base64 -d > "$KUBECONFIG"
+          echo "✅ Kubeconfig écrit dans $KUBECONFIG"
+
+      - name: Run XWiki smoke test (script source de vérité)
+        run: |
+          chmod +x tests/smoke-tests/xwiki/xwiki-smoke.sh
+          tests/smoke-tests/xwiki/xwiki-smoke.sh

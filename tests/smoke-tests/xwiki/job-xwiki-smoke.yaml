@@ -15,5 +15,7 @@ spec:
         command: ["sh", "-c"]
         args:
           - |
-            echo "🌐 Test accès XWiki..."
-            curl -s -o /dev/null -w "%{http_code}" http://xwiki-svc:8080/bin/view/Main/WebHome | grep 200
+            echo "🌐 Vérification accès XWiki..."
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://xwiki-svc:8080/bin/view/Main/WebHome)
+            echo "HTTP code=$code"
+            test "$code" = "200"

@@ -8,10 +8,10 @@ YAML="tests/smoke-tests/xwiki/job-xwiki-smoke.yaml"
 echo "🧹 Suppression du job précédent..."
 kubectl -n "$NS" delete job "$JOB" --ignore-not-found
 
-echo "🚀 Lancement du job..."
+echo "🚀 Lancement du job $JOB..."
 kubectl -n "$NS" apply -f "$YAML"
 
-echo "⏳ Attente de la complétion..."
+echo "⏳ Attente de complétion..."
 kubectl -n "$NS" wait --for=condition=complete --timeout=120s job/$JOB || true
 
 POD=$(kubectl -n "$NS" get pods -l job-name=$JOB -o jsonpath='{.items[0].metadata.name}')
@@ -21,9 +21,9 @@ kubectl -n "$NS" logs "$POD" || true
 STATUS=$(kubectl -n "$NS" get job "$JOB" -o jsonpath='{.status.succeeded}' 2>/dev/null || echo 0)
 
 if [[ "$STATUS" == "1" ]]; then
-  echo "✅ Smoke test XWiki OK"
+  echo "✅ Smoke test XWiki PASSED"
   exit 0
 else
-  echo "❌ Smoke test XWiki FAIL"
+  echo "❌ Smoke test XWiki FAILED"
   exit 1
 fi
