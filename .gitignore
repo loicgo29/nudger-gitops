@@ -2,3 +2,6 @@
 *.swp
 ble.sh/
 apps/.DS_Store
+
+kubeconfig-ci.yaml
+kubeconfig-ci.b64
