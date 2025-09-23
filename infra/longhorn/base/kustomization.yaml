@@ -4,6 +4,7 @@ resources:
   - namespace.yaml
   - helmrepository-prometheus-community.yaml 
   - storageclass-longhorn-db.yaml
+  - storageclass-longhorn-db-integration.yaml 
   - storageclass-longhorn.yaml
   - storageclass-longhorn-delete.yaml
   - patch-node.yaml 
