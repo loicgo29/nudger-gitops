@@ -5,3 +5,4 @@ namespace: ns-open4goods-integration
 
 resources:
   - ../../base
+  - path: patch-ingress.yaml
