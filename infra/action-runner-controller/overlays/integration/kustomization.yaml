@@ -3,4 +3,3 @@ kind: Kustomization
 resources:
   - ../../base
   - ../../runners/integration
-  - secret-actions-runner-controller-sealed.yaml
