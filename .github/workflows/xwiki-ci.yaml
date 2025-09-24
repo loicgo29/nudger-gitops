@@ -1,0 +1,44 @@
+name: XWiki CI/CD
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Nouvelle version de XWiki"
+        required: true
+      promote:
+        description: "Promouvoir aussi en recette ?"
+        required: false
+        default: "false"
+
+jobs:
+  bump-xwiki:
+    runs-on: [self-hosted, nudger-gitops]   # ton Runner ARC
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run bump script
+        run: |
+          chmod +x scripts/ci/xwiki-bump.sh
+          PROMOTE=${{ github.event.inputs.promote }} ./scripts/ci/xwiki-bump.sh ${{ github.event.inputs.version }}
+
+      # --- Vérification déploiement en intégration ---
+      - name: Wait for rollout (integration)
+        run: |
+          kubectl rollout status statefulset/xwiki -n ns-open4goods-integration --timeout=300s
+
+      - name: Curl check XWiki integration
+        run: |
+          curl -vk https://xwiki-int.logo-solutions.fr || true
+
+      # --- Vérification déploiement en recette si PROMOTE=true ---
+      - name: Wait for rollout (recette)
+        if: ${{ github.event.inputs.promote == 'true' }}
+        run: |
+          kubectl rollout status statefulset/xwiki -n ns-open4goods-recette --timeout=300s
+
+      - name: Curl check XWiki recette
+        if: ${{ github.event.inputs.promote == 'true' }}
+        run: |
+          curl -vk https://xwiki-recette.logo-solutions.fr || true
