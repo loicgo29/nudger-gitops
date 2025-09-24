@@ -12,4 +12,3 @@ resources:
   - actions-runner-controller.kustomization.yaml
   - ../../infra/action-runner-controller/overlays/recette
   - ci-runner-sa.yaml
-  - ../../infra/action-runner-controller/runners/recette
