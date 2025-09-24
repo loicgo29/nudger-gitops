@@ -15,4 +15,4 @@ spec:
         - nudger-gitops   # 👈 le label attendu par ton workflow
       envFrom:
         - secretRef:
-            name: controller-manager
+            name: actions-runner-controller

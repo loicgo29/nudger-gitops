@@ -14,4 +14,4 @@ spec:
         - prod
       envFrom:
         - secretRef:
-            name: controller-manager
+            name: actions-runner-controller

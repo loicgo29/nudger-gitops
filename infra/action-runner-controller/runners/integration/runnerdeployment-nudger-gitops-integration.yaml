@@ -14,4 +14,4 @@ spec:
         - integration
       envFrom:
         - secretRef:
-            name: controller-manager
+            name: actions-runner-controller
