@@ -13,3 +13,7 @@ spec:
         - self-hosted
         - nudger-gitops   # 👈 le label attendu par ton workflow
         - recette
+      envFrom:
+        - secretRef:
+            name: actions-runner-controller   # ✅ cherche le secret
+            namespace: actions-runner-system  # 👈 ajoute ce champ
