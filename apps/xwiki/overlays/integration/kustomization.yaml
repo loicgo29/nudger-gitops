@@ -9,4 +9,5 @@ patches:
 - path: patch-ingress.yaml
 - path: patch-labels.yaml
 - path: patch-probes.yaml
+- patch: xwiki-image-patch.yaml
 
