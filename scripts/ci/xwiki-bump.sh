@@ -1,38 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# --- Variables ----------------------------------------------------
-XWIKI_VERSION="${1:-17.4.0}"   # version XWiki à déployer
-CLUSTERS_DIR="clusters"
+XWIKI_VERSION="${1:-17.4.0}"
 
-# --- Fonctions utilitaires ----------------------------------------
-commit_and_push() {
-  local msg="$1"
-  git config user.name "nudger-bot"
-  git config user.email "bot@logo-solutions.fr"
-  git add .
-  git commit -m "$msg" || echo "Nothing to commit"
-  git push origin HEAD
-}
+# --- Étape 1 : bump image dans le StatefulSet ---
+echo "➡️ Mise à jour XWiki version ${XWIKI_VERSION}..."
+sed -i "s|image: xwiki:.*|image: xwiki:${XWIKI_VERSION}-mysql-tomcat|g" apps/xwiki/base/xwiki-statefulset.yaml
 
-# --- Étape 1 : bump en intégration --------------------------------
-echo "➡️ Mise à jour XWiki version ${XWIKI_VERSION} en intégration..."
-sed -i "s|image: .*xwiki:.*|image: xwiki:${XWIKI_VERSION}|g" \
-  "${CLUSTERS_DIR}/integration/xwiki/kustomization.yaml"
-
-# Vérification syntaxe avec kustomize + kubeconform
+# --- Étape 2 : validation kustomize ---
 echo "🔍 Validation des manifests..."
-kustomize build "${CLUSTERS_DIR}/integration/xwiki" | kubeconform -strict
+kustomize build apps/xwiki/overlays/integration | kubeconform -strict
 
-commit_and_push "chore: bump XWiki to ${XWIKI_VERSION} in integration [skip ci]"
+# --- Étape 3 : commit & push ---
+git config user.name "nudger-bot"
+git config user.email "bot@logo-solutions.fr"
+git add apps/xwiki/base/xwiki-statefulset.yaml
+git commit -m "chore: bump XWiki to ${XWIKI_VERSION} in integration [skip ci]" || echo "Nothing to commit"
+git push origin HEAD
 
-# --- Étape 2 : promotion recette (si demandé) ---------------------
-if [[ "${PROMOTE:-false}" == "true" ]]; then
-  echo "➡️ Promotion XWiki ${XWIKI_VERSION} vers recette..."
-  cp "${CLUSTERS_DIR}/integration/xwiki/kustomization.yaml" \
-     "${CLUSTERS_DIR}/recette/xwiki/kustomization.yaml"
-
-  commit_and_push "chore: promote XWiki ${XWIKI_VERSION} to recette [skip ci]"
-fi
-
-echo "✅ Script terminé."
+echo "✅ Bump terminé."
