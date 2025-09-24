@@ -1,0 +1,18 @@
+# apps/runners/recette/runnerdeployment-nudger-gitops-recette.yaml
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: nudger-gitops-recette-runner
+  namespace: ns-open4goods-recette
+spec:
+  replicas: 1
+  template:
+    spec:
+      serviceAccountName: arc-sa       # 👈 au lieu de secretRef
+      repository: loicgo29/nudger-gitops
+      dockerdWithinRunnerContainer: false
+      ephemeral: false
+      labels:
+        - self-hosted
+        - nudger-gitops
+        - recette

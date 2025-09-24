@@ -1,0 +1,6 @@
+# apps/runners/recette/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - serviceaccount.yaml
+  - runnerdeployment-nudger-gitops-recette.yaml
