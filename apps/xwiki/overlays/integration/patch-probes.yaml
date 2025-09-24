@@ -9,7 +9,7 @@ spec:
         - name: xwiki
           startupProbe:
             httpGet:
-              path: /bin/view/Main/
+              path: /
               port: 8080
               httpHeaders:
               - name: Host
@@ -20,7 +20,7 @@ spec:
             failureThreshold: 30 
           readinessProbe:
             httpGet:
-              path: /bin/view/Main/
+              path: /
               port: 8080
               httpHeaders:
               - name: Host
@@ -31,7 +31,7 @@ spec:
             failureThreshold: 30
           livenessProbe:
             httpGet:
-              path: /bin/view/Main/
+              path: /
               port: 8080
               httpHeaders:
               - name: Host
