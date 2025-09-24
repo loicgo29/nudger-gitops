@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mysql-xwiki-grants
+  namespace: ns-open4goods-integration
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: mysql-client
+        image: mysql:8.4
+        command:
+        - sh
+        - -c
+        - |
+          mysql -h mysql-xwiki -uroot -p$(cat /secrets/mysql-root-pw) <<'EOF'
+          CREATE USER IF NOT EXISTS 'xwiki'@'%' IDENTIFIED BY 'xwikiPass123!';
+          GRANT ALL PRIVILEGES ON xwiki.* TO 'xwiki'@'%';
+          GRANT PROCESS ON *.* TO 'xwiki'@'%';
+          FLUSH PRIVILEGES;
+          EOF
+        volumeMounts:
+        - name: mysql-secret
+          mountPath: /secrets
+          readOnly: true
+      volumes:
+      - name: mysql-secret
+        secret:
+          secretName: mysql-xwiki
+          items:
+          - key: mysql-root-password
+            path: mysql-root-pw
