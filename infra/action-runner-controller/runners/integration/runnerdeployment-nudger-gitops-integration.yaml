@@ -10,7 +10,7 @@ spec:
       repository: loicgo29/nudger-gitops
       labels:
         - self-hosted
-        - nudger
+        - nudger-gitops
         - integration
       envFrom:
         - secretRef:
