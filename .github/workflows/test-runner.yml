@@ -1,11 +1,16 @@
-name: Test Runner ARC
+name: Test Integration Runner
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
 
 jobs:
-  test:
-    runs-on: [self-hosted, nudger-gitops, recette]
+  test-runner:
+    runs-on: [self-hosted, nudger-gitops, integration]
     steps:
-      - name: Hello
-        run: echo "Runner ARC OK ✅ sur $(hostname)"
+      - name: Check runner context
+        run: |
+          echo "Runner OS: $RUNNER_OS"
+          echo "Runner name: $RUNNER_NAME"
+          echo "Repo: $GITHUB_REPOSITORY"
+      - name: Simple docker test
+        run: docker version || echo "Docker not available"
