@@ -12,7 +12,6 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: actions-runner-system
   dependsOn:
     - name: meta-infra-namespaces
       namespace: flux-system
