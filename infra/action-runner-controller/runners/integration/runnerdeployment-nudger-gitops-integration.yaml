@@ -15,5 +15,4 @@ spec:
       envFrom:
         - secretRef:
             name: actions-runner-controller   # ✅ cherche le secret
-            namespace: actions-runner-system  # 👈 ajoute ce champ
 
