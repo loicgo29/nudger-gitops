@@ -5,8 +5,9 @@ namespace: ns-open4goods-integration
 
 resources:
 - ../../base
+
 patches:
-- path: patch-ingress.yaml
-- path: patch-labels.yaml
-- path: patch-probes.yaml
-- path: xwiki-image-patch.yaml
+  - path: patch-ingress.yaml
+  - path: patch-labels.yaml
+  - path: patch-probes.yaml
+  - path: xwiki-image-patch.yaml
