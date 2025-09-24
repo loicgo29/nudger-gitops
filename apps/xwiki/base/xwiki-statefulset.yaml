@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: xwiki
-          image: xwiki:17.4.0-mysql-tomcat
+          image: xwiki:17.3.0-mysql-tomcat
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
