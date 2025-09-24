@@ -5,6 +5,15 @@ metadata:
   namespace: ns-open4goods-integration
 spec:
   interval: 5m
+  timeout: 10m          # <---- clé importante
+  install:
+    remediation:
+      retries: 3
+    timeout: 10m        # <---- augmente le timeout
+  upgrade:
+    remediation:
+      retries: 3
+    timeout: 10m        # <---- augmente le timeout
   chart:
     spec:
       chart: mysql
