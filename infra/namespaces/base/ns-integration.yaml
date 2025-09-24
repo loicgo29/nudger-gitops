@@ -5,8 +5,8 @@ metadata:
   labels:
     environment: integration
     app.kubernetes.io/part-of: open4goods
-    pod-security.kubernetes.io/enforce: baseline
-    pod-security.kubernetes.io/warn: baseline
-    pod-security.kubernetes.io/audit: baseline
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: privileged
+    pod-security.kubernetes.io/audit: privileged
   annotations:
     nudger.logo-solutions.fr/managed-by: gitops
