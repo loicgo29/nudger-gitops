@@ -12,6 +12,3 @@ spec:
         - self-hosted
         - nudger-gitops
         - integration
-      envFrom:
-        - secretRef:
-            name: actions-runner-controller

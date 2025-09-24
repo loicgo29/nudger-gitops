@@ -8,11 +8,8 @@ spec:
   template:
     spec:
       repository: loicgo29/nudger-gitops
-      dockerdWithinRunnerContainer: false
       ephemeral: false
       labels:
         - self-hosted
         - nudger-gitops   # 👈 le label attendu par ton workflow
-      envFrom:
-        - secretRef:
-            name: actions-runner-controller
+        - recette

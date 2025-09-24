@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: nudger-gitops-recette-runnerset
-  namespace: ns-open4goods-recette
-spec:
-  clusterIP: None
-  selector:
-    app: nudger-gitops-recette-runnerset
