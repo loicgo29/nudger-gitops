@@ -6,4 +6,3 @@ resources:
   - xwiki-statefulset.yaml 
   - xwiki-ingress.yaml
   - secret-mysql-xwiki.yaml
-  - job-mysql-xwiki-grants.yaml
