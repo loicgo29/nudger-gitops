@@ -5,7 +5,7 @@ namespace: ns-open4goods-integration
 
 resources:
 - ../../base
-patches:
+patchesStrategicMerge:
 - path: patch-ingress.yaml
 - path: patch-labels.yaml
 - path: patch-probes.yaml
