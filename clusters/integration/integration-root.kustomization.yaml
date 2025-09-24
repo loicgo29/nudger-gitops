@@ -7,8 +7,11 @@ spec:
   interval: 10m
   path: ./clusters/integration
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  wait: true
+  dependsOn:
+    - name: meta-infra-namespaces
+      namespace: flux-system
