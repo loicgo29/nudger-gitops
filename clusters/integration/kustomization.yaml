@@ -6,3 +6,5 @@ resources:
   - mysql-xwiki.kustomization.yaml
   - xwiki.kustomization.yaml
   - infra.kustomization.yaml
+  - actions-runner-controller.kustomization.yaml
+  - ../../infra/action-runner-controller/overlays/recette
