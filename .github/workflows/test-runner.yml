@@ -1,16 +1,31 @@
-name: Test Integration Runner
+name: Test All Runners
 
 on:
   workflow_dispatch:
 
 jobs:
-  test-runner:
-    runs-on: [self-hosted, nudger-gitops, integration]
+  test-recette:
+    name: Test Recette Runner
+    runs-on: [self-hosted, nudger-gitops, recette]
     steps:
-      - name: Check runner context
+      - name: Show runner info
         run: |
+          echo "=== Recette Runner ==="
           echo "Runner OS: $RUNNER_OS"
           echo "Runner name: $RUNNER_NAME"
           echo "Repo: $GITHUB_REPOSITORY"
-      - name: Simple docker test
-        run: docker version || echo "Docker not available"
+      - name: Docker test
+        run: docker ps || echo "⚠️ Docker not available"
+
+  test-integration:
+    name: Test Integration Runner
+    runs-on: [self-hosted, nudger-gitops, integration]
+    steps:
+      - name: Show runner info
+        run: |
+          echo "=== Integration Runner ==="
+          echo "Runner OS: $RUNNER_OS"
+          echo "Runner name: $RUNNER_NAME"
+          echo "Repo: $GITHUB_REPOSITORY"
+      - name: Docker test
+        run: docker ps || echo "⚠️ Docker not available"
