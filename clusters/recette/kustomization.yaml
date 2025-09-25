@@ -7,7 +7,6 @@ resources:
   - kyverno.kustomization.yaml
   - cert-manager.kustomization.yaml
   - cert-manager-issuers.kustomization.yaml
-  - xwiki-kustomization.yaml
   - actions-runner-controller.kustomization.yaml
   - runners.kustomization.yaml
   - ci-runner-sa.yaml

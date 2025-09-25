@@ -6,5 +6,4 @@ resources:
   - infra.kustomization.yaml
   - ../../infra/action-runner-controller/overlays/integration
   - actions-runner-controller-integration.kustomization.yaml   # ✅ ajout
-  - xwiki-kustomization.yaml
   - kustomization-certificates.yaml
