@@ -8,8 +8,8 @@ resources:
   - mysql-xwiki.kustomization.yaml 
   - cert-manager.kustomization.yaml
   - cert-manager-issuers.kustomization.yaml
-  - actions-runner-controller.kustomization.yaml
-  - ci-runner-sa.yaml
   - xwiki-kustomization.yaml
   - ns-open4goods-recette 
+  - actions-runner-controller.kustomization.yaml
   - runners.kustomization.yaml
+  - ci-runner-sa.yaml
