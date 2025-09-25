@@ -1,7 +1,0 @@
-auth:
-  existingSecret: mysql-xwiki-recette   # le nom du Secret
-primary:
-  persistence:
-    enabled: true
-    storageClass: longhorn-db-recette
-    size: 5Gi
