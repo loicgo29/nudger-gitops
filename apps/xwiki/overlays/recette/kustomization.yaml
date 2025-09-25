@@ -25,9 +25,3 @@ patches:
             - secretName: xwiki-tls
               hosts:
                 - xwiki.recette.nudger.logo-solutions.fr
-      - op: replace
-        path: /spec/values/mariadb/auth/rootPassword
-        value: xwikiRoot123
-      - op: replace
-        path: /spec/values/mariadb/auth/password
-        value: xwikiPass123
