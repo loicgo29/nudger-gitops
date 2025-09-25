@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: xwiki-tls
   issuerRef:
-    name: letsencrypt-prod
+    name: letsencrypt-staging
     kind: ClusterIssuer
   dnsNames:
     - xwiki.integration.nudger.logo-solutions.fr
