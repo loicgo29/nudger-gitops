@@ -1,0 +1,9 @@
+auth:
+  database: xwiki
+  username: xwiki
+  # ⚠️ pas de mot de passe ici → géré par Secret
+primary:
+  persistence:
+    enabled: true
+    storageClass: longhorn-db-recette
+    size: 5Gi

@@ -2,7 +2,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: mysql-xwiki
-  namespace: ns-open4goods-integration
+  namespace: ns-open4goods-recette
 spec:
   interval: 5m
   timeout: 10m
@@ -27,22 +27,16 @@ spec:
       rootPassword: rootpassword   # ⚠️ à basculer dans un Secret
       database: xwiki
       username: xwiki
-      password: xwikiPass123!      # ⚠️ idem
+      password: xwikiPass123!      # ⚠️ idem, Secret conseillé
     primary:
       persistence:
         enabled: true
-        storageClass: longhorn-db-integration
-        size: 5Gi
+        storageClass: longhorn-db  # issu du patch PVC
+        size: 10Gi                 # issu du patch PVC
       resources:
         requests:
-          cpu: "100m"
-          memory: "256Mi"
-        limits:
           cpu: "200m"
           memory: "512Mi"
-      readinessProbe:
-        enabled: true
-        initialDelaySeconds: 60
-        periodSeconds: 10
-        timeoutSeconds: 5
-        failureThreshold: 6
+        limits:
+          cpu: "1"
+          memory: "1Gi"
