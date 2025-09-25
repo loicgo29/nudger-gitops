@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: xwiki
-      version: 1.6.2 # à adapter selon le repo retenu
+      version: 1.6.2
       sourceRef:
         kind: HelmRepository
         name: helmrepo-xwiki
@@ -18,10 +18,12 @@ spec:
     image:
       repository: xwiki
       tag: 17.3.0-mysql-tomcat
+
     persistence:
       enabled: true
       storageClass: longhorn-db
       size: 10Gi
+
     database:
       type: mysql
       host: mysql-xwiki
@@ -29,6 +31,7 @@ spec:
       user: xwiki
       existingSecret: mysql-xwiki
       existingSecretPasswordKey: mysql-password
+
     ingress:
       enabled: true
       ingressClassName: nginx
@@ -46,10 +49,33 @@ spec:
           hosts:
             - xwiki.recette.nudger.logo-solutions.fr
             - xwiki.integration.nudger.logo-solutions.fr
-    resources:   # ⬅️ conseillé
+
+    resources:
       requests:
         cpu: 200m
         memory: 512Mi
       limits:
         cpu: 500m
         memory: 1Gi
+
+    # ➡️ Ajout des probes
+    probes:
+      livenessProbe:
+        httpGet:
+          path: /rest
+          port: 8080
+        initialDelaySeconds: 90
+        periodSeconds: 20
+        timeoutSeconds: 5
+        failureThreshold: 6
+        successThreshold: 1
+
+      readinessProbe:
+        httpGet:
+          path: /rest/wikis/xwiki/spaces
+          port: 8080
+        initialDelaySeconds: 120
+        periodSeconds: 20
+        timeoutSeconds: 5
+        failureThreshold: 10
+        successThreshold: 1
