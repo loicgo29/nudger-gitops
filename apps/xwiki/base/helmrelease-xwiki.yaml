@@ -26,8 +26,6 @@ spec:
       storageClass: longhorn-db
       size: 10Gi
 
-    mysql:
-      enabled: false
     mariadb:
       enabled: false
     postgresql:

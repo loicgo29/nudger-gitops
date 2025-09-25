@@ -12,36 +12,12 @@ patches:
       name: xwiki
     patch: |
       - op: replace
-        path: /spec/values/externalDB
-        value:
-          type: mysql
-          host: mysql-xwiki.ns-open4goods-integration.svc.cluster.local
-          user: xwiki
-          database: xwiki
-          customKeyRef:
-            enabled: true
-            name: mysql-xwiki
-            key: mysql-password
-      - op: replace
-        path: /spec/values/mysql/enabled
-        value: false
-      - op: replace
-        path: /spec/values/mariadb/enabled
-        value: false
-      - op: replace
-        path: /spec/values/postgresql/enabled
-        value: false
-  - target:
-      kind: HelmRelease
-      name: xwiki
-    patch: |
+        path: /spec/values/database/host
+        value: mysql-xwiki.ns-open4goods-integration.svc.cluster.local
       - op: replace
         path: /spec/values/image/tag
         value: 17.3.0-mysql-tomcat
       - op: replace
-        path: /spec/values/database/host
-        value: mysql-xwiki.ns-open4goods-integration.svc.cluster.local
-      - op: add
         path: /spec/values/ingress
         value:
           enabled: true
