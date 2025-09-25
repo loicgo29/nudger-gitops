@@ -7,7 +7,11 @@ spec:
   interval: 10m
   path: ./apps/mysql-xwiki/overlays/recette
   prune: true
-  targetNamespace: ns-open4goods-recette
   sourceRef:
     kind: GitRepository
     name: flux-system
+    namespace: flux-system
+  targetNamespace: ns-open4goods-recette
+  wait: true
+  timeout: 5m
+  validation: client
