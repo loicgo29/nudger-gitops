@@ -9,6 +9,6 @@ spec:
   prune: true
   sourceRef:
     kind: GitRepository
-    name: nudger-gitops
+    name: flux-system
   timeout: 3m
   targetNamespace: ns-open4goods-recette
