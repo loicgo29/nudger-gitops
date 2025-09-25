@@ -38,12 +38,12 @@ spec:
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: mysql-xwiki-secret
+                  name: mysql-xwiki
                   key: username
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mysql-xwiki-secret
+                  name: mysql-xwiki
                   key: password
           volumeMounts:
             - name: xwiki-data
