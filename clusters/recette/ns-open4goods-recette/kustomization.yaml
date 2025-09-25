@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
   - xwiki-mysql-secret.yaml
   - xwiki-root-mysql-secret.yaml
-  - ../../../../apps/mysql-xwiki/overlays/recette/helmrelease-mysql-xwiki.yaml
+  - ../../../apps/mysql-xwiki/overlays/recette/helmrelease-mysql-xwiki.yaml
