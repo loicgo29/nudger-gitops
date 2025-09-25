@@ -1,0 +1,55 @@
+# apps/xwiki/base/helmrelease-xwiki.yaml
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: xwiki
+spec:
+  interval: 5m
+  timeout: 15m
+  chart:
+    spec:
+      chart: xwiki
+      version: 1.6.2 # à adapter selon le repo retenu
+      sourceRef:
+        kind: HelmRepository
+        name: helmrepo-xwiki
+        namespace: flux-system
+  values:
+    image:
+      repository: xwiki
+      tag: 17.3.0-mysql-tomcat
+    persistence:
+      enabled: true
+      storageClass: longhorn-db
+      size: 10Gi
+    database:
+      type: mysql
+      host: mysql-xwiki
+      name: xwiki
+      user: xwiki
+      existingSecret: mysql-xwiki
+      existingSecretPasswordKey: mysql-password
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hosts:
+        - host: xwiki.recette.nudger.logo-solutions.fr
+          paths:
+            - path: /
+              pathType: Prefix
+        - host: xwiki.integration.nudger.logo-solutions.fr
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - secretName: xwiki-tls
+          hosts:
+            - xwiki.recette.nudger.logo-solutions.fr
+            - xwiki.integration.nudger.logo-solutions.fr
+    resources:   # ⬅️ conseillé
+      requests:
+        cpu: 500m
+        memory: 2Gi
+      limits:
+        cpu: 1
+        memory: 4Gi

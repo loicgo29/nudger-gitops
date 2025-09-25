@@ -1,0 +1,9 @@
+# apps/xwiki/base/helmrepo-xwiki.yaml
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: helmrepo-xwiki
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://xwiki-contrib.github.io/xwiki-helm

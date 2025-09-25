@@ -4,10 +4,27 @@ kind: Kustomization
 namespace: ns-open4goods-integration
 
 resources:
-- ../../base
+  - ../../base
 
-patchesStrategicMerge:
-  - patch-ingress.yaml
-  - patch-labels.yaml
-  - patch-probes.yaml
-  - xwiki-image-patch.yaml
+patches:
+  - target:
+      kind: HelmRelease
+      name: xwiki
+    patch: |
+      - op: replace
+        path: /spec/values/image/tag
+        value: 17.4.0
+      - op: add
+        path: /spec/values/ingress
+        value:
+          enabled: true
+          ingressClassName: nginx
+          hosts:
+            - host: xwiki.integration.nudger.logo-solutions.fr
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - secretName: xwiki-tls
+              hosts:
+                - xwiki.integration.nudger.logo-solutions.fr

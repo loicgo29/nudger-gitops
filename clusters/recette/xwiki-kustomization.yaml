@@ -10,4 +10,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
+    namespace: flux-system
   targetNamespace: ns-open4goods-recette
+  wait: true
+  timeout: 5m

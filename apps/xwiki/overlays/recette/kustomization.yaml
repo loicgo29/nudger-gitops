@@ -5,6 +5,26 @@ namespace: ns-open4goods-recette
 
 resources:
   - ../../base
-patchesStrategicMerge:
-  - patch-ingress.yaml
-  - patch-labels.yaml
+
+patches:
+  - target:
+      kind: HelmRelease
+      name: xwiki
+    patch: |
+      - op: replace
+        path: /spec/values/image/tag
+        value: 17.3.0-mysql-tomcat
+      - op: add
+        path: /spec/values/ingress
+        value:
+          enabled: true
+          ingressClassName: nginx
+          hosts:
+            - host: xwiki.recette.nudger.logo-solutions.fr
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - secretName: xwiki-tls
+              hosts:
+                - xwiki.recette.nudger.logo-solutions.fr
