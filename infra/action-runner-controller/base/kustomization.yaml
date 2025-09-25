@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - action-runner-controller-helmrelease.yaml
   - action-runner-controller-helmrepository.yaml
+  - action-runner-controller-webhook-svc.yaml
