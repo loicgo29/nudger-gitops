@@ -13,23 +13,19 @@ spec:
         kind: HelmRepository
         name: helmrepo-xwiki
         namespace: flux-system
+
   values:
     image:
       repository: xwiki
       tag: 17.3.0-mysql-tomcat
 
-    # Persistance XWiki (espace données permanentes)
+    # === Persistance des données XWiki ===
     persistence:
       enabled: true
       storageClass: longhorn-db
       size: 10Gi
-    mysql:
-      enabled: false
 
-    postgresql:
-      enabled: false
-
-    # Utilisation de MariaDB embarqué
+    # === Base de données embarquée ===
     mariadb:
       enabled: true
       auth:
@@ -43,7 +39,13 @@ spec:
           storageClass: longhorn-db
           size: 8Gi
 
-    # Ingress pour accéder à XWiki
+    # Désactive les autres DB
+    mysql:
+      enabled: false
+    postgresql:
+      enabled: false
+
+    # === Ingress (à ajuster selon l’overlay) ===
     ingress:
       enabled: true
       ingressClassName: nginx
@@ -57,10 +59,27 @@ spec:
           hosts:
             - xwiki.recette.nudger.logo-solutions.fr
 
-    resources:
-      requests:
-        cpu: 200m
-        memory: 512Mi
-      limits:
-        cpu: 500m
-        memory: 1Gi
+    # === Probes pour laisser XWiki démarrer tranquillement ===
+    probes:
+      startupProbe:
+        httpGet:
+          path: /bin/view/Main/WebHome
+          port: 8080
+        initialDelaySeconds: 120
+        timeoutSeconds: 60
+        periodSeconds: 30
+        failureThreshold: 80
+      livenessProbe:
+        httpGet:
+          path: /rest
+          port: 8080
+        initialDelaySeconds: 120
+        periodSeconds: 30
+        timeoutSeconds: 10
+      readinessProbe:
+        httpGet:
+          path: /rest/wikis/xwiki/spaces
+          port: 8080
+        initialDelaySeconds: 120
+        periodSeconds: 30
+        timeoutSeconds: 10
