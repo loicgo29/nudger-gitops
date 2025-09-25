@@ -26,14 +26,22 @@ spec:
       storageClass: longhorn-db
       size: 10Gi
 
-    database:
-      embedded: "false"
+    mysql:
+      enabled: false
+    mariadb:
+      enabled: false
+    postgresql:
+      enabled: false
+
+    externalDB:
       type: mysql
-      host: mysql-xwiki
-      name: xwiki
+      host: mysql-xwiki.ns-open4goods-recette.svc.cluster.local
       user: xwiki
-      existingSecret: mysql-xwiki
-      existingSecretPasswordKey: mysql-password
+      database: xwiki
+      customKeyRef:
+        enabled: true
+        name: mysql-xwiki
+        key: mysql-password
 
     ingress:
       enabled: true

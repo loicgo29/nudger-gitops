@@ -11,26 +11,26 @@ patches:
       kind: HelmRelease
       name: xwiki
     patch: |
-      - op: add
-        path: /spec/values/env
+      - op: replace
+        path: /spec/values/externalDB
         value:
-          - name: DB_HOST
-            value: mysql-xwiki.ns-open4goods-integration.svc.cluster.local
-          - name: DB_USER
-            valueFrom:
-              secretKeyRef:
-                name: mysql-xwiki
-                key: mysql-user
-          - name: DB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: mysql-xwiki
-                key: mysql-password
-          - name: DB_DATABASE
-            valueFrom:
-              secretKeyRef:
-                name: mysql-xwiki
-                key: mysql-database
+          type: mysql
+          host: mysql-xwiki.ns-open4goods-integration.svc.cluster.local
+          user: xwiki
+          database: xwiki
+          customKeyRef:
+            enabled: true
+            name: mysql-xwiki
+            key: mysql-password
+      - op: replace
+        path: /spec/values/mysql/enabled
+        value: false
+      - op: replace
+        path: /spec/values/mariadb/enabled
+        value: false
+      - op: replace
+        path: /spec/values/postgresql/enabled
+        value: false
   - target:
       kind: HelmRelease
       name: xwiki
