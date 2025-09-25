@@ -82,6 +82,7 @@ for ns in "${NAMESPACES[@]}"; do
   svc=$(kubectl -n "$ns" get svc -l app.kubernetes.io/instance=xwiki -o jsonpath="{.items[0].metadata.name}" 2>/dev/null || true)
   if [[ -n "$svc" ]]; then
     CLUSTER_IP=$(kubectl -n "$ns" get svc "$svc" -o jsonpath="{.spec.clusterIP}")
+    echo "curl -shttp://$CLUSTER_IP:8080/bin/view/Main/WebHome"
     if curl -s "http://$CLUSTER_IP:8080/bin/view/Main/WebHome" | grep -q "XWiki"; then
       echo "✅ XWiki responded successfully"
     else

@@ -13,7 +13,10 @@ patches:
     patch: |
       - op: replace
         path: /spec/values/image/tag
-        value: 17.4.0
+        value: 17.3.0-mysql-tomcat
+      - op: replace
+        path: /spec/values/database/host
+        value: mysql-xwiki.ns-open4goods-integration.svc.cluster.local
       - op: add
         path: /spec/values/ingress
         value:
