@@ -1,7 +1,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: mysql-xwiki
+  name: mysql-xwiki-integration
   namespace: ns-open4goods-integration
 spec:
   interval: 5m

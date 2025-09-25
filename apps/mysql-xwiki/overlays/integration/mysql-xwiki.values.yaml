@@ -1,5 +1,5 @@
 auth:
-  existingSecret: mysql-xwiki   # le nom du Secret
+  existingSecret: mysql-xwiki-integration  # le nom du Secret
 primary:
   persistence:
     enabled: true
