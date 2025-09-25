@@ -27,7 +27,7 @@ spec:
       size: 10Gi
 
     database:
-      embedded: false
+      embedded: "false"
       type: mysql
       host: mysql-xwiki
       name: xwiki
