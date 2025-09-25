@@ -10,6 +10,6 @@ spec:
   prune: true
   sourceRef:
     kind: GitRepository
-    name: flux-system
+    name: nudger-gitops
   dependsOn:
     - name: meta-infra-namespaces   # pour que ns-kyverno existe si tu le gères ici

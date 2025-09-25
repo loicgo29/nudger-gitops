@@ -10,7 +10,7 @@ spec:
   wait: true
   sourceRef:
     kind: GitRepository
-    name: flux-system
+    name: nudger-gitops
     namespace: flux-system
   dependsOn:
     - name: meta-infra-namespaces

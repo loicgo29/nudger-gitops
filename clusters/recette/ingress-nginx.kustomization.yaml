@@ -10,7 +10,7 @@ spec:
   prune: true
   sourceRef:
     kind: GitRepository
-    name: flux-system
+    name: nudger-gitops
   path: apps/ingress-nginx/overlays/recette
   healthChecks:
     - apiVersion: apps/v1

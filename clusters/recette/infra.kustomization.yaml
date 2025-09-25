@@ -9,5 +9,5 @@ spec:
   wait: false
   sourceRef:
     kind: GitRepository
-    name: flux-system
+    name: nudger-gitops
   path: ./infra/namespaces
