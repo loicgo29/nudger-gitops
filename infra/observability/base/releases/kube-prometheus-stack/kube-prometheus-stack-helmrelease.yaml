@@ -5,6 +5,7 @@ metadata:
   name: helm-kube-prometheus-stack
   namespace: ns-observability
 spec:
+  suspend: true
   interval: 10m
   chart:
     spec:
