@@ -24,24 +24,34 @@ spec:
         namespace: flux-system
   values:
     auth:
-      rootPassword: rootpassword   # ⚠️ à basculer dans un Secret
+      rootPassword: rootpassword     # ⚠️ à remplacer par Secret
       database: xwiki
       username: xwiki
-      password: xwikiPass123!      # ⚠️ idem
+      password: xwikiPass123!        # ⚠️ idem
+
     primary:
       persistence:
         enabled: true
         storageClass: longhorn-db-integration
-        size: 5Gi
-      resources:
+        size: 5Gi   # patch-pvc.yaml supprimé
+
+      resources:     # patch-resources.yaml supprimé
         requests:
           cpu: "100m"
           memory: "256Mi"
         limits:
           cpu: "200m"
           memory: "512Mi"
-      readinessProbe:
-        enabled: true
+
+      readinessProbe:   # patch-readiness.yaml supprimé
+        exec:
+          command:
+            - mysqladmin
+            - ping
+            - "-h"
+            - "127.0.0.1"
+            - "-uroot"
+            - "-p$(MYSQL_ROOT_PASSWORD)"
         initialDelaySeconds: 60
         periodSeconds: 10
         timeoutSeconds: 5
