@@ -15,7 +15,7 @@ patches:
         path: /spec/values/env
         value:
           - name: DB_HOST
-            value: mysql-xwiki.ns-open4goods-recette.svc.cluster.local
+            value: mysql-xwiki.ns-open4goods-integration.svc.cluster.local
           - name: DB_USER
             valueFrom:
               secretKeyRef:
