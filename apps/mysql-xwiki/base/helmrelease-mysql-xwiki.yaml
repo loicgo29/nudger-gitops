@@ -23,6 +23,10 @@ spec:
     architecture: standalone
     auth:
       existingSecret: mysql-xwiki   # 👈 dit à Helm d’utiliser ton Secret
+      existingSecretUserKey: mysql-user
+      existingSecretPasswordKey: mysql-password
+      existingSecretRootPasswordKey: mysql-root-password
+      existingSecretDatabaseKey: mysql-database
     primary:
       persistence:
         enabled: true
