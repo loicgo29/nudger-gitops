@@ -23,12 +23,6 @@ spec:
         name: helmrepo-bitnami
         namespace: flux-system
   values:
-    auth:
-      rootPassword: rootpassword     # ⚠️ à remplacer par un Secret
-      database: xwiki
-      username: xwiki
-      password: xwikiPass123!        # ⚠️ idem
-
     primary:
       persistence:
         enabled: true
