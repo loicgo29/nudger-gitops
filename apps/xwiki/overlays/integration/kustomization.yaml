@@ -6,22 +6,5 @@ namespace: ns-open4goods-integration
 resources:
   - ../../base
 
-patches:
-  - target:
-      kind: HelmRelease
-      name: xwiki
-    patch: |
-      - op: replace
-        path: /spec/values/ingress
-        value:
-          enabled: true
-          ingressClassName: nginx
-          hosts:
-            - host: xwiki.integration.nudger.logo-solutions.fr
-              paths:
-                - path: /
-                  pathType: Prefix
-          tls:
-            - secretName: xwiki-tls
-              hosts:
-                - xwiki.integration.nudger.logo-solutions.fr
+patchesStrategicMerge:
+  - patch-xwiki.yaml
