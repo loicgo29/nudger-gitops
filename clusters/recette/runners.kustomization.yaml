@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: runners-recette
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: ./infra/action-runner-controller/runners/recette
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: nudger-gitops
+  dependsOn:
+    - name: actions-runner-controller-recette
