@@ -12,3 +12,4 @@ resources:
   - ../../infra/action-runner-controller/overlays/recette
   - ci-runner-sa.yaml
   - xwiki-kustomization.yaml
+  - ns-open4goods-recette 
