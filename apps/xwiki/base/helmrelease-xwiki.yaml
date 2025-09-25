@@ -69,7 +69,14 @@ spec:
         timeoutSeconds: 5
         failureThreshold: 6
         successThreshold: 1
-
+      startupProbe:
+        httpGet:
+          path: /bin/view/Main/WebHome
+          port: 8080
+        periodSeconds: 30
+        timeoutSeconds: 5
+        failureThreshold: 80   # 80 × 30s = ~40 min max pour démarrer
+        successThreshold: 1
       readinessProbe:
         httpGet:
           path: /rest/wikis/xwiki/spaces
