@@ -23,6 +23,11 @@ spec:
       enabled: true
       storageClass: longhorn-db
       size: 10Gi
+    mysql:
+      enabled: false
+
+    postgresql:
+      enabled: false
 
     # Utilisation de MariaDB embarqué
     mariadb:
