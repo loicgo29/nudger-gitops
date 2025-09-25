@@ -1,4 +1,3 @@
-# apps/xwiki/base/helmrelease-xwiki.yaml
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
@@ -15,32 +14,31 @@ spec:
         name: helmrepo-xwiki
         namespace: flux-system
   values:
-    mysql:
-      enabled: false
     image:
       repository: xwiki
       tag: 17.3.0-mysql-tomcat
 
+    # Persistance XWiki (espace données permanentes)
     persistence:
       enabled: true
       storageClass: longhorn-db
       size: 10Gi
 
+    # Utilisation de MariaDB embarqué
     mariadb:
-      enabled: false
-    postgresql:
-      enabled: false
+      enabled: true
+      auth:
+        rootPassword: xwikiRoot123
+        username: xwiki
+        password: xwikiPass123
+        database: xwiki
+      primary:
+        persistence:
+          enabled: true
+          storageClass: longhorn-db
+          size: 8Gi
 
-    externalDB:
-      type: mysql
-      host: mysql-xwiki.ns-open4goods-recette.svc.cluster.local
-      user: xwiki
-      database: xwiki
-      customKeyRef:
-        enabled: true
-        name: mysql-xwiki
-        key: mysql-password
-
+    # Ingress pour accéder à XWiki
     ingress:
       enabled: true
       ingressClassName: nginx
@@ -49,15 +47,10 @@ spec:
           paths:
             - path: /
               pathType: Prefix
-        - host: xwiki.integration.nudger.logo-solutions.fr
-          paths:
-            - path: /
-              pathType: Prefix
       tls:
         - secretName: xwiki-tls
           hosts:
             - xwiki.recette.nudger.logo-solutions.fr
-            - xwiki.integration.nudger.logo-solutions.fr
 
     resources:
       requests:
@@ -66,32 +59,3 @@ spec:
       limits:
         cpu: 500m
         memory: 1Gi
-
-    # ➡️ Ajout des probes
-    probes:
-      livenessProbe:
-        httpGet:
-          path: /rest
-          port: 8080
-        initialDelaySeconds: 900
-        periodSeconds: 20
-        timeoutSeconds: 5
-        failureThreshold: 6
-        successThreshold: 1
-      startupProbe:
-        httpGet:
-          path: /bin/view/Main/WebHome
-          port: 8080
-        periodSeconds: 30
-        timeoutSeconds: 5
-        failureThreshold: 80   # 80 × 30s = ~40 min max pour démarrer
-        successThreshold: 1
-      readinessProbe:
-        httpGet:
-          path: /rest/wikis/xwiki/spaces
-          port: 8080
-        initialDelaySeconds: 900
-        periodSeconds: 20
-        timeoutSeconds: 5
-        failureThreshold: 10
-        successThreshold: 1

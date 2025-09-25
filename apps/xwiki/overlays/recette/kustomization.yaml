@@ -5,28 +5,29 @@ namespace: ns-open4goods-recette
 
 resources:
   - ../../base
+
 patches:
   - target:
       kind: HelmRelease
       name: xwiki
     patch: |
       - op: replace
-        path: /spec/values/mysql/enabled
-        value: false
-      - op: replace
-        path: /spec/values/mariadb/enabled
-        value: false
-      - op: replace
-        path: /spec/values/postgresql/enabled
-        value: false
-      - op: replace
-        path: /spec/values/externalDB
+        path: /spec/values/ingress
         value:
-          type: mysql
-          host: mysql-xwiki.ns-open4goods-recette.svc.cluster.local
-          user: xwiki
-          database: xwiki
-          customKeyRef:
-            enabled: true
-            name: mysql-xwiki
-            key: mysql-password
+          enabled: true
+          ingressClassName: nginx
+          hosts:
+            - host: xwiki.recette.nudger.logo-solutions.fr
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - secretName: xwiki-tls
+              hosts:
+                - xwiki.recette.nudger.logo-solutions.fr
+      - op: replace
+        path: /spec/values/mariadb/auth/rootPassword
+        value: xwikiRoot123
+      - op: replace
+        path: /spec/values/mariadb/auth/password
+        value: xwikiPass123

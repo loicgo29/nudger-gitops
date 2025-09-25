@@ -5,7 +5,6 @@ resources:
   - ingress-nginx.kustomization.yaml
   - observability.kustomization.yaml
   - kyverno.kustomization.yaml
-  - mysql-xwiki.kustomization.yaml 
   - cert-manager.kustomization.yaml
   - cert-manager-issuers.kustomization.yaml
   - xwiki-kustomization.yaml
