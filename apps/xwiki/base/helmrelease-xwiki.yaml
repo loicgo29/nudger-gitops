@@ -27,7 +27,7 @@ spec:
       host: mysql-xwiki
       name: xwiki
       user: xwiki
-      existingSecret: mysql-xwiki
+      existingSecret: xwiki-mysql
       existingSecretPasswordKey: mysql-password
     ingress:
       enabled: true
