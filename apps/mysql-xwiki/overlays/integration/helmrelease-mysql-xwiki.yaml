@@ -24,14 +24,8 @@ spec:
         namespace: flux-system
   values:
     auth:
-      existingSecret: mysql-xwiki   # 👈 utilisation du secret ci-dessus
-      username: xwiki
+      createDatabase: true
       database: xwiki
-      secretKeys:
-        userPasswordKey: mysql-password
-        rootPasswordKey: mysql-root-password
-        userKey: mysql-user
-        databaseKey: mysql-database
     primary:
       persistence:
         enabled: true
