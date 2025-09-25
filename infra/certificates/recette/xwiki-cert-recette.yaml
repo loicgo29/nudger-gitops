@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: xwiki-tls
+  namespace: ns-open4goods-recette
+spec:
+  secretName: xwiki-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - xwiki.recette.nudger.logo-solutions.fr
