@@ -3,5 +3,3 @@ kind: Kustomization
 namespace: ns-open4goods-integration
 resources:
   - ../../../apps/mysql-xwiki/overlays/integration
-  - xwiki-mysql-secret.yaml
-  - xwiki-root-mysql-secret.yaml

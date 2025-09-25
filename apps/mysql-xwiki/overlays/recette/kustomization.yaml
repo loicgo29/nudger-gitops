@@ -5,3 +5,4 @@ namespace: ns-open4goods-recette
 
 resources:
   - helmrelease-mysql-xwiki.yaml
+  - secret-mysql-xwiki-sealed.yaml
