@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - mysql-xwiki.values.yaml
   - xwiki-mysql-secret.yaml
+  - xwiki-root-mysql-secret.yaml
