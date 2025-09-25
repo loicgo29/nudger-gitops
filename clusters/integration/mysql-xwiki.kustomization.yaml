@@ -14,4 +14,3 @@ spec:
   targetNamespace: ns-open4goods-integration
   wait: true
   timeout: 5m
-  validation: client
