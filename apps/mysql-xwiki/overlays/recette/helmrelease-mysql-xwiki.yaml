@@ -24,16 +24,18 @@ spec:
         namespace: flux-system
   values:
     auth:
-      rootPassword: rootpassword   # ⚠️ à basculer dans un Secret
+      rootPassword: rootpassword     # ⚠️ à remplacer par un Secret
       database: xwiki
       username: xwiki
-      password: xwikiPass123!      # ⚠️ idem, Secret conseillé
+      password: xwikiPass123!        # ⚠️ idem
+
     primary:
       persistence:
         enabled: true
-        storageClass: longhorn-db  # issu du patch PVC
-        size: 10Gi                 # issu du patch PVC
-      resources:
+        storageClass: longhorn-db-recette
+        size: 10Gi   # ancien patch-pvc.yaml
+
+      resources:     # ancien patch-resources.yaml
         requests:
           cpu: "200m"
           memory: "512Mi"
