@@ -22,6 +22,7 @@ spec:
     primary:
       persistence:
         enabled: true
+        existingClaim: ""
         storageClass: longhorn-1r
         size: 8Gi
       resources:
