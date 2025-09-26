@@ -10,8 +10,6 @@ spec:
       database: xwiki
       password: xwikiPass123
     ingress:
-      enabled: true
-      ingressClassName: nginx
       hosts:
         - host: xwiki.integration.nudger.logo-solutions.fr
           paths:
@@ -21,19 +19,3 @@ spec:
         - secretName: xwiki-tls
           hosts:
             - xwiki.integration.nudger.logo-solutions.fr
-
-    # probes adaptées
-    livenessProbe:
-      httpGet:
-        path: /rest
-        port: 8080
-      initialDelaySeconds: 120
-      periodSeconds: 20
-      failureThreshold: 10
-    readinessProbe:
-      httpGet:
-        path: /rest/wikis/xwiki/spaces
-        port: 8080
-      initialDelaySeconds: 180
-      periodSeconds: 20
-      failureThreshold: 15

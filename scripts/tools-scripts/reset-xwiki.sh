@@ -1,45 +1,59 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-NS="ns-open4goods-integration"
-MYSQL_PVC="data-mysql-xwiki-0"
-XWIKI_PVC="xwiki-data-xwiki-0"
+NAMESPACES=("ns-open4goods-integration" "ns-open4goods-recette")
 
-echo "🗑 Suppression des finalizers sur les PVC..."
-for pvc in "$MYSQL_PVC" "$XWIKI_PVC"; do
-  if kubectl -n "$NS" get pvc "$pvc" &>/dev/null; then
-	kubectl -n "$NS" patch pvc "$pvc" \
-  --type=json \
-  -p='[{"op":"remove","path":"/metadata/finalizers"}]'
-  fi
+echo "🧹 Reset complet de XWiki et MariaDB sur namespaces: ${NAMESPACES[*]}"
+echo "⚠️ ATTENTION : les PVC seront supprimés → perte de données !"
+echo
+
+for ns in "${NAMESPACES[@]}"; do
+  echo "----------------------------------------------------"
+  echo "➡️  Namespace: $ns"
+  echo "----------------------------------------------------"
+
+  echo "🩹 Removing finalizers"
+  for res in $(kubectl -n "$ns" get helmrelease,sts,pods,pvc -o name 2>/dev/null || true); do
+    kubectl -n "$ns" patch "$res" --type=merge -p '{"metadata":{"finalizers":[]}}' || true
+  done
+
+  echo "🗑️  Deleting PVCs"
+  for pvc in $(kubectl -n "$ns" get pvc -o name | grep -E 'xwiki|mariadb|mysql' || true); do
+    kubectl -n "$ns" delete "$pvc" --wait=false || true
+  done
+
+  echo "🗑️  Deleting ConfigMaps"
+  for cm in $(kubectl -n "$ns" get cm -o name | grep -E 'xwiki|mariadb|mysql' || true); do
+    kubectl -n "$ns" delete "$cm" || true
+  done
+
+  echo "🗑️  Deleting Secrets"
+  for sec in $(kubectl -n "$ns" get secret -o name | grep -E 'xwiki|mariadb|mysql' || true); do
+    kubectl -n "$ns" delete "$sec" || true
+  done
+
+  echo "🗑️  Deleting HelmRelease (si présent)"
+  kubectl -n "$ns" delete helmrelease xwiki --ignore-not-found || true
+
+  echo "✅ Namespace $ns clean."
+  echo
 done
 
-echo "🗑 Suppression des PVC et Pods XWiki/MySQL..."
-kubectl -n "$NS" delete pvc "$MYSQL_PVC" "$XWIKI_PVC" --ignore-not-found
-kubectl -n "$NS" delete pod mysql-xwiki-0 xwiki-0 --ignore-not-found
+echo "----------------------------------------------------"
+echo "➡️  Nettoyage FluxSystem (HelmCharts/Kustomizations)"
+echo "----------------------------------------------------"
 
-echo "⏳ Attente que MySQL soit Ready..."
-kubectl -n "$NS" wait --for=condition=ready pod -l app.kubernetes.io/name=mysql --timeout=300s
+# Supprimer les HelmCharts liés à XWiki
+for hc in $(kubectl -n flux-system get helmcharts.source.toolkit.fluxcd.io -o name 2>/dev/null | grep -i xwiki || true); do
+  kubectl -n flux-system delete "$hc" --ignore-not-found || true
+done
 
-echo "🔑 Application des privilèges MySQL..."
-export MYSQL_ROOT_PASSWORD=$(kubectl -n "$NS" get secret mysql-xwiki -o jsonpath='{.data.mysql-root-password}' | base64 -d)
+# Supprimer les Kustomizations liées à XWiki
+kubectl -n flux-system delete kustomization xwiki-integration xwiki-recette --ignore-not-found || true
 
-kubectl -n "$NS" exec -i mysql-xwiki-0 -- \
-  mysql -uroot -p"$MYSQL_ROOT_PASSWORD" <<'EOF'
-DROP USER IF EXISTS 'xwiki'@'%';
-CREATE USER 'xwiki'@'%' IDENTIFIED BY 'xwikiPass123!';
-GRANT ALL PRIVILEGES ON *.* TO 'xwiki'@'%' WITH GRANT OPTION;
-GRANT PROCESS, SUPER, RELOAD, EVENT, TRIGGER ON *.* TO 'xwiki'@'%';
-FLUSH PRIVILEGES;
-EOF
+echo "----------------------------------------------------"
+echo "🔎 Vérification post-reset"
+echo "----------------------------------------------------"
+kubectl get pvc,cm,secret,helmrelease -A | grep -i xwiki || echo "🟢 Plus aucune ressource XWiki détectée"
 
-echo "⏳ Attente que XWiki soit Ready..."
-kubectl -n "$NS" wait --for=condition=ready pod -l app=xwiki --timeout=600s
-
-NODE_IP="${NODE_IP:-91.98.16.184}"
-HOST="xwiki.integration.nudger.logo-solutions.fr"
-
-echo "🌐 Test HTTP sur http://${NODE_IP}/bin/view/Main/ avec Host=${HOST} ..."
-curl -vk -H "Host: ${HOST}" "http://${NODE_IP}/bin/view/Main/" || true
-
-echo "✅ Reset terminé. Vérifie que la page XWiki s'affiche correctement."
+echo "🎉 Reset XWiki + MariaDB terminé."

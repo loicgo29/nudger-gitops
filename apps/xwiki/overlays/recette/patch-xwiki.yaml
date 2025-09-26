@@ -1,12 +1,16 @@
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# apps/xwiki/overlays/recette/patch-xwiki.yaml
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: xwiki
 spec:
   values:
+    externalDB:
+      host: mysql-xwiki.ns-open4goods-recette.svc.cluster.local
+      user: xwiki
+      database: xwiki
+      password: xwikiPass123
     ingress:
-      enabled: true
-      ingressClassName: nginx
       hosts:
         - host: xwiki.recette.nudger.logo-solutions.fr
           paths:

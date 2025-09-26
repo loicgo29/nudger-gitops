@@ -27,7 +27,7 @@ spec:
 
     # === Base de données embarquée ===
     mariadb:
-      enabled: true
+      enabled: false
       auth:
         rootPassword: xwikiRoot123
         username: xwiki

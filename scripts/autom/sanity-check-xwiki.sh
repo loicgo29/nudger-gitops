@@ -1,97 +1,65 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# --- Namespaces ciblés --------------------------------------------------------
 NAMESPACES=("ns-open4goods-integration" "ns-open4goods-recette")
 
-echo "🔎 Sanity check XWiki for namespaces: ${NAMESPACES[*]}"
+echo "🔎 Sanity check XWiki + MariaDB for namespaces: ${NAMESPACES[*]}"
 echo "----------------------------------------------------"
 
 for ns in "${NAMESPACES[@]}"; do
-  echo ""
   echo "🟢 Checking namespace: $ns"
   echo "----------------------------------------------------"
 
-  # 0️⃣ Flux Kustomization
-  echo "0️⃣ Flux Kustomization:"
-  ks_name="xwiki-$(echo "$ns" | cut -d'-' -f3)" # => xwiki-integration / xwiki-recette
-  if kubectl -n flux-system get kustomization "$ks_name" &>/dev/null; then
-    kubectl -n flux-system get kustomization "$ks_name"
-  else
-    echo "❌ Flux Kustomization $ks_name not found"
-  fi
-  echo ""
+  # 1️⃣ Vérifier HelmRelease XWiki
+  echo "1️⃣ HelmRelease XWiki:"
+  kubectl -n "$ns" get helmrelease xwiki || echo "❌ HelmRelease xwiki not found"
+  echo
 
-  # 0️⃣b HelmRepository
-  echo "0️⃣b HelmRepository:"
-  if kubectl -n flux-system get helmrepository helmrepo-xwiki &>/dev/null; then
-    kubectl -n flux-system get helmrepository helmrepo-xwiki
-  else
-    echo "❌ HelmRepository helmrepo-xwiki not found"
-  fi
-  echo ""
+  # 2️⃣ Vérifier StatefulSets
+  echo "2️⃣ StatefulSets:"
+  kubectl -n "$ns" get statefulset | grep -E "xwiki|mariadb" || echo "❌ No xwiki/mariadb statefulset found"
+  echo
 
-  # 1️⃣ HelmRelease
-  echo "1️⃣ HelmRelease:"
-  if kubectl -n "$ns" get helmrelease xwiki &>/dev/null; then
-    kubectl -n "$ns" get helmrelease xwiki
-  else
-    echo "❌ HelmRelease not found"
-  fi
-  echo ""
+  # 3️⃣ Vérifier Pods
+  echo "3️⃣ Pods:"
+  kubectl -n "$ns" get pods -o wide | grep -E "xwiki|mariadb" || echo "❌ No xwiki/mariadb pods running"
+  echo
 
-  # 2️⃣ Secret MySQL
-  echo "2️⃣ Secret mysql-xwiki:"
-  if kubectl -n "$ns" get secret mysql-xwiki &>/dev/null; then
-    echo "✅ Secret mysql-xwiki present with keys:"
-    kubectl -n "$ns" get secret mysql-xwiki -o jsonpath="{.data}" | jq 'keys'
-  else
-    echo "❌ Secret mysql-xwiki missing"
-  fi
-  echo ""
-
-  # 3️⃣ Pods XWiki
-  echo "3️⃣ Pods XWiki:"
-  if kubectl -n "$ns" get pods -l app.kubernetes.io/instance=xwiki &>/dev/null; then
-    kubectl -n "$ns" get pods -l app.kubernetes.io/instance=xwiki -o wide
-  else
-    echo "❌ No XWiki pods found"
-  fi
-  echo ""
-
-  # 4️⃣ PVC
+  # 4️⃣ Vérifier PVC
   echo "4️⃣ PVC:"
-  if kubectl -n "$ns" get pvc -l app.kubernetes.io/instance=xwiki &>/dev/null; then
-    kubectl -n "$ns" get pvc -l app.kubernetes.io/instance=xwiki
-  else
-    echo "❌ No PVC found"
-  fi
-  echo ""
+  kubectl -n "$ns" get pvc | grep -E "xwiki" || echo "❌ No xwiki PVCs found"
+  echo
 
-  # 5️⃣ Logs
-  echo "5️⃣ Logs XWiki (dernier 20 lignes):"
-  pod=$(kubectl -n "$ns" get pod -l app.kubernetes.io/instance=xwiki -o jsonpath="{.items[0].metadata.name}" 2>/dev/null || true)
-  if [[ -n "$pod" ]]; then
-    kubectl -n "$ns" logs "$pod" --tail=20 || echo "❌ Could not fetch logs"
-  else
-    echo "❌ No pod to fetch logs"
-  fi
-  echo ""
+  # 5️⃣ Vérifier le ConfigMap et Secret XWiki
+  echo "5️⃣ ConfigMap / Secret XWiki:"
+  kubectl -n "$ns" get cm xwiki -o yaml | grep -E "DB_" || echo "❌ ConfigMap xwiki missing"
+  kubectl -n "$ns" get secret xwiki -o yaml | grep DB_PASSWORD || echo "❌ Secret xwiki missing"
+  echo
 
-  # 6️⃣ Test HTTP
-  echo "6️⃣ Test HTTP XWiki (via clusterIP):"
-  svc=$(kubectl -n "$ns" get svc -l app.kubernetes.io/instance=xwiki -o jsonpath="{.items[0].metadata.name}" 2>/dev/null || true)
-  if [[ -n "$svc" ]]; then
-    CLUSTER_IP=$(kubectl -n "$ns" get svc "$svc" -o jsonpath="{.spec.clusterIP}")
-    echo "curl -shttp://$CLUSTER_IP:8080/bin/view/Main/WebHome"
-    if curl -s "http://$CLUSTER_IP:8080/bin/view/Main/WebHome" | grep -q "XWiki"; then
-      echo "✅ XWiki responded successfully"
+  # 6️⃣ Tester connexion DB (MariaDB)
+  echo "6️⃣ Database connectivity test:"
+  DBPASS=$(kubectl -n "$ns" get secret xwiki -o jsonpath='{.data.DB_PASSWORD}' | base64 -d)
+  if kubectl -n "$ns" exec -i xwiki-mariadb-0 -- mariadb -uxwiki -p"$DBPASS" xwiki -e "SELECT 1;" >/dev/null 2>&1; then
+    echo "✅ MariaDB accessible with xwiki credentials"
+  else
+    echo "❌ MariaDB connection failed"
+  fi
+  echo
+
+  # 7️⃣ Vérifier endpoint XWiki HTTP
+  echo "7️⃣ XWiki HTTP check:"
+  XWIKI_HOST=$(kubectl -n "$ns" get ingress xwiki -o jsonpath='{.spec.rules[0].host}' 2>/dev/null || echo "none")
+  if [[ "$XWIKI_HOST" != "none" ]]; then
+    if curl -s -o /dev/null -w "%{http_code}" "http://$XWIKI_HOST" | grep -qE "200|302"; then
+      echo "✅ XWiki HTTP reachable at http://$XWIKI_HOST"
     else
-      echo "❌ XWiki did not respond correctly"
+      echo "❌ XWiki HTTP not responding properly"
     fi
   else
-    echo "❌ No XWiki service found"
+    echo "⚠️ No Ingress found for XWiki in $ns"
   fi
-  echo "----------------------------------------------------"
-done
 
-echo "✅ Sanity check terminé."
+  echo "===================================================="
+  echo
+done
