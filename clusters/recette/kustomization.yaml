@@ -12,3 +12,5 @@ resources:
   - ci-runner-sa.yaml
   - kustomization-certificates.yaml
   - ../../apps/xwiki/overlays/recette
+  - ../../apps/mysql-xwiki/overlays/integration
+
