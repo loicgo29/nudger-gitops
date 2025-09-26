@@ -6,3 +6,5 @@ resources:
   - releases/cert-manager/helmrelease.yaml
   - clusterissuer-letsencrypt.yaml
   - arc-ingress.yaml
+  - clusterissuer-letsencrypt-staging.yaml   # 👈 ajouté
+

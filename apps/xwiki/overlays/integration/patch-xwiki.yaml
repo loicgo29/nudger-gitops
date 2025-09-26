@@ -3,6 +3,10 @@ kind: HelmRelease
 metadata:
   name: xwiki
 spec:
+  timeout: 30m
+  dependsOn:
+    - name: mysql-xwiki
+      namespace: ns-open4goods-integration
   values:
     externalDB:
       host: mysql-xwiki.ns-open4goods-integration.svc.cluster.local
@@ -18,7 +22,7 @@ spec:
             - path: /
               pathType: Prefix
       tls:
-        - secretName: xwiki-tls
+        - secretName: xwiki-tls-staging
           hosts:
             - xwiki.integration.nudger.logo-solutions.fr
 
