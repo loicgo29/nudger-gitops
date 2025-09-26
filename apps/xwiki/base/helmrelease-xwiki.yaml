@@ -19,13 +19,11 @@ spec:
       repository: xwiki
       tag: 17.3.0-mysql-tomcat
 
-    # === Persistance des données XWiki ===
     persistence:
       enabled: true
       storageClass: longhorn-db
       size: 10Gi
 
-    # === Désactive les DB packagées ===
     mariadb:
       enabled: false
     mysql:
@@ -33,27 +31,16 @@ spec:
     postgresql:
       enabled: false
 
-    # === Connexion à la DB externe (mysql-xwiki) ===
-    xwiki:
-      database:
-        type: mysql
-        host: mysql-xwiki.svc.cluster.local   # 👈 plus de ${NAMESPACE}
-        database: xwiki
-        user: xwiki
-        password: xwikiPass123
-
-    # === Ingress (ajusté par overlay) ===
     ingress:
       enabled: true
       ingressClassName: nginx
       hosts:
-        - host: xwiki.recette.nudger.logo-solutions.fr
+        - host: dummy.host.to.be.overriden
           paths:
             - path: /
               pathType: Prefix
       tls: []
 
-    # === Probes pour laisser XWiki démarrer tranquillement ===
     probes:
       startupProbe:
         httpGet:

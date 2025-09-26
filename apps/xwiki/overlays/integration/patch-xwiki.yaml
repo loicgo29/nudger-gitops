@@ -8,13 +8,6 @@ spec:
     - name: mysql-xwiki
       namespace: ns-open4goods-integration
   values:
-    xwiki:
-      database:
-        type: mysql
-        host: mysql-xwiki.ns-open4goods-<env>.svc.cluster.local
-        database: xwiki
-        user: xwiki
-        password: xwikiPass123
     ingress:
       enabled: true
       ingressClassName: nginx
@@ -23,8 +16,8 @@ spec:
           paths:
             - path: /
               pathType: Prefix
-      tls: [] 
-    # probes adaptées
+      tls: []
+
     livenessProbe:
       httpGet:
         path: /rest
@@ -32,6 +25,7 @@ spec:
       initialDelaySeconds: 120
       periodSeconds: 20
       failureThreshold: 10
+
     readinessProbe:
       httpGet:
         path: /rest/wikis/xwiki/spaces
