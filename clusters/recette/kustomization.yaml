@@ -12,4 +12,4 @@ resources:
   - ci-runner-sa.yaml
   - ../../apps/mysql-xwiki/overlays/recette
   - ../../apps/xwiki/overlays/recette
-  - kustomization-certificates.yaml
+    #- kustomization-certificates.yaml

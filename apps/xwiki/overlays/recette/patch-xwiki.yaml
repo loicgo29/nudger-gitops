@@ -20,7 +20,4 @@ spec:
           paths:
             - path: /
               pathType: Prefix
-      tls:
-        - secretName: xwiki-tls-staging
-          hosts:
-            - xwiki.recette.nudger.logo-solutions.fr
+      tls: [] 

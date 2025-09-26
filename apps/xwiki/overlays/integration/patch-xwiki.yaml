@@ -21,11 +21,7 @@ spec:
           paths:
             - path: /
               pathType: Prefix
-      tls:
-        - secretName: xwiki-tls-staging
-          hosts:
-            - xwiki.integration.nudger.logo-solutions.fr
-
+      tls: [] 
     # probes adaptées
     livenessProbe:
       httpGet:

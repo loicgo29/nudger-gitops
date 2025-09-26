@@ -8,4 +8,4 @@ resources:
   - actions-runner-controller-integration.kustomization.yaml   # ✅ ajout
   - ../../apps/mysql-xwiki/overlays/integration
   - ../../apps/xwiki/overlays/integration
-  - kustomization-certificates.yaml
+    #  - kustomization-certificates.yaml
