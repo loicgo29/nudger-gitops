@@ -24,3 +24,10 @@ spec:
         enabled: true
         storageClass: longhorn-db
         size: 8Gi
+      resources:
+        requests:
+          cpu: 300m
+          memory: 512Mi
+        limits:
+          cpu: 800m
+          memory: 1Gi
