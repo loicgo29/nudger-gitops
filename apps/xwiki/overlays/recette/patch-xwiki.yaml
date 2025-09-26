@@ -9,6 +9,12 @@ spec:
     - name: mysql-xwiki
       namespace: ns-open4goods-recette
   values:
+    externalDB:
+      host: mysql-xwiki.ns-open4goods-recette.svc.cluster.local
+      user: xwiki
+      database: xwiki
+      password: xwikiPass123
+
     ingress:
       hosts:
         - host: xwiki.recette.nudger.logo-solutions.fr
