@@ -2,7 +2,6 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: xwiki
-  namespace: ${NAMESPACE}
 spec:
   interval: 5m
   timeout: 15m
@@ -38,7 +37,7 @@ spec:
     xwiki:
       database:
         type: mysql
-        host: mysql-xwiki.${NAMESPACE}.svc.cluster.local
+        host: mysql-xwiki.svc.cluster.local   # 👈 plus de ${NAMESPACE}
         database: xwiki
         user: xwiki
         password: xwikiPass123
