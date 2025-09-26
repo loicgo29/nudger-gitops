@@ -28,11 +28,6 @@ spec:
     # === Base de données embarquée ===
     mariadb:
       enabled: false
-      auth:
-        rootPassword: xwikiRoot123
-        username: xwiki
-        password: xwikiPass123
-        database: xwiki
       primary:
         persistence:
           enabled: true
