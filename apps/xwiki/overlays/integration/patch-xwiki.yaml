@@ -8,6 +8,13 @@ spec:
     - name: mysql-xwiki
       namespace: ns-open4goods-integration
   values:
+    xwiki:
+      database:
+        type: mysql
+        host: mysql-xwiki.ns-open4goods-<env>.svc.cluster.local
+        database: xwiki
+        user: xwiki
+        password: xwikiPass123
     ingress:
       enabled: true
       ingressClassName: nginx
