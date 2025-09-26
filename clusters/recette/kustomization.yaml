@@ -10,6 +10,6 @@ resources:
   - actions-runner-controller.kustomization.yaml
   - runners.kustomization.yaml
   - ci-runner-sa.yaml
-  - kustomization-certificates.yaml
   - ../../apps/mysql-xwiki/overlays/integration
   - ../../apps/xwiki/overlays/recette
+  - kustomization-certificates.yaml
