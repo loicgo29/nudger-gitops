@@ -8,3 +8,4 @@ resources:
 
 patchesStrategicMerge:
   - patch-xwiki.yaml
+  - helmrelease-xwiki-patch.yaml
