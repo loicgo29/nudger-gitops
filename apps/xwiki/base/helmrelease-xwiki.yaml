@@ -25,30 +25,24 @@ spec:
       storageClass: longhorn-db
       size: 10Gi
 
-    # === Base de données embarquée ===
+    # === Désactive les DB packagées ===
     mariadb:
       enabled: false
-      primary:
-        persistence:
-          enabled: true
-          storageClass: longhorn-db
-          accessMode: ReadWriteOnce
-          size: 8Gi
-      resources:
-        requests:
-          cpu: 200m        # 🔽 réduit (avant 500m)
-          memory: 512Mi    # 🔽 réduit (avant 1Gi)
-        limits:
-          cpu: 600m
-          memory: 1Gi
-
-    # Désactive les autres DB
     mysql:
       enabled: false
     postgresql:
       enabled: false
 
-    # === Ingress (à ajuster selon l’overlay) ===
+    # === Connexion à la DB externe (mysql-xwiki) ===
+    xwiki:
+      database:
+        type: mysql
+        host: mysql-xwiki.${NAMESPACE}.svc.cluster.local
+        database: xwiki
+        user: xwiki
+        password: xwikiPass123
+
+    # === Ingress (ajusté par overlay) ===
     ingress:
       enabled: true
       ingressClassName: nginx
