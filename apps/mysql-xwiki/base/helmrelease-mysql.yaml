@@ -22,7 +22,7 @@ spec:
     primary:
       persistence:
         enabled: true
-        storageClass: longhorn-db
+        storageClass: longhorn-1r
         size: 8Gi
       resources:
         requests:
