@@ -38,6 +38,13 @@ spec:
           enabled: true
           storageClass: longhorn-db
           size: 8Gi
+      resources:
+        requests:
+          cpu: 200m        # 🔽 réduit (avant 500m)
+          memory: 512Mi    # 🔽 réduit (avant 1Gi)
+        limits:
+          cpu: 600m
+          memory: 1Gi
 
     # Désactive les autres DB
     mysql:
@@ -54,10 +61,7 @@ spec:
           paths:
             - path: /
               pathType: Prefix
-      tls:
-        - secretName: xwiki-tls
-          hosts:
-            - xwiki.recette.nudger.logo-solutions.fr
+      tls: []
 
     # === Probes pour laisser XWiki démarrer tranquillement ===
     probes:

@@ -26,8 +26,8 @@ spec:
         size: 8Gi
       resources:
         requests:
-          cpu: 300m
-          memory: 512Mi
+          cpu: 100m       # 🔽 réduit (avant 300m)
+          memory: 256Mi   # 🔽 réduit (avant 512Mi)
         limits:
-          cpu: 800m
-          memory: 1Gi
+          cpu: 500m
+          memory: 512Mi
