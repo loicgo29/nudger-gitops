@@ -9,8 +9,8 @@ spec:
       host: mysql-xwiki.ns-open4goods-recette.svc.cluster.local
       user: xwiki
       database: xwiki
-      password: xwikiPass123
-
+      existingSecret: xwiki-db-secret
+      existingSecretPasswordKey: db-password
     ingress:
       hosts:
         - host: xwiki.recette.nudger.logo-solutions.fr

@@ -9,7 +9,8 @@ spec:
       host: mysql-xwiki.ns-open4goods-integration.svc.cluster.local
       user: xwiki
       database: xwiki
-      password: xwikiPass123
+      existingSecret: xwiki-db-secret
+      existingSecretPasswordKey: db-password
 
     ingress:
       hosts:
