@@ -7,3 +7,4 @@ resources:
   - ../../infra/action-runner-controller/overlays/integration
   - actions-runner-controller-integration.kustomization.yaml   # ✅ ajout
   - kustomization-certificates.yaml
+  - ../../apps/xwiki/overlays/recette
